@@ -1,45 +1,108 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Bootstrap Example</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-  </head>
-  <body>
-    <div style="background-color: white; height: 20px; position: fixed; top: 0; width: 100%; z-index: 1000;">
-      <a href="index.html" style="color: black; text-decoration: none; padding: 10px 10px 10px 10px;">Index</a>
-      <a href="admin.html" style="color: black; text-decoration: none; padding: 10px 10px 10px 10px;">Admin</a>
-      <a href="login.html" style="color: black; text-decoration: none; padding: 10px 10px 10px 10px;">Login</a>
-      <a href="register.html" style="color: black; text-decoration: none; padding: 10px 10px 10px 10px;">Register</a>
-      <a href="profile.html" style="color: black; text-decoration: none; padding: 10px 10px 10px 10px;">Profile</a>
-      <a href="thread.html" style="color: black; text-decoration: none; padding: 10px 10px 10px 10px;">Thread</a>
+<head>
+    <title>The Awesome Site</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container mt-5">
+
+    <!-- LOGIN SECTION -->
+    <div id="loginSection">
+        <h2>The Awesome Site</h2>
+        <p>Please log in</p>
+
+        <form>
+            <div class="mb-3">
+                <label>Email</label>
+                <input type="email" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label>Password</label>
+                <input type="password" class="form-control">
+            </div>
+
+            <button type="button" class="btn btn-primary mb-3">
+                Log In (Demo Only)
+            </button>
+        </form>
+
+        <hr>
+
+        <h5>Demo Views:</h5>
+
+        <button class="btn btn-danger mb-2" onclick="showAdmin()">
+            Go to Admin View
+        </button>
+
+        <br>
+
+        <button class="btn btn-success" onclick="showUser()">
+            Go to Regular User View
+        </button>
     </div>
-    <div class="jumbotron text-center">
-      <h1>My First Bootstrap Page</h1>
-      <p>Resize this responsive page to see the effect!</p> 
+
+
+    <!-- ADMIN SECTION (Hidden Initially) -->
+    <div id="adminSection" style="display:none;">
+        <h2>Admin Dashboard</h2>
+
+        <ul class="list-group mt-3">
+            <li class="list-group-item">Manage Users</li>
+            <li class="list-group-item">Edit or Delete Any Item</li>
+            <li class="list-group-item">View Reports</li>
+        </ul>
+
+        <br>
+
+        <button class="btn btn-secondary" onclick="showLogin()">
+            Logout
+        </button>
     </div>
-      
-    <div class="container">
-      <div class="row">
-        <div class="col-sm-4">
-          <h3>Column 1</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-          <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-        </div>
-        <div class="col-sm-4">
-          <h3>Column 2</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-          <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-        </div>
-        <div class="col-sm-4">
-          <h3>Column 3</h3>        
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-          <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-        </div>
-      </div>
+
+
+    <!-- USER SECTION (Hidden Initially) -->
+    <div id="userSection" style="display:none;">
+        <h2>User Dashboard</h2>
+
+        <ul class="list-group mt-3">
+            <li class="list-group-item">View Profile</li>
+            <li class="list-group-item">Browse Marketplace</li>
+            <li class="list-group-item">View Groups</li>
+            <li class="list-group-item">Messages</li>
+        </ul>
+
+        <br>
+
+        <button class="btn btn-secondary" onclick="showLogin()">
+            Logout
+        </button>
     </div>
-  </body>
+
+</div>
+
+<script>
+    function showAdmin() {
+        document.getElementById("loginSection").style.display = "none";
+        document.getElementById("adminSection").style.display = "block";
+        document.getElementById("userSection").style.display = "none";
+    }
+
+    function showUser() {
+        document.getElementById("loginSection").style.display = "none";
+        document.getElementById("adminSection").style.display = "none";
+        document.getElementById("userSection").style.display = "block";
+    }
+
+    function showLogin() {
+        document.getElementById("loginSection").style.display = "block";
+        document.getElementById("adminSection").style.display = "none";
+        document.getElementById("userSection").style.display = "none";
+    }
+</script>
+
+</body>
 </html>
