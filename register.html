@@ -1,59 +1,161 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Awesome Forum</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <title>Awesome Forum - Register</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+    />
+
     <style>
-      .post {background-color: grey; margin: 5px; padding 5px;}
+      /* (Optional) Example style if you use .post later */
+      .post {
+        background-color: #e9ecef;
+        margin: 5px;
+        padding: 10px; /* <-- you were missing the colon before */
+        border-radius: 8px;
+      }
     </style>
   </head>
-  <body>
-    <ul class="nav">
-      <li class="nav-item">
-        <a class="nav-link" href="admin.html">Admin</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="login.html">Login</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="register.html">Register</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="profile.html">My Profile</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="index.html">Home Page</a>
-      </li>
-    </ul>
-    <h1 style="text-align: center;">Register an Account.</h1>
-    <form>
-   
-      <div class="row">
-    <div class="col">
-      <input type="text" class="form-control" placeholder="First name">
+
+  <body class="bg-light">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand bg-white border-bottom">
+      <div class="container">
+        <a class="navbar-brand fw-bold" href="index.html">Awesome Forum</a>
+
+        <div class="navbar-nav ms-auto">
+          <a class="nav-link" href="index.html">Home Page</a>
+          <a class="nav-link" href="profile.html">My Profile</a>
+          <a class="nav-link" href="admin.html">Admin</a>
+          <a class="nav-link" href="login.html">Login</a>
+          <a class="nav-link active" aria-current="page" href="register.html"
+            >Register</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page content -->
+    <div class="container my-5">
+      <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+          <div class="card shadow-sm">
+            <div class="card-body p-4">
+              <h1 class="h3 text-center mb-4">Register an Account</h1>
+
+              <!-- Form -->
+              <!-- Later, you can connect this to your server by changing action="" -->
+              <form action="#" method="post">
+                <!-- First + Last Name -->
+                <div class="row g-3 mb-3">
+                  <div class="col">
+                    <label class="form-label">First name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="first_name"
+                      placeholder="First name"
+                      required
+                    />
+                  </div>
+                  <div class="col">
+                    <label class="form-label">Last name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="last_name"
+                      placeholder="Last name"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <!-- Username (recommended for a forum) -->
+                <div class="mb-3">
+                  <label class="form-label">Username</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="username"
+                    placeholder="Choose a username"
+                    required
+                  />
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                  <label class="form-label">Email address</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    name="email"
+                    placeholder="Enter email"
+                    required
+                  />
+                  <div class="form-text">
+                    We'll never share your email with anyone else.
+                  </div>
+                </div>
+
+                <!-- Password -->
+                <div class="mb-3">
+                  <label class="form-label">Password</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    name="password"
+                    placeholder="Password"
+                    minlength="6"
+                    required
+                  />
+                  <div class="form-text">Use at least 6 characters.</div>
+                </div>
+
+                <!-- Confirm Password (optional but good) -->
+                <div class="mb-3">
+                  <label class="form-label">Confirm password</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    name="confirm_password"
+                    placeholder="Confirm password"
+                    required
+                  />
+                </div>
+
+                <!-- Terms checkbox -->
+                <div class="form-check mb-3">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="terms"
+                    required
+                  />
+                  <label class="form-check-label" for="terms">
+                    I agree to the rules of the Awesome Forum
+                  </label>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="btn btn-primary w-100">
+                  Create Account
+                </button>
+
+                <p class="text-center mt-3 mb-0">
+                  Already have an account?
+                  <a href="login.html">Log in</a>
+                </p>
+              </form>
+              <!-- End Form -->
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="col">
-      <input type="text" class="form-control" placeholder="Last name">
-    </div>
-  </div>
-      
-      <div class="form-group">
-    <label for="exampleInputEmail1">Email address</label>
-    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-  </div>
-  <div class="form-group">
-    <label for="exampleInputPassword1">Password</label>
-    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-  </div>
-  <div class="form-group form-check">
-    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-    <label class="form-check-label" for="exampleCheck1">Check me out</label>
-  </div>
-  <button type="submit" class="btn btn-primary">Submit</button>
-</form>
-      
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
