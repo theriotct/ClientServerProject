@@ -17,29 +17,71 @@
       <a href="profile.html" style="color: black; text-decoration: none; padding: 10px 10px 10px 10px;">Profile</a>
       <a href="thread.html" style="color: black; text-decoration: none; padding: 10px 10px 10px 10px;">Thread</a>
     </div>
-    <div class="jumbotron text-center">
-      <h1>My First Bootstrap Page</h1>
-      <p>Resize this responsive page to see the effect!</p> 
-    </div>
-      
-    <div class="container">
-      <div class="row">
-        <div class="col-sm-4">
-          <h3>Column 1</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-          <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-        </div>
-        <div class="col-sm-4">
-          <h3>Column 2</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-          <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-        </div>
-        <div class="col-sm-4">
-          <h3>Column 3</h3>        
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-          <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-        </div>
+    <body style="padding-top:40px; background-color:#f5f5f5;">
+
+  <!-- Top Navigation -->
+  <div style="background-color: white; height: 40px; position: fixed; top: 0; width: 100%; z-index: 1000; border-bottom:1px solid #ddd;">
+    <a href="index.html" style="color: black; text-decoration: none; padding: 10px;">Index</a>
+    <a href="admin.html" style="color: black; text-decoration: none; padding: 10px;">Admin</a>
+    <a href="login.html" style="color: black; text-decoration: none; padding: 10px;">Login</a>
+    <a href="register.html" style="color: black; text-decoration: none; padding: 10px;">Register</a>
+    <a href="profile.html" style="color: black; text-decoration: none; padding: 10px;">Profile</a>
+    <a href="thread.html" style="color: black; text-decoration: none; padding: 10px;">Thread</a>
+  </div>
+
+  <!-- Thread Content -->
+  <div class="container" style="margin-top:20px;">
+
+    <!-- Original Post -->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3>The Power of Awesome Ideas</h3>
+        <small>Posted by JohnDoe • March 1, 2026</small>
+      </div>
+      <div class="panel-body">
+        <p>
+          Today I explored how small creative ideas can turn into something powerful.
+          When we share our awesomeness, we inspire others.
+        </p>
       </div>
     </div>
-  </body>
-</html>
+
+    <!-- Replies Section -->
+    <h4>Replies</h4>
+
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <strong>JaneSmith</strong> • March 1, 2026
+      </div>
+      <div class="panel-body">
+        I love this idea! Creativity really does start small.
+      </div>
+    </div>
+
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <strong>MikeBrown</strong> • March 2, 2026
+      </div>
+      <div class="panel-body">
+        This motivated me to start my own project. Thanks for sharing!
+      </div>
+    </div>
+
+    <!-- Reply Form -->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4>Add a Reply</h4>
+      </div>
+      <div class="panel-body">
+        <form>
+          <div class="form-group">
+            <textarea class="form-control" rows="4" placeholder="Write your reply..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Post Reply</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+</body>
