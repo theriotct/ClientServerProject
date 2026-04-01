@@ -2,7 +2,23 @@
   include('connection.php');
   include('functions.php');
 
-  
+  function get_posts($con){
+    $query = "select * from posts where parentID is null order by date desc limit 10";
+    $result = mysqli_query($con, $query);
+
+    if($result){
+        if($result && mysqli_num_rows($result) > 0)
+        {
+            foreach($result as $post){
+                if($post){
+                  echo '<div class="row post"><div class="col-sm-8"><a href="thread.html">'.$post['title'].'</a></div><div class="col-sm-2">'.$post['date'].'</div><div class="col-sm-2">Date: '.$post['date'].'</div></div>';
+                }
+            }
+        }
+    }else{
+        echo 'Error fetching posts';
+    }
+  }
 ?>
 <!DOCTYPE html>
 <html>
@@ -33,7 +49,7 @@
     </div>
     <div class="container">
       <div>Awesome Topics</div>
-        <?php echo '<div class="row post"><div class="col-sm-8"><a href="thread.html">Thread title</a></div><div class="col-sm-2">Date</div><div class="col-sm-2">Views</div></div>'; ?>
+        <?php get_posts($con); ?>
       </div>
     </div>
   </body>
