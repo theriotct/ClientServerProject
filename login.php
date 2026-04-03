@@ -1,3 +1,73 @@
+<?php 
+session_start();
+
+include("connection.php");
+include("functions.php");
+
+if($_SERVER['REQUEST_METHOD'] == "POST")
+{
+    //Something was posted
+    $user_name = $_POST['user_name'];
+    $password = $_POST['password'];
+
+    $pepper = getenv('PASSWORD_PEPPER');
+
+    if(!empty($user_name) && !empty($password) && !is_numeric($user_name))
+    {
+        //read from database
+        $query = "select * from user where username = '$user_name' limit 1";
+
+        $result = mysqli_query($con, $query);
+        if($result){
+            if($result && mysqli_num_rows($result) > 0)
+            {
+                $user_data = mysqli_fetch_assoc($result);
+
+                if(password_verify($password . $pepper, $user_data['password'])){
+                    $_SESSION['userID'] = $user_data['userID'];
+                    $_SESSION['username'] = $user_name;
+                    $_SESSION['isAdmin'] = $user_data['isAdmin'];
+                    $query = "UPDATE `user` SET `lastLogin` = CURRENT_TIMESTAMP WHERE `userID` = ".$user_data['userID'];
+                    mysqli_query($con, $query);
+
+                    if($user_data['isAdmin'] == 1){
+                        header("Location: 2fa.php");
+                        exit;
+                    }
+                    header("Location: user/dashboard.php");
+                    exit;
+                }
+            }
+        }else{
+            $query = "select * from login where email = '$user_name' limit 1";
+            $result = mysqli_query($con, $query);
+            if($result && mysqli_num_rows($result) > 0)
+            {
+                $user_data = mysqli_fetch_assoc($result);
+                if(password_verify($password . $pepper, $user_data['password'])){
+                    $_SESSION['userID'] = $user_data['userID'];
+                    $_SESSION['username'] = $user_name;
+                    $_SESSION['isAdmin'] = $user_data['isAdmin'];
+                    $query = "UPDATE `user` SET `lastLogin` = CURRENT_TIMESTAMP WHERE `userID` = ".$user_data['userID'];
+                    mysqli_query($con, $query);
+
+                    if($user_data['isAdmin'] == 1){
+                        header("Location: 2fa.php");
+                        exit;
+                    }
+                    header("Location: user/dashboard.php");
+                    exit;
+                }
+            }
+            alert("Wrong Username Or Password!");
+        }
+    }else{
+        alert("Wrong Username Or Password!");
+    }
+}
+?>
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,95 +84,25 @@
         <h2>The Awesome Site</h2>
         <p>Please log in</p>
 
-        <form>
+        <form method="post">
             <div class="mb-3">
-                <label>Email</label>
-                <input type="email" class="form-control">
+                <label>Username / Email</label>
+                <input type="text" class="form-control" name="user_name">
             </div>
 
             <div class="mb-3">
                 <label>Password</label>
-                <input type="password" class="form-control">
+                <input type="password" class="form-control" name="password">
             </div>
 
-            <button type="button" class="btn btn-primary mb-3">
-                Log In (Demo Only)
-            </button>
+            <input type="submit" class="btn btn-primary mb-3" value="Log In">
         </form>
-
-        <hr>
-
-        <h5>Demo Views:</h5>
-
-        <button class="btn btn-danger mb-2" onclick="showAdmin()">
-            Go to Admin View
-        </button>
-
-        <br>
-
-        <button class="btn btn-success" onclick="showUser()">
-            Go to Regular User View
-        </button>
-    </div>
-
-
-    <!-- ADMIN SECTION (Hidden Initially) -->
-    <div id="adminSection" style="display:none;">
-        <h2>Admin Dashboard</h2>
-
-        <ul class="list-group mt-3">
-            <li class="list-group-item">Manage Users</li>
-            <li class="list-group-item">Edit or Delete Any Item</li>
-            <li class="list-group-item">View Reports</li>
-        </ul>
-
-        <br>
-
-        <button class="btn btn-secondary" onclick="showLogin()">
-            Logout
-        </button>
-    </div>
-
-
-    <!-- USER SECTION (Hidden Initially) -->
-    <div id="userSection" style="display:none;">
-        <h2>User Dashboard</h2>
-
-        <ul class="list-group mt-3">
-            <li class="list-group-item">View Home Page</li>
-            <li class="list-group-item">Browse Marketplace</li>
-            <li class="list-group-item">View Profile</li>
-            <li class="list-group-item">Messages</li>
-        </ul>
-
-        <br>
-
-        <button class="btn btn-secondary" onclick="showLogin()">
-            Logout
-        </button>
+        <p>
+            Don't have an account? <a href="register.php">Register here</a>
+        </p>
     </div>
 
 </div>
-
-<script>
-    function showAdmin() {
-        document.getElementById("loginSection").style.display = "none";
-        document.getElementById("adminSection").style.display = "block";
-        document.getElementById("userSection").style.display = "none";
-    }
-
-    function showUser() {
-        document.getElementById("loginSection").style.display = "none";
-        document.getElementById("adminSection").style.display = "none";
-        document.getElementById("userSection").style.display = "block";
-    }
-
-    function showLogin() {
-        document.getElementById("loginSection").style.display = "block";
-        document.getElementById("adminSection").style.display = "none";
-        document.getElementById("userSection").style.display = "none";
-    }
-</script>
 
 </body>
 </html>

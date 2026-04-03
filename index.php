@@ -3,7 +3,7 @@
   include('functions.php');
 
   function get_posts($con){
-    $query = "select * from posts where parentID is null order by date desc limit 10";
+    $query = "WITH RECURSIVE thread AS( SELECT postID, parentID, date, postID AS rootID FROM posts WHERE parentID IS NULL UNION ALL SELECT p.postID, p.parentID, p.date, t.rootID FROM posts p JOIN thread t ON p.parentID = t.postID), latest AS ( SELECT rootID, MAX(date) AS last_activity FROM thread GROUP BY rootID ) SELECT p.title, p.date, l.last_activity FROM posts p JOIN latest l ON p.postID = l.rootID ORDER BY l.last_activity DESC LIMIT 10;";
     $result = mysqli_query($con, $query);
 
     if($result){
@@ -11,7 +11,7 @@
         {
             foreach($result as $post){
                 if($post){
-                  echo '<div class="row post"><div class="col-sm-8"><a href="thread.html">'.$post['title'].'</a></div><div class="col-sm-2">'.$post['date'].'</div><div class="col-sm-2">Date: '.$post['date'].'</div></div>';
+                  echo '<div class="row post"><div class="col-sm-6"><a href="thread.php?postID='.$post['postID'].'">'.$post['title'].'</a></div><div class="col-sm-3">Date Created: '.$post['date'].'</div><div class="col-sm-3">Recent Activity: '.$post['last_activity'].'</div></div>';
                 }
             }
         }
@@ -34,13 +34,13 @@
   <body>
     <ul class="nav">
       <li class="nav-item">
-        <a class="nav-link" href="login.html">Login</a>
+        <a class="nav-link" href="login.php">Login</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="register.html">Register</a>
+        <a class="nav-link" href="register.php">Register</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="profile.html">My Profile</a>
+        <a class="nav-link" href="profile.php">My Profile</a>
       </li>
     </ul>
     <div class="p-5 bg-primary text-white rounded text-center">

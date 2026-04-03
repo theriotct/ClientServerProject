@@ -325,16 +325,16 @@
   <body>
     <ul id="nav">
         <li id="nav-item">
-        <a id="nav-link" href="index.html">Home</a>
+        <a id="nav-link" href="index.php">Home</a>
       </li>
       <li id="nav-item">
-        <a id="nav-link" href="login.html">Login</a>
+        <a id="nav-link" href="login.php">Login</a>
       </li>
       <li id="nav-item">
-        <a id="nav-link" href="register.html">Register</a>
+        <a id="nav-link" href="register.php">Register</a>
       </li>
       <li id="nav-item">
-        <a id="nav-link" href="profile.html">My Profile</a>
+        <a id="nav-link" href="profile.php">My Profile</a>
       </li>
     </ul>
 

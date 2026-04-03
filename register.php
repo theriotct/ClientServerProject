@@ -1,3 +1,49 @@
+<?php
+  include("connection.php");
+  include("functions.php");
+
+  $secret_key = getenv("PASSWORD_PEPPER"); // <-- get the pepper value from an environment variable
+  if($_SERVER['REQUEST_METHOD'] == "POST")
+  {
+      //Something was posted
+      $user_name = $_POST['username'];
+      $password = $_POST['password'];
+      $confirm_password = $_POST['confirm_password'];
+      $fname = $_POST['first_name'];
+      $lname = $_POST['last_name'];
+      $email = $_POST['email'];
+      $phone = $_POST['phone'];
+
+      if($password !== $confirm_password){
+          echo "Passwords do not match!";
+          exit;
+      }
+
+      if(!empty($user_name) && !empty($password) && !is_numeric($user_name))
+      {
+          $query = "select * from user where username = '$user_name' limit 1";
+          $result = mysqli_query($con, $query);
+          if($result){
+              if($result && mysqli_num_rows($result) > 0)
+              {
+                  //Change this to be more user friendly
+                  echo "Username already exists!";
+                  exit;
+              }
+          }
+
+          //save to database
+          $password = $password . $secret_key; // <-- append the pepper to the password before hashing
+          $password_hash = password_hash($password, PASSWORD_DEFAULT);
+          $query = "insert into user (username,password,fname,lname,email,phone) values ('$user_name', '$password_hash', '$fname', '$lname', '$email', '$phone')"; // <-- save the salt in the database
+          mysqli_query($con, $query);
+          header("Location: login.php");
+          die;
+      }else{
+          echo "Please enter some valid information!";
+      } 
+  }
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -24,13 +70,13 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand bg-white border-bottom">
       <div class="container">
-        <a class="navbar-brand fw-bold" href="index.html">Awesome Site</a>
+        <a class="navbar-brand fw-bold" href="index.php">Awesome Site</a>
 
         <div class="navbar-nav ms-auto">
-          <a class="nav-link" href="index.html">Home</a>
-          <a class="nav-link" href="profile.html">My Profile</a>
-          <a class="nav-link" href="login.html">Login</a>
-          <a class="nav-link active" aria-current="page" href="register.html"
+          <a class="nav-link" href="index.php">Home</a>
+          <a class="nav-link" href="profile.php">My Profile</a>
+          <a class="nav-link" href="login.php">Login</a>
+          <a class="nav-link active" aria-current="page" href="register.php"
             >Register</a
           >
         </div>
@@ -47,7 +93,7 @@
 
               <!-- Form -->
               <!-- Later, you can connect this to your server by changing action="" -->
-              <form action="profile.html" method="get">
+              <form method="post">
                 <!-- First + Last Name -->
                 <div class="row g-3 mb-3">
                   <div class="col">
@@ -154,9 +200,7 @@
                 </div>
 
                 <!-- Submit -->
-                <button type="submit" class="btn btn-primary w-100">
-                  Create Account
-                </button>
+                <input type="submit" class="btn btn-primary w-100" value="Create Account">
 
                 <p class="text-center mt-3 mb-0">
                   Already have an account?
@@ -173,39 +217,3 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
-
-<?php
-  include("connection.php");
-  include("functions.php");
-
-  $secret_key = getenv("PASSWORD_PEPPER"); // <-- get the pepper value from an environment variable
-  if($_SERVER['REQUEST_METHOD'] == "POST")
-  {
-      //Something was posted
-      $user_name = $_POST['user_name'];
-      $password = $_POST['password'];
-
-      if(!empty($user_name) && !empty($password) && !is_numeric($user_name))
-      {
-          $query = "select * from login where username = '$user_name' limit 1";
-          $result = mysqli_query($con, $query);
-          if($result){
-              if($result && mysqli_num_rows($result) > 0)
-              {
-                  //Change this to be more user friendly
-                  echo "Username already exists!";
-                  exit;
-              }
-          }
-
-          //save to database
-          $password = $password . $secret_key; // <-- append the pepper to the password before hashing
-          $password_hash = password_hash($password, PASSWORD_DEFAULT);
-          $query = "insert into login (username,password) values ('$user_name', '$password_hash')"; // <-- save the salt in the database
-          mysqli_query($con, $query);
-          header("Location: login.php");
-          die;
-      }else{
-          echo "Please enter some valid information!";
-      }
-  }

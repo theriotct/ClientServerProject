@@ -1,11 +1,10 @@
 <?php
 function check_login($con)
 {
-
-    if(isset($_SESSION['id']))
+    if(isset($_SESSION['userID']))
     {
-        $id = $_SESSION['id'];
-        $query = "select * from login where id = $id limit 1";
+        $id = $_SESSION['userID'];
+        $query = "select * from user where userID = $id limit 1";
 
         $result = mysqli_query($con,$query);
         if($result && mysqli_num_rows($result) > 0)
@@ -15,9 +14,7 @@ function check_login($con)
         }
     }
     //redirect to login
-    header("Location: login.php");
-    die;
-
+    return null;
 }
 
 function log_maker($username, $query, $con)
@@ -34,7 +31,7 @@ function log_maker($username, $query, $con)
     $latitude = $url->latitude;
     $longitude = $url->longitude;
 
-    $insertQuery = "INSERT INTO `logs` (`username`, `ip`, `page`, `country`, `region`, `city`, `zip`, `latitude`, `longitude`) VALUES ('$username', '$ip_address','$page','$country','$region','$city','$zip','$latitude','$longitude')";
+    $insertQuery = "INSERT INTO `logs` (`userID`, `ip`, `page`, `country`, `region`, `city`, `zip`, `latitude`, `longitude`) VALUES ('$username', '$ip_address','$page','$country','$region','$city','$zip','$latitude','$longitude')";
     echo $insertQuery;
     $result = mysqli_query($con, $insertQuery);
     if($result){
@@ -43,4 +40,21 @@ function log_maker($username, $query, $con)
         echo 'error making log';
     }
 
+}
+
+function alert($message){
+    echo "<script>alert('$message');</script>";
+}
+
+function check_login_user($con)
+{
+
+    if(isset($_SESSION['userID']))
+    {
+        $id = $_SESSION['userID'];
+    }else{
+        //redirect to login
+        header("Location: login.php");
+        die;
+    }
 }
