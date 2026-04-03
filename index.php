@@ -11,7 +11,7 @@
         {
             foreach($result as $post){
                 if($post){
-                  echo '<div class="row post"><div class="col-sm-6"><a href="thread.php?postID='.$post['postID'].'">'.$post['title'].'</a></div><div class="col-sm-3">Date Created: '.$post['date'].'</div><div class="col-sm-3">Recent Activity: '.$post['last_activity'].'</div></div>';
+                  echo '<div class="row post"><div class="col-sm-6"><a href="thread.php?postID='.$post['po2stID'].'">'.$post['title'].'</a></div><div class="col-sm-3">Date Created: '.$post['date'].'</div><div class="col-sm-3">Recent Activity: '.$post['last_activity'].'</div></div>';
                 }
             }
         }
