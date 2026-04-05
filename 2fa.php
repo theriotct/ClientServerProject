@@ -5,8 +5,6 @@
 
     $user_data = check_login($con);
 
-    require 'C:\xampp\vendor\autoload.php';
-
     if (!class_exists('PHPGangsta_GoogleAuthenticator')) {
         class PHPGangsta_GoogleAuthenticator
         {
