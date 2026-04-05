@@ -6,7 +6,7 @@ include("functions.php");
 
 $user_data = check_login($con);
 
-if(!$user_data || $user_data['isAdmin'] != 1){
+if($user_data){
     header("Location: index.php");
     die;
 }
