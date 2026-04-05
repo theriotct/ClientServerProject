@@ -58,3 +58,9 @@ function check_login_user($con)
         die;
     }
 }
+
+function forbidden(){
+    header("HTTP/1.1 403 Forbidden");
+    include('403.html');
+    die;
+}
