@@ -28,7 +28,7 @@
           <a class="nav-link" href="/index.php">Home</a>
           <a class="nav-link" href="/profile.php">My Profile</a>
           <a class="nav-link" href="/login.php">Login</a>
-          <a class="nav-link active" aria-current="page" href="/register.php">Register</a>
+          <a class="nav-link deactive" aria-current="page" href="/register.php">Register</a>
         </div>
       </div>
     </nav>
