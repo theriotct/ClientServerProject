@@ -31,7 +31,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST")
                     mysqli_query($con, $query);
 
                     if($user_data['isAdmin'] == 1){
-                        header("Location: 2fa.php");
+                        header("Location: admin/dashboard.php");
                         exit;
                     }
                     header("Location: user/dashboard.php");
@@ -52,7 +52,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST")
                     mysqli_query($con, $query);
 
                     if($user_data['isAdmin'] == 1){
-                        header("Location: 2fa.php");
+                        header("Location: admin/dashboard.php");
                         exit;
                     }
                     header("Location: user/dashboard.php");
