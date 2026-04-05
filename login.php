@@ -83,8 +83,6 @@ if($_SERVER['REQUEST_METHOD'] == "POST")
 </head>
 
 <body>
-
-<div class="container mt-5">
     <!-- Navbar -->
     <nav class="navbar navbar-expand bg-white border-bottom">
       <div class="container">
@@ -98,6 +96,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST")
         </div>
       </div>
     </nav>
+<div class="container mt-5">
     <!-- LOGIN SECTION -->
     <div id="loginSection">
         <h2>The Awesome Site</h2>
