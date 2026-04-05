@@ -4,6 +4,13 @@ session_start();
 include("connection.php");
 include("functions.php");
 
+$user_data = check_login($con);
+
+if(!$user_data || $user_data['isAdmin'] != 1){
+    header("Location: index.php");
+    die;
+}
+
 if($_SERVER['REQUEST_METHOD'] == "POST")
 {
     //Something was posted
