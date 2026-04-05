@@ -20,7 +20,7 @@
 
             <br>
 
-            <button class="btn btn-secondary" onclick="showLogin()">
+            <button class="btn btn-secondary mt-3" onclick="window.location.href='logoutk.php'">
                 Logout
             </button>
         </div>
