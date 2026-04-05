@@ -8,7 +8,7 @@
         $query = "WITH RECURSIVE thread AS ( SELECT * FROM posts WHERE postID = $postID UNION ALL SELECT p.* FROM posts p INNER JOIN thread t ON p.parentID = t.postID ) SELECT t.*, u.username FROM thread t JOIN `user` u ON u.userID = t.authorID ORDER BY date ASC;";
         $result = mysqli_query($con, $query);
         $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        if(count($posts) == 0){
+        if(count($posts) == 0 || $posts[0]['title'] === NULL){
             header("HTTP/1.1 404 Not Found");
             include('404.html');
             die;
