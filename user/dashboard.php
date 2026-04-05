@@ -20,10 +20,7 @@
             </ul>
 
             <br>
-            <form action="logout.php" method="post">
-                <input class="btn btn-secondary" type="submit" value="Logout">
-            </form> 
-            <a href="/logout.php">Logout</a>
+            <a class="btn btn-secondary" href="/logout.php">Logout</a>
         </div>
 
     </div>
