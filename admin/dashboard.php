@@ -46,9 +46,7 @@
 
             <br>
 
-            <button class="btn btn-secondary mt-3" onclick="window.location.href='logoutk.php'">
-                Logout
-            </button>
+            <a class="btn btn-secondary" href="/logout.php">Logout</a>
         </div>
     </div>
 </body>
