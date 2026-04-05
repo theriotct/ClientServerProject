@@ -8,10 +8,15 @@
         $query = "WITH RECURSIVE thread AS ( SELECT * FROM posts WHERE postID = $postID UNION ALL SELECT p.* FROM posts p INNER JOIN thread t ON p.parentID = t.postID ) SELECT t.*, u.username FROM thread t JOIN `user` u ON u.userID = t.authorID ORDER BY date ASC;";
         $result = mysqli_query($con, $query);
         $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        if(count($posts) == 0){
+            header("HTTP/1.1 404 Not Found");
+            include('404.html');
+            die;
+        }
     }else{
-        alert('404: Post not found');
-        header('Location: index.php');
-        exit;
+        header("HTTP/1.1 404 Not Found");
+        include('404.html');
+        die;
     }
       
     $user_data = check_login($con);
