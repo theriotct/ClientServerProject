@@ -50,21 +50,19 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   </head>
   <body>
-    <div style="background-color: white; height: 20px; position: fixed; top: 0; width: 100%; z-index: 1000;">
-      <a href="index.php" style="color: black; text-decoration: none; padding: 10px 10px 10px 10px;">Home</a>
-      <a href="login.php" style="color: black; text-decoration: none; padding: 10px 10px 10px 10px;">Login</a>
-      <a href="register.php" style="color: black; text-decoration: none; padding: 10px 10px 10px 10px;">Register</a>
-      <a href="profile.php" style="color: black; text-decoration: none; padding: 10px 10px 10px 10px;">My Profile</a>
-    </div>
-    <body style="padding-top:40px; background-color:#f5f5f5;">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand bg-white border-bottom">
+      <div class="container">
+        <a class="navbar-brand fw-bold" href="/index.php">Awesome Site</a>
 
-  <!-- Top Navigation -->
-  <div style="background-color: white; height: 40px; position: fixed; top: 0; width: 100%; z-index: 1000; border-bottom:1px solid #ddd;">
-    <a href="index.php" style="color: black; text-decoration: none; padding: 10px;">Home</a>
-    <a href="login.php" style="color: black; text-decoration: none; padding: 10px;">Login</a>
-    <a href="register.php" style="color: black; text-decoration: none; padding: 10px;">Register</a>
-    <a href="profile.php" style="color: black; text-decoration: none; padding: 10px;">My Profile</a>
-  </div>
+        <div class="navbar-nav ms-auto">
+          <a class="nav-link" href="/index.php">Home</a>
+          <a class="nav-link" href="/profile.php">My Profile</a>
+          <a class="nav-link" href="/login.php">Login</a>
+          <a class="nav-link active" aria-current="page" href="/register.php">Register</a>
+        </div>
+      </div>
+    </nav>
 
   <!-- Thread Content -->
   <div class="container" style="margin-top:20px;">

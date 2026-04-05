@@ -323,20 +323,19 @@
     </style>
   </head>
   <body>
-    <ul id="nav">
-        <li id="nav-item">
-        <a id="nav-link" href="index.php">Home</a>
-      </li>
-      <li id="nav-item">
-        <a id="nav-link" href="login.php">Login</a>
-      </li>
-      <li id="nav-item">
-        <a id="nav-link" href="register.php">Register</a>
-      </li>
-      <li id="nav-item">
-        <a id="nav-link" href="profile.php">My Profile</a>
-      </li>
-    </ul>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand bg-white border-bottom">
+      <div class="container">
+        <a class="navbar-brand fw-bold" href="/index.php">Awesome Site</a>
+
+        <div class="navbar-nav ms-auto">
+          <a class="nav-link" href="/index.php">Home</a>
+          <a class="nav-link" href="/profile.php">My Profile</a>
+          <a class="nav-link" href="/login.php">Login</a>
+          <a class="nav-link active" aria-current="page" href="/register.php">Register</a>
+        </div>
+      </div>
+    </nav>
 
     <div class="col-sm-3" style=" height: 200px;">
         <div class="col-xs-4 col-sm-12" style="height: 200px; text-align: center; align-content: center;">
