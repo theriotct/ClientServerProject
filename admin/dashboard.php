@@ -6,7 +6,7 @@
 
     $user_data = check_login($con);
 
-    if($user_data['isAdmin'] != 1){
+    if(!$user_data || $user_data['isAdmin'] != 1){
         forbidden();
     }
 ?>
