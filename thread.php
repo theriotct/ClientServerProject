@@ -67,8 +67,10 @@
             <a class="nav-link" href="/login.php">Login</a>
           <?php endif; ?>
 
-          <?php if(!$user_data): ?>
+          <?php if($user_data): ?>
             <a class="nav-link active" aria-current="page" href="/logout.php">Logout</a>
+          <?php else: ?>
+            <a class="nav-link" href="/register.php">Register</a>
           <?php endif; ?>
         </div>
       </div>
