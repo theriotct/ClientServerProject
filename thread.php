@@ -60,6 +60,7 @@
           <a class="nav-link" href="/index.php">Home</a>
           <a class="nav-link" href="/profile.php">My Profile</a>
 <<<<<<< HEAD
+<<<<<<< HEAD
           <?php if($user_data && $user_data['isAdmin'] == 1): ?>
             <a class="nav-link" href="/admin/dashboard.php">Admin Dashboard</a>
           <?php elseif($user_data): ?>
@@ -73,6 +74,10 @@
           <?php else: ?>
             <a class="nav-link" href="/register.php">Register</a>
           <?php endif; ?>
+=======
+          <a class="nav-link" href="/login.php">Login</a>
+          <a class="nav-link active" aria-current="page" href="/register.php">Register</a>
+>>>>>>> parent of cbb5bfd (Cant see changes on Register)
 =======
           <a class="nav-link" href="/login.php">Login</a>
           <a class="nav-link active" aria-current="page" href="/register.php">Register</a>
