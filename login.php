@@ -7,7 +7,11 @@ include("functions.php");
 $user_data = check_login($con);
 
 if($user_data){
-    header("Location: index.php");
+    if($user_data['isAdmin'] == 1){
+        header("Location: admin/dashboard.php");
+        exit;
+    }
+    header("Location: user/dashboard.php");
     die;
 }
 
@@ -92,7 +96,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST")
           <a class="nav-link" href="/index.php">Home</a>
           <a class="nav-link" href="/profile.php">My Profile</a>
           <a class="nav-link" href="/login.php">Login</a>
-          <a class="nav-link" aria-current="page" href="/register.php">Register</a>
+          <a class="nav-link active" aria-current="page" href="/register.php">Register</a>
         </div>
       </div>
     </nav>
