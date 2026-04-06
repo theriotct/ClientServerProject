@@ -2,6 +2,17 @@
   include("connection.php");
   include("functions.php");
 
+  $user_data = check_login($con);
+
+  if($user_data){
+      if($user_data['isAdmin'] == 1){
+          header("Location: admin/dashboard.php");
+          die;
+      }
+      header("Location: user/dashboard.php");
+      die;
+  }
+
   $secret_key = getenv("PASSWORD_PEPPER"); // <-- get the pepper value from an environment variable
   if($_SERVER['REQUEST_METHOD'] == "POST")
   {
