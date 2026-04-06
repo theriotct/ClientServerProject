@@ -12,7 +12,7 @@
       $fname = $_POST['first_name'];
       $lname = $_POST['last_name'];
       $email = $_POST['email'];
-      $phone = $_POST['phone'];
+      $phone = 1;
 
       if($password !== $confirm_password){
           echo "Passwords do not match!";
