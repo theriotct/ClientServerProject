@@ -5,8 +5,7 @@
   $user_data = check_login($con);
   
   if(!$user_data){
-    header("Location: ../login.php");
-    die;
+    forbidden();
   }
 ?>
 <!DOCTYPE html>
