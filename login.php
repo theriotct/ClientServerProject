@@ -7,11 +7,7 @@ include("functions.php");
 $user_data = check_login($con);
 
 if($user_data){
-    if($user_data['isAdmin'] == 1){
-        header("Location: admin/dashboard.php");
-        die;
-    }
-    header("Location: user/dashboard.php");
+    header("Location: index.php");
     die;
 }
 
