@@ -1,3 +1,14 @@
+<?php
+  include('../connection.php');
+  include('../functions.php');
+  
+  $user_data = check_login($con);
+  
+  if(!$user_data){
+    header("Location: ../login.php");
+    die;
+  }
+?>
 <!DOCTYPE html>
 <html>
 <head>
