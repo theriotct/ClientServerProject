@@ -35,7 +35,7 @@
           //save to database
           $password = $password . $secret_key; // <-- append the pepper to the password before hashing
           $password_hash = password_hash($password, PASSWORD_DEFAULT);
-          $query = "insert into user (username,password,fname,lname,email,phone) values ('$user_name', '$password_hash', '$fname', '$lname', '$email', '$phone')"; // <-- save the salt in the database
+          $query = "insert into user (username,password,fname,lname,email,phone,auth_key) values ('$user_name', '$password_hash', '$fname', '$lname', '$email', '$phone', NULL)"; // <-- save the salt in the database
           mysqli_query($con, $query);
           header("Location: login.php");
           die;
