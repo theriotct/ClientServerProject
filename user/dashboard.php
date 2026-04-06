@@ -3,10 +3,6 @@
   include('../functions.php');
   
   $user_data = check_login($con);
-  
-  if(!$user_data){
-    forbidden();
-  }
 ?>
 <!DOCTYPE html>
 <html>
