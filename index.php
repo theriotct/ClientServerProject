@@ -2,6 +2,8 @@
   include('connection.php');
   include('functions.php');
 
+  $user_data = check_login($con);
+
   function get_posts($con){
     $query = "WITH RECURSIVE thread AS( SELECT postID, parentID, date, postID AS rootID FROM posts WHERE parentID IS NULL UNION ALL SELECT p.postID, p.parentID, p.date, t.rootID FROM posts p JOIN thread t ON p.parentID = t.postID), latest AS ( SELECT rootID, MAX(date) AS last_activity FROM thread GROUP BY rootID ) SELECT p.postID, p.title, p.date, l.last_activity FROM posts p JOIN latest l ON p.postID = l.rootID ORDER BY l.last_activity DESC LIMIT 10;";
     $result = mysqli_query($con, $query);
@@ -40,11 +42,24 @@
         <div class="navbar-nav ms-auto">
           <a class="nav-link" href="/index.php">Home</a>
           <a class="nav-link" href="/profile.php">My Profile</a>
-          <a class="nav-link" href="/login.php">Login</a>
-          <a class="nav-link" aria-current="page" href="/register.php">Register</a>
+          <?php if($user_data && $user_data['isAdmin'] == 1): ?>
+            <a class="nav-link" href="/admin/dashboard.php">Admin Dashboard</a>
+          <?php elseif($user_data): ?>
+            <a class="nav-link" href="/user/dashboard.php">User Dashboard</a>
+          <?php else: ?>
+            <a class="nav-link" href="/login.php">Login</a>
+          <?php endif; ?>
+
+          <?php if($user_data): ?>
+            <a class="nav-link active" aria-current="page" href="/logout.php">Logout</a>
+          <?php else: ?>
+            <a class="nav-link" href="/register.php">Register</a>
+          <?php endif; ?>
         </div>
       </div>
     </nav>
+
+
     <div class="p-5 bg-primary text-white rounded text-center">
       <h1>The Awesome Site</h1>
       <p>Discussions of things that are awesome!</p> 

@@ -16,8 +16,19 @@
         <div class="navbar-nav ms-auto">
           <a class="nav-link" href="/index.php">Home</a>
           <a class="nav-link" href="/profile.php">My Profile</a>
-          <a class="nav-link" href="/login.php">Login</a>
-          <a class="nav-link active" aria-current="page" href="/register.php">Register</a>
+          <?php if($user_data && $user_data['isAdmin'] == 1): ?>
+            <a class="nav-link" href="/admin/dashboard.php">Admin Dashboard</a>
+          <?php elseif($user_data): ?>
+            <a class="nav-link" href="/user/dashboard.php">User Dashboard</a>
+          <?php else: ?>
+            <a class="nav-link" href="/login.php">Login</a>
+          <?php endif; ?>
+
+          <?php if($user_data): ?>
+            <a class="nav-link active" aria-current="page" href="/logout.php">Logout</a>
+          <?php else: ?>
+            <a class="nav-link" href="/register.php">Register</a>
+          <?php endif; ?>
         </div>
       </div>
     </nav>
