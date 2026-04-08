@@ -35,11 +35,11 @@
         <div id="userSection" >
             <h2>User Dashboard</h2>
 
-            <ul class="list-group mt-3" style="background-color: #00ffff;">
-                <li class="list-group-item">View Home Page</li>
-                <li class="list-group-item">Browse Marketplace</li>
-                <li class="list-group-item">View Profile</li>
-                <li class="list-group-item">Messages</li>
+            <ul class="list-group mt-3">
+                <li class="list-group-item" style="background-color: #00ffff;">View Home Page</li>
+                <li class="list-group-item" style="background-color: #00ffff;">Browse Marketplace</li>
+                <li class="list-group-item" style="background-color: #00ffff;">View Profile</li>
+                <li class="list-group-item" style="background-color: #00ffff;">Messages</li>
             </ul>
 
             <br>
