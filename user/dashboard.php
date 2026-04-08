@@ -36,10 +36,10 @@
             <h2>User Dashboard</h2>
 
             <ul class="list-group mt-3">
-                <li class="list-group-item" style="background-color: #00ffff;">View Home Page</li>
-                <li class="list-group-item" style="background-color: #00ffff;">Browse Marketplace</li>
-                <li class="list-group-item" style="background-color: #00ffff;">View Profile</li>
-                <li class="list-group-item" style="background-color: #00ffff;">Messages</li>
+                <li class="list-group-item" style="background-color: #00b7eb;">View Home Page</li>
+                <li class="list-group-item" style="background-color: #00b7eb;">Browse Marketplace</li>
+                <li class="list-group-item" style="background-color: #00b7eb;">View Profile</li>
+                <li class="list-group-item" style="background-color: #00b7eb;">Messages</li>
             </ul>
 
             <br>
