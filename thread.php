@@ -88,6 +88,12 @@
           <?php echo $posts[0]['body']; ?>
         </p>
       </div>
+      <div class="panel-footer">
+        <a href="#" class="btn btn-sm btn-default">Like: ###</a>
+        <a href="#" class="btn btn-sm btn-default">Dislike: ###</a>
+        <a href="#" class="btn btn-sm btn-default">Report</a>
+        <a href="#" class="btn btn-sm btn-default btn-danger delete" >Delete</a>
+      </div>
     </div>
 
     <!-- Replies Section -->
