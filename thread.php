@@ -50,7 +50,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <style>
-        body {background-color: #ffd580;}
+        body {background-color: #fed8b1;}
     </style>
   </head>
   <body>
