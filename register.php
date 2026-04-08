@@ -63,14 +63,15 @@
         padding: 10px; /* <-- you were missing the colon before */
         border-radius: 8px;
       }
+      body {background-color: #ffe1ca;}
     </style>
   </head>
 
   <body class="bg-light">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand bg-white border-bottom">
+    <nav class="navbar navbar-expand border-bottom" style="background-color: #e3f2fd;">
       <div class="container">
-        <a class="navbar-brand fw-bold" href="/index.php">Awesome Site</a>
+        <a class="navbar-brand fw-bold link-primary" href="/index.php">Awesome Site</a>
 
         <div class="navbar-nav ms-auto">
           <a class="nav-link" href="/index.php">Home</a>
