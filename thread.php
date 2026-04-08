@@ -53,7 +53,7 @@
         body {background-color: #fed8b1;}
 
         .delete {
-            margin-left: auto;
+            float: right;
         }
 
 
