@@ -52,7 +52,7 @@
     <style>
         body {background-color: #fed8b1;}
 
-        .delete {
+        .right {
             float: right;
         }
 
@@ -92,7 +92,8 @@
         <a href="#" class="btn btn-sm btn-default">Like: ###</a>
         <a href="#" class="btn btn-sm btn-default">Dislike: ###</a>
         <a href="#" class="btn btn-sm btn-default">Report</a>
-        <a href="#" class="btn btn-sm btn-default btn-danger delete" >Delete</a>
+        <a href="#" class="btn btn-sm btn-default right">Edit</a>
+        <a href="#" class="btn btn-sm btn-default btn-danger right" >Delete</a>
       </div>
     </div>
 
@@ -112,7 +113,8 @@
                   <a href="#" class="btn btn-sm btn-default">Like: ###</a>
                   <a href="#" class="btn btn-sm btn-default">Dislike: ###</a>
                   <a href="#" class="btn btn-sm btn-default">Report</a>
-                  <a href="#" class="btn btn-sm btn-default btn-danger delete" >Delete</a>
+                  <a href="#" class="btn btn-sm btn-default right">Edit</a>
+                  <a href="#" class="btn btn-sm btn-default btn-danger right" >Delete</a>
                 </div>
               </div>';
       }
