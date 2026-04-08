@@ -82,7 +82,7 @@
     </nav>
 
     <!-- Page content -->
-    <div class="container my-5" style="background-color: #fed8b1">
+    <div class="container my-5">
       <div class="row justify-content-center">
         <div class="col-md-7 col-lg-6">
           <div class="card shadow-sm">
