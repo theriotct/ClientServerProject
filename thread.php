@@ -51,6 +51,12 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <style>
         body {background-color: #fed8b1;}
+
+        .delete {
+            margin-left: auto;
+        }
+
+
     </style>
   </head>
   <body>
@@ -100,7 +106,7 @@
                   <a href="#" class="btn btn-sm btn-default">Like</a>
                   <a href="#" class="btn btn-sm btn-default">Dislike</a>
                   <a href="#" class="btn btn-sm btn-default">Report</a>
-                  <a href="#" class="btn btn-sm btn-default btn-danger">Delete</a>
+                  <a href="#" class="btn btn-sm btn-default btn-danger delete" >Delete</a>
                 </div>
               </div>';
       }
