@@ -100,7 +100,7 @@
                   <a href="#" class="btn btn-sm btn-default">Like</a>
                   <a href="#" class="btn btn-sm btn-default">Dislike</a>
                   <a href="#" class="btn btn-sm btn-default">Report</a>
-                  <a href="#" class="btn btn-sm btn-default text-right">Delete</a>
+                  <a href="#" class="btn btn-sm btn-default text-danger">Delete</a>
                 </div>
               </div>';
       }
