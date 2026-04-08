@@ -16,13 +16,16 @@
 <head>
     <title>The Awesome Site</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <Style>
+      body {background-color: #dc143c;}
+    </Style>
 </head>
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand bg-white border-bottom">
+    <nav class="navbar navbar-expand border-bottom" style="background-color: #e3f2fd;">
       <div class="container">
-        <a class="navbar-brand fw-bold" href="/index.php">Awesome Site</a>
+        <a class="navbar-brand fw-bold link-primary" href="/index.php">Awesome Site</a>
 
         <div class="navbar-nav ms-auto">
           <a class="nav-link" href="/index.php">Home</a>
@@ -39,14 +42,14 @@
             <h2>Admin Dashboard</h2>
 
             <ul class="list-group mt-3">
-                <li class="list-group-item">Manage Users</li>
-                <li class="list-group-item">Edit or Delete Any Item</li>
-                <li class="list-group-item">View Reports</li>
+                <li class="list-group-item" style="background-color: #00b7eb;">Manage Users</li>
+                <li class="list-group-item" style="background-color: #00b7eb;">Edit or Delete Any Item</li>
+                <li class="list-group-item" style="background-color: #00b7eb;">View Reports</li>
             </ul>
 
             <br>
 
-            <a class="btn btn-secondary" href="/logout.php">Logout</a>
+            <a class="btn btn-primary" href="/logout.php">Logout</a>
         </div>
     </div>
 </body>
