@@ -17,7 +17,7 @@
     <title>The Awesome Site</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <Style>
-      body {background-color: #dc143c;}
+      body {background-color: #ff746c;}
     </Style>
 </head>
 
