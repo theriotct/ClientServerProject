@@ -35,7 +35,7 @@
   </head>
   <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand bg-white border-bottom">
+    <nav class="navbar navbar-expand border-bottom" style="background-color: #e3f2fd;">
       <div class="container">
         <a class="navbar-brand fw-bold" href="/index.php">Awesome Site</a>
 
