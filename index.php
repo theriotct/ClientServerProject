@@ -30,7 +30,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
     <style>
-      .post {background-color: lightgray; margin: 5px; padding: 5px;}
+      .post {background-color: white; margin: 5px; padding: 5px;}
       body {background-color: lightblue;}
     </style>
   </head>
@@ -55,7 +55,7 @@
       <p style="color: orange;">Discussions of things that are awesome!</p>
     </div>
     <div class="container">
-      <div>Awesome Topics</div>
+      <div>Awesome Topics<a href="#" class="btn btn-sm btn-default" style="float: right;">New Thread</a></div>
         <?php get_posts($con); ?>
       </div>
     </div>
