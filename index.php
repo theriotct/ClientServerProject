@@ -31,6 +31,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
     <style>
       .post {background-color: lightgray; margin: 5px; padding: 5px;}
+      body {background-color: lightblue;}
     </style>
   </head>
   <body>
@@ -50,8 +51,8 @@
 
 
     <div class="p-5 bg-primary text-white rounded text-center">
-      <h1>The Awesome Site</h1>
-      <p>Discussions of things that are awesome!</p> 
+      <h1 style="color: orange;">The Awesome Site</h1>
+      <p style="color: orange;">Discussions of things that are awesome!</p>
     </div>
     <div class="container">
       <div>Awesome Topics</div>
