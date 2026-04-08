@@ -63,11 +63,10 @@
         padding: 10px; /* <-- you were missing the colon before */
         border-radius: 8px;
       }
-      body {background-color: #ffe1ca;}
     </style>
   </head>
 
-  <body class="bg-light">
+  <body class="bg-info">
     <!-- Navbar -->
     <nav class="navbar navbar-expand border-bottom" style="background-color: #e3f2fd;">
       <div class="container">
