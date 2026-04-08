@@ -54,7 +54,7 @@
 
         .right {
             float: right;
-            margin-right: 10px;
+            margin-left: 10px;
         }
 
 
@@ -93,7 +93,7 @@
         <a href="#" class="btn btn-sm btn-default">Like: ###</a>
         <a href="#" class="btn btn-sm btn-default">Dislike: ###</a>
         <a href="#" class="btn btn-sm btn-default">Report</a>
-        <a href="#" class="btn btn-sm btn-default btn-danger right" >Delete</a>
+        <a href="#" class="btn btn-sm btn-default btn-danger right">Delete</a>
         <a href="#" class="btn btn-sm btn-default right">Edit</a>
       </div>
     </div>
