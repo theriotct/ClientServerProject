@@ -49,12 +49,15 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        body {background-color: #ffd580;}
+    </style>
   </head>
   <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand bg-white border-bottom">
+    <nav class="navbar navbar-expand border-bottom" style="background-color: #e3f2fd;">
       <div class="container">
-        <a class="navbar-brand fw-bold" href="/index.php">Awesome Site</a>
+        <a class="navbar-brand fw-bold link-primary" href="/index.php">Awesome Site</a>
 
         <div class="navbar-nav ms-auto">
           <a class="nav-link" href="/index.php">Home</a>
