@@ -2,7 +2,7 @@
   session_start();
   include('connection.php');
   include('functions.php');
-  
+
   $user_data = check_login($con);
 
   function get_posts($con){
@@ -58,9 +58,11 @@
     <div class="container">
       <div>Awesome Topics
         <?php
-          if($user_data['userID']){
+          if(!is_null($user_data['userID'])){
             echo '<a href="post.php" class="btn btn-sm btn-default" style="float: right;">New Thread</a>';
-          }?></div>
+          }
+        ?>
+      </div>
         <?php get_posts($con); ?>
       </div>
     </div>
