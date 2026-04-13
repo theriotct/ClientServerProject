@@ -55,7 +55,11 @@
       <p style="color: orange;">Discussions of things that are awesome!</p>
     </div>
     <div class="container">
-      <div>Awesome Topics<a href="post.php" class="btn btn-sm btn-default" style="float: right;">New Thread</a></div>
+      <div>Awesome Topics
+        <?php
+          if(isset($_SESSION['userID'])){
+            echo '<a href="post.php" class="btn btn-sm btn-default" style="float: right;">New Thread</a>';
+          }?></div>
         <?php get_posts($con); ?>
       </div>
     </div>
