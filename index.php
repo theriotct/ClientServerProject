@@ -57,7 +57,7 @@
     <div class="container">
       <div>Awesome Topics
         <?php
-          if(isset($_SESSION['userID'])){
+          if($user_data['userID']){
             echo '<a href="post.php" class="btn btn-sm btn-default" style="float: right;">New Thread</a>';
           }?></div>
         <?php get_posts($con); ?>
