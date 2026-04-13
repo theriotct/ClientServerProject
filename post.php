@@ -3,7 +3,7 @@
   include("functions.php");
 
   $user_data = check_login($con);
-  if($user_data == false){
+  if($user_data == null){
 	header("Location: login.php");
 	die;
   }
