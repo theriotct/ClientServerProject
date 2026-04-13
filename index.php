@@ -1,7 +1,7 @@
 <?php
   include('connection.php');
   include('functions.php');
-
+  alert($_SESSION['userID']);
   $user_data = check_login($con);
 
   function get_posts($con){
