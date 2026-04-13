@@ -3,11 +3,7 @@
   include("functions.php");
 
   $user_data = check_login($con);
-  if(!$user_data){
-	header("Location: login.php");
-	die;
-  }
-
+  
   if($_SERVER['REQUEST_METHOD'] == "POST"){
 	$title = $_POST['title'];
 	$body = $_POST['description'];
