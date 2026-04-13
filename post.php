@@ -1,3 +1,30 @@
+<?php
+  include("connection.php");
+  include("functions.php");
+
+  $user_data = check_login($con);
+  if($user_data == false){
+	header("Location: login.php");
+	die;
+  }
+
+  if($_SERVER['REQUEST_METHOD'] == "POST"){
+	$title = $_POST['title'];
+	$body = $_POST['description'];
+
+	if(!empty($title)){
+	  $user_id = $user_data['userID'];
+	  $query = "INSERT INTO posts (authorID, title, body) VALUES ('$user_id', '$title', '$body')";
+	  mysqli_query($con, $query);
+	  header("Location: index.php");
+	  die;
+	}else{
+	  echo "Please enter a title";
+	}
+  }
+
+?>
+
 <html>
     <head>
       <title>Create an awesome post</title>
