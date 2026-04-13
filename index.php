@@ -58,7 +58,7 @@
     <div class="container">
       <div>Awesome Topics
         <?php
-          if(!is_null($user_data['userID'])){
+          if($user_data){
             echo '<a href="post.php" class="btn btn-sm btn-default" style="float: right;">New Thread</a>';
           }
         ?>
