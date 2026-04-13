@@ -54,7 +54,7 @@
     <div class="p-5 bg-primary text-white rounded text-center">
       <h1 style="color: orange;">The Awesome Site</h1>
       <p style="color: orange;">Discussions of things that are awesome!</p>
-    </div>
+    </div><br>
     <div class="container">
       <div>Awesome Topics
         <?php
@@ -62,7 +62,7 @@
             echo '<a href="post.php" class="btn btn-sm btn-default" style="float: right;">New Thread</a>';
           }
         ?>
-      </div>
+      </div><br>
         <?php get_posts($con); ?>
       </div>
     </div>
