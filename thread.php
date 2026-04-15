@@ -105,7 +105,7 @@
       for($i = 1; $i < count($posts); $i++){
         echo '<div class="panel panel-info">
                 <div class="panel-heading">
-                  <strong>'.$posts[$i]['username'].'</strong> • '.$posts[$i]['date'].'
+                  <strong><a href="profile.php?userID='.$posts[$i]['authorID'].'">'.$posts[$i]['username'].'</a></strong> • '.$posts[$i]['date'].'
                 </div>
                 <div class="panel-body">
                   '.$posts[$i]['body'].'
