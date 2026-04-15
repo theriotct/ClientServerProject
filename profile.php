@@ -12,7 +12,7 @@
         $query = "WITH RECURSIVE thread AS ( SELECT p.postID AS replyID, p.parentID, p.title, p.body, p.authorID, p.date, p.postID AS originalReplyID FROM posts p WHERE p.authorID = $userID UNION ALL SELECT parent.postID, parent.parentID, parent.title, parent.body, parent.authorID, parent.date, t.originalReplyID FROM posts parent JOIN thread t ON t.parentID = parent.postID ) SELECT root.postID AS parentID, root.title AS parentTitle, root.authorID AS parentAuthorID, root.date AS parentDate, reply.postID AS replyID, reply.parentID AS replyParentID, reply.authorID AS replyAuthorID, reply.body AS replyBody, reply.title AS replyTitle, reply.date AS replyDate FROM thread t JOIN posts root ON root.postID = t.postID AND root.parentID IS NULL JOIN posts reply ON reply.postID = t.originalReplyID;";
         $result = mysqli_query($con, $query);
     } catch (Exception $e) {
-        echo 'Error executing query: ',  $e->getMessage(), "\n";
+        echo '<div class="" style="background-color: rgb(234, 234, 234); padding: 10px; border-radius: 5px; margin-top: 10px; margin-bottom: 10px;"><h4>User Has No Posts</h4></div>';
         return;
     }
 
