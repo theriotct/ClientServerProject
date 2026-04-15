@@ -69,26 +69,7 @@
         </div>
     </div>
     <div class="col-sm-9">
-        <div class="" style="background-color: rgb(234, 234, 234); padding: 10px; border-radius: 5px; margin-top: 10px; margin-bottom: 10px;">
-            <h4>The Power of Awesome Ideas</h4>
-            <p>Today I explored how small creative ideas can turn into truly awesome projects with just a bit of persistence.</p>
-            <p>March 1, 2026</p>
-        </div>
-        <div class="" style="background-color: rgb(234, 234, 234); padding: 10px; border-radius: 5px; margin-top: 10px; margin-bottom: 10px;">
-            <h4>The Power of Awesome Ideas</h4>
-            <p>Today I explored how small creative ideas can turn into truly awesome projects with just a bit of persistence.</p>
-            <p>March 1, 2026</p>
-        </div>
-        <div class="" style="background-color: rgb(234, 234, 234); padding: 10px; border-radius: 5px; margin-top: 10px; margin-bottom: 10px;">
-            <h4>The Power of Awesome Ideas</h4>
-            <p>Today I explored how small creative ideas can turn into truly awesome projects with just a bit of persistence.</p>
-            <p>March 1, 2026</p>
-        </div>
-        <div class="" style="background-color: rgb(234, 234, 234); padding: 10px; border-radius: 5px; margin-top: 10px; margin-bottom: 10px;">
-            <h4>The Power of Awesome Ideas</h4>
-            <p>Today I explored how small creative ideas can turn into truly awesome projects with just a bit of persistence.</p>
-            <p>March 1, 2026</p>
-        </div>
+        <?php get_posts($con, $user_data['userID']); ?>
     </div>
   </body>
 </html>
