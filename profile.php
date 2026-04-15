@@ -10,17 +10,17 @@
 
   if(isset($_GET['userID'])){
     $userID = $_GET['userID'];
-    $query = "SELECT `fname`, `lname`, `username` FROM `user` WHERE userID = $userID";
-    $profile_result = mysqli_query($con, $query);
-    if($profile_result && mysqli_num_rows($profile_result) > 0){
-        $profile_user_data = mysqli_fetch_assoc($profile_result);
-    }else{
-        $userID = $user_data['userID'];
-    }
   } else {
     $userID = $user_data['userID'];
   }
-  
+  $query = "SELECT `fname`, `lname`, `username` FROM `user` WHERE userID = $userID";
+  $profile_result = mysqli_query($con, $query);
+  if($profile_result && mysqli_num_rows($profile_result) > 0){
+      $profile_user_data = mysqli_fetch_assoc($profile_result);
+  }else{
+      not_found();
+  }
+
   function get_posts($con, $userID){
     try {
         $query = "WITH RECURSIVE thread AS ( SELECT p.postID AS replyID, p.parentID, p.title, p.body, p.authorID, p.date, p.postID AS originalReplyID FROM posts p WHERE p.authorID = $userID UNION ALL SELECT parent.postID AS replyID, parent.parentID, parent.title, parent.body, parent.authorID, parent.date, t.originalReplyID FROM posts parent JOIN thread t ON t.parentID = parent.postID ) SELECT root.postID AS parentID, root.title AS parentTitle, root.authorID AS parentAuthorID, root.date AS parentDate, reply.postID AS replyID, reply.parentID AS replyParentID, reply.authorID AS replyAuthorID, reply.body AS replyBody, reply.title AS replyTitle, reply.date AS replyDate FROM thread t JOIN posts root ON root.postID = t.replyID AND root.parentID IS NULL JOIN posts reply ON reply.postID = t.originalReplyID ORDER BY reply.date DESC;";
