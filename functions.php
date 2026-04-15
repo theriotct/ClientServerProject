@@ -64,3 +64,8 @@ function forbidden(){
     include('403.html');
     die;
 }
+function not_found(){
+    header("HTTP/1.1 404 Not Found");
+    include('404.html');
+    die;
+}

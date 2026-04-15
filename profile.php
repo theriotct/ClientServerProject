@@ -1,3 +1,12 @@
+<?php
+  include "connection.php";
+  include "functions.php";
+
+  $user_data = check_login($con);
+  if (!$user_data) {
+    not_found();
+  }
+?>
 <!DOCTYPE html>
 <html>
   <head>
@@ -32,8 +41,8 @@
             <img src="images/download.jpg" style="width: 150px; padding-top: 10px;" class="img-circle">
         </div>
         <div class="col-xs-8 col-sm-12" style=" height: 200px; align-content: center;">
-            <h4 class="text-center" style="margin-bottom: 0px;">John Doe</h4>
-            <h6 class="text-center" style="margin-top: 0px;">john.doe</h6>
+            <h4 class="text-center" style="margin-bottom: 0px;"><?php echo $user_data['fname'] . " " . $user_data['lname']; ?></h4>
+            <h6 class="text-center" style="margin-top: 0px;"><?php echo $user_data['username']; ?></h6>
             <div style=" vertical-align: middle; text-align: center;">
                 <button> Follow</button>
                 <button> Message </button>
