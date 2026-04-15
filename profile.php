@@ -10,6 +10,13 @@
 
   if(isset($_GET['userID'])){
     $userID = $_GET['userID'];
+    $query = "SELECT `fname`, `lname`, `username` FROM `user` WHERE userID = $userID";
+    $profile_result = mysqli_query($con, $query);
+    if($profile_result && mysqli_num_rows($profile_result) > 0){
+        $profile_user_data = mysqli_fetch_assoc($profile_result);
+    }else{
+        $userID = $user_data['userID'];
+    }
   } else {
     $userID = $user_data['userID'];
   }
@@ -70,8 +77,8 @@
             <img src="images/download.jpg" style="width: 150px; padding-top: 10px;" class="img-circle">
         </div>
         <div class="col-xs-8 col-sm-12" style=" height: 200px; align-content: center;">
-            <h4 class="text-center" style="margin-bottom: 0px;"><?php echo $user_data['fname'] . " " . $user_data['lname']; ?></h4>
-            <h6 class="text-center" style="margin-top: 0px;"><?php echo $user_data['username']; ?></h6>
+            <h4 class="text-center" style="margin-bottom: 0px;"><?php echo $profile_user_data['fname'] . " " . $profile_user_data['lname']; ?></h4>
+            <h6 class="text-center" style="margin-top: 0px;"><?php echo $profile_user_data['username']; ?></h6>
             <div style=" vertical-align: middle; text-align: center;">
                 <button> Follow</button>
                 <button> Message </button>
