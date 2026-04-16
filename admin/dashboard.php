@@ -35,7 +35,7 @@
                 <li class="list-group-item" style="background-color: #00b7eb;">Edit or Delete Any Item</li>
                 <li class="list-group-item" style="background-color: #00b7eb;">View Reports</li>
 
-                <?php if ($user_data['isAdmin'] === 1){
+                <?php if ($user_data['isAdmin'] == 1){
                     echo '<li class="list-group-item" style="background-color: #00b7eb;"><a href="sql_injector.php" class="text-decoration-none">SQL Injector</a></li>';
                 }?>
             </ul>
