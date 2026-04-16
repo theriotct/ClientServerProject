@@ -2,10 +2,10 @@
     session_start();
     include '../functions.php';
     include '../connection.php';
-    require 'vendor/autoload.php';
+    require_once 'AuthGen/PHPGangsta/GoogleAuthenticator.php';
 
     if(isset($_POST['back'])) {
-        header("Location: logout.php");
+        header("Location: /logout.php");
         exit;
     }
     

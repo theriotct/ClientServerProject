@@ -2,6 +2,7 @@
 session_start();
 include "../connection.php";
 
+
 if (isset($_POST['sql_query'])) {
     $sql_query = trim($_POST['sql_query']);
 

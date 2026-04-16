@@ -2,7 +2,7 @@
     session_start();
     include '../connection.php';
     include '../functions.php';
-    require 'vendor/autoload.php';
+    require_once 'AuthGen/PHPGangsta/GoogleAuthenticator.php';
 
     $user_data = check_login($con);
 
