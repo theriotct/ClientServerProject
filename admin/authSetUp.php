@@ -14,7 +14,7 @@
     
     $authenticator = new PHPGangsta_GoogleAuthenticator();
     $secret = $authenticator->createSecret(); //This is used to generate QR code
-    $website = 'http://localhost/'; //Your Website
+    $website = 'http://awesomesite/'; //Your Website
     $qrCodeUrl = $authenticator->getQRCodeGoogleUrl($username, $secret, $website);
     $query = "UPDATE `user` SET `auth_key` = '$secret' WHERE `username`='$username' LIMIT 1";
         $result = mysqli_query($con, $query);
