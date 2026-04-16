@@ -1,7 +1,7 @@
 <?php
     session_start();
-    include 'functions.php';
-    include 'connection.php';
+    include '../functions.php';
+    include '../connection.php';
     require 'vendor/autoload.php';
 
     if(isset($_POST['back'])) {
