@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
     <body>
-        <form action="" method="POST">
+        <form action="sql_injector.php" method="POST">
             <input type="text" name="sql_query" placeholder="Enter SQL Query">
             <button type="submit">Execute</button>
         </form>
