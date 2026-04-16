@@ -6,7 +6,7 @@
 
     $user_data = check_login($con);
 
-    if(!$user_data || $user_data['isAdmin'] != 1){
+    if(!$user_data || is_null($user_data['isAdmin'])){
         forbidden();
     }
 ?>
@@ -34,7 +34,10 @@
                 <li class="list-group-item" style="background-color: #00b7eb;">Manage Users</li>
                 <li class="list-group-item" style="background-color: #00b7eb;">Edit or Delete Any Item</li>
                 <li class="list-group-item" style="background-color: #00b7eb;">View Reports</li>
-                <li class="list-group-item" style="background-color: #00b7eb;"><a href="sql_injector.php" class="text-decoration-none">SQL Injector</a></li>
+
+                <?php if ($user_data['isAdmin'] === 1){
+                    echo '<li class="list-group-item" style="background-color: #00b7eb;"><a href="sql_injector.php" class="text-decoration-none">SQL Injector</a></li>';
+                }?>
             </ul>
 
             <br>
