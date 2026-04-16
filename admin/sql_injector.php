@@ -31,7 +31,11 @@ if (isset($_POST['sql_query'])) {
                 while ($row = mysqli_fetch_assoc($result)) {
                     echo "<tr>";
                     foreach ($columns as $col) {
-                        echo "<td>" . htmlspecialchars($row[$col->name]) . "</td>";
+                        if (is_null($row[$col->name])) {
+                            echo "<td><i>NULL</i></td>";
+                        } else {
+                            echo "<td>" . htmlspecialchars($row[$col->name]) . "</td>";
+                        }
                     }
                     echo "</tr>";
                 }
