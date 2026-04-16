@@ -71,6 +71,11 @@ function not_found(){
 }
 
 function set_header(){
+    echo '<nav class="navbar navbar-expand border-bottom" style="background-color: #e3f2fd;">
+      <div class="container">
+        <a class="navbar-brand fw-bold link-primary" href="/index.php">Awesome Site</a>
+
+        <div class="navbar-nav ms-auto">';
     if(isset($_SESSION['userID'])){
         echo '<a class="nav-link" href="/index.php">Home</a>';
         if(isset($_SESSION['isAdmin']) && $_SESSION['isAdmin'] == 1){
@@ -85,4 +90,5 @@ function set_header(){
         echo '<a class="nav-link" href="/login.php">Login</a>';
         echo '<a class="nav-link" href="/register.php">Register</a>';
     }
+    echo '</div></div></nav>';
 }

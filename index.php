@@ -37,16 +37,7 @@
   </head>
   <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand border-bottom" style="background-color: #e3f2fd;">
-      <div class="container">
-        <a class="navbar-brand fw-bold link-primary" href="/index.php">Awesome Site</a>
-
-        <div class="navbar-nav ms-auto">
           <?php set_header(); ?>
-        </div>
-      </div>
-    </nav>
-
 
     <div class="p-5 bg-primary text-white rounded text-center">
       <h1 style="color: orange;">The Awesome Site</h1>
