@@ -69,3 +69,20 @@ function not_found(){
     include('404.html');
     die;
 }
+
+function set_header(){
+    if(isset($_SESSION['userID'])){
+        echo '<a class="nav-link" href="/index.php">Home</a>';
+        if(isset($_SESSION['isAdmin']) && $_SESSION['isAdmin'] == 1){
+            echo '<a class="nav-link" href="/admin/dashboard.php">Admin Panel</a>';
+        }else{
+            echo '<a class="nav-link" href="/user/dashboard.php">User Dashboard</a>';
+        }
+        echo '<a class="nav-link" href="/profile.php">My Profile</a>';
+        echo '<a class="nav-link" href="/logout.php">Logout</a>';
+    }else{
+        echo '<a class="nav-link" href="/index.php">Home</a>';
+        echo '<a class="nav-link" href="/login.php">Login</a>';
+        echo '<a class="nav-link" href="/register.php">Register</a>';
+    }
+}

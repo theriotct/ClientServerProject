@@ -42,10 +42,7 @@
         <a class="navbar-brand fw-bold link-primary" href="/index.php">Awesome Site</a>
 
         <div class="navbar-nav ms-auto">
-          <a class="nav-link" href="/index.php">Home</a>
-          <a class="nav-link" href="/profile.php">My Profile</a>
-          <a class="nav-link" href="/login.php">Login</a>
-          <a class="nav-link active" aria-current="page" href="/register.php">Register</a>
+          <?php set_header(); ?>
         </div>
       </div>
     </nav>

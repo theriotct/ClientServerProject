@@ -4,9 +4,6 @@
   include "functions.php";
 
   $user_data = check_login($con);
-  if (!$user_data) {
-    not_found();
-  }
 
   if(isset($_GET['userID'])){
     $userID = $_GET['userID'];
