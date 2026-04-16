@@ -35,14 +35,24 @@
                 <li class="list-group-item" style="background-color: #00b7eb;">Edit or Delete Any Item</li>
                 <li class="list-group-item" style="background-color: #00b7eb;">View Reports</li>
 
-                <?php if ($user_data['isAdmin'] == 1){
-                    echo '<li class="list-group-item" style="background-color: #00b7eb;"><a href="sql_injector.php" class="text-decoration-none">SQL Injector</a></li>';
-                }?>
+                
             </ul>
-
             <br>
-
-            <a class="btn btn-primary" href="/logout.php">Logout</a>
         </div>
-    </div>
+        <?php if ($user_data['isAdmin'] == 1):?>
+        <div id="superAdminSection">           
+            <h2>Super Admin Dashboard</h2>
+            <ul class="list-group mt-3">
+                <li class="list-group-item" style="background-color: #00b7eb;">Manage Admins</li>
+                <li class="list-group-item" style="background-color: #00b7eb;">Full Database Access</li>
+                <li class="list-group-item" style="background-color: #00b7eb;">System Settings</li>
+                <li class="list-group-item" style="background-color: #00b7eb;">View All Logs</li>
+                <li class="list-group-item" style="background-color: #00b7eb;"><a href="sql_injector.php" class="text-decoration-none">SQL Injector</a></li>
+            
+            </ul>
+            <br>
+        </div>
+        <?php endif; ?>
+        <a class="btn btn-primary" href="/logout.php">Logout</a>
+    </div> 
 </body>
