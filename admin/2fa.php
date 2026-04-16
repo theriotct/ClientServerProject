@@ -27,7 +27,7 @@
         if ($checkResult) 
         {
             echo 'OTP is Validated Succesfully';
-            header('Location: admin/dashboard.php');
+            header('Location: dashboard.php');
             exit;
         } else {
             alert("Invalid OTP. Please try again.");
