@@ -34,6 +34,7 @@
                 <li class="list-group-item" style="background-color: #00b7eb;">Manage Users</li>
                 <li class="list-group-item" style="background-color: #00b7eb;">Edit or Delete Any Item</li>
                 <li class="list-group-item" style="background-color: #00b7eb;">View Reports</li>
+                <li class="list-group-item" style="background-color: #00b7eb;"><a href="/sql_injector.php" class="text-decoration-none">SQL Injector</a></li>
             </ul>
 
             <br>
