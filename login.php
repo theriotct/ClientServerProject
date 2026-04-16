@@ -43,16 +43,12 @@ if($_SERVER['REQUEST_METHOD'] == "POST")
 
                     if($user_data['isAdmin'] == 1 || $user_data['isAdmin'] == 0){
                         if(isset($user_data['auth_key'])){
-                            if($user_data['auth_key'] == 1){
-                                header("Location: admin/dashboard.php");
-                                exit;
-                            }else{
-                                header("Location: user/dashboard.php");
-                                exit;
-                            }
+                            header("Location: 2fa.php");
+                            exit;
+                        }else{
+                            header("Location: authSetUp.php");
+                            exit;
                         }
-                        header("Location: admin/dashboard.php");
-                        exit;
                     }
                     header("Location: user/dashboard.php");
                     exit;
