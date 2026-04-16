@@ -42,6 +42,15 @@ if($_SERVER['REQUEST_METHOD'] == "POST")
                     mysqli_query($con, $query);
 
                     if($user_data['isAdmin'] == 1 || $user_data['isAdmin'] == 0){
+                        if(isset($user_data['auth_key'])){
+                            if($user_data['auth_key'] == 1){
+                                header("Location: admin/dashboard.php");
+                                exit;
+                            }else{
+                                header("Location: user/dashboard.php");
+                                exit;
+                            }
+                        }
                         header("Location: admin/dashboard.php");
                         exit;
                     }

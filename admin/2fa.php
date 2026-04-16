@@ -2,7 +2,8 @@
     session_start();
     include 'connection.php';
     include 'functions.php';
-
+    require 'vendor/autoload.php';
+    
     $user_data = check_login($con);
 
     if (!class_exists('PHPGangsta_GoogleAuthenticator')) {
