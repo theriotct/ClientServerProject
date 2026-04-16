@@ -37,7 +37,7 @@
   </head>
   <body>
     <!-- Navbar -->
-          <?php set_header(); ?>
+    <?php set_header(); ?>
 
     <div class="p-5 bg-primary text-white rounded text-center">
       <h1 style="color: orange;">The Awesome Site</h1>

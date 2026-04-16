@@ -36,59 +36,45 @@
 	  </style>
     </head>
     <body>
-      <!-- Navbar -->
-      <nav class="navbar navbar-expand border-bottom" style="background-color: #e3f2fd;">
-        <div class="container">
-          <a class="navbar-brand fw-bold link-primary" href="/index.php">Awesome Site</a>
-
-          <div class="navbar-nav ms-auto">
-            <a class="nav-link" href="/index.php">Home</a>
-            <a class="nav-link" href="/profile.php">My Profile</a>
-            <a class="nav-link" href="/login.php">Login</a>
-            <a class="nav-link active" aria-current="page" href="/register.php">Register</a>
-          </div>
-        </div>
-      </nav>  
+      	<!-- Navbar -->
+      	<?php set_header(); ?>
       
-      
-      
-      
-  <div class="container">
-	  <div class="row">
-	    
-	    <div class="col-md-8 col-md-offset-2">
-	        
-    		<h1>Create post</h1>
-    		
-    		<form action="" method="POST">
-    		    
-    		    <div class="form-group">
-    		        <label for="title">Title <span class="require">*</span></label>
-    		        <input type="text" class="form-control" name="title" />
-    		    </div>
-    		    
-    		    <div class="form-group">
-    		        <label for="description">Description</label>
-    		        <textarea rows="5" class="form-control" name="description" ></textarea>
-    		    </div>
-    		    
-    		    <div class="form-group">
-    		        <p><span class="require">*</span> - required fields</p>
-    		    </div>
-    		    
-    		    <div class="form-group">
-    		        <button type="submit" class="btn btn-primary">
-    		            Create
-    		        </button>
-    		        <button class="btn btn-default">
-    		            Cancel
-    		        </button>
-    		    </div>
-    		    
-    		</form>
+		<div class="container">
+			<div class="row">
+				
+				<div class="col-md-8 col-md-offset-2">
+					
+					<h1>Create post</h1>
+					
+					<form action="" method="POST">
+						
+						<div class="form-group">
+							<label for="title">Title <span class="require">*</span></label>
+							<input type="text" class="form-control" name="title" />
+						</div>
+						
+						<div class="form-group">
+							<label for="description">Description</label>
+							<textarea rows="5" class="form-control" name="description" ></textarea>
+						</div>
+						
+						<div class="form-group">
+							<p><span class="require">*</span> - required fields</p>
+						</div>
+						
+						<div class="form-group">
+							<button type="submit" class="btn btn-primary">
+								Create
+							</button>
+							<button class="btn btn-default">
+								Cancel
+							</button>
+						</div>
+						
+					</form>
+				</div>
+				
+			</div>
 		</div>
-		
-	</div>
-</div>
-</body>
+	</body>
 </html>

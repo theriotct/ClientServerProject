@@ -56,18 +56,7 @@
   </head>
   <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand border-bottom" style="background-color: #e3f2fd;">
-      <div class="container">
-        <a class="navbar-brand fw-bold link-primary" href="/index.php">Awesome Site</a>
-
-        <div class="navbar-nav ms-auto">
-          <a class="nav-link" href="/index.php">Home</a>
-          <a class="nav-link" href="/profile.php">My Profile</a>
-          <a class="nav-link" href="/login.php">Login</a>
-          <a class="nav-link active" aria-current="page" href="/register.php">Register</a>
-        </div>
-      </div>
-    </nav>
+    <?php set_header(); ?>
 
     <div class="col-sm-3" style=" height: 200px;">
         <div class="col-xs-4 col-sm-12" style="height: 200px; text-align: center; align-content: center;">
