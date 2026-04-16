@@ -78,7 +78,7 @@ function set_header(){
         <div class="navbar-nav ms-auto">';
     if(isset($_SESSION['userID'])){
         echo '<a class="nav-link" href="/index.php">Home</a>';
-        if(isset($_SESSION['isAdmin']) && $_SESSION['isAdmin'] == 1){
+        if(isset($_SESSION['isAdmin']) && ($_SESSION['isAdmin'] == 1 || $_SESSION['isAdmin'] == 0)){
             echo '<a class="nav-link" href="/admin/dashboard.php">Admin Panel</a>';
         }else{
             echo '<a class="nav-link" href="/user/dashboard.php">User Dashboard</a>';

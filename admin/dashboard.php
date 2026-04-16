@@ -48,7 +48,6 @@
                 <li class="list-group-item" style="background-color: #00b7eb;">System Settings</li>
                 <li class="list-group-item" style="background-color: #00b7eb;">View All Logs</li>
                 <li class="list-group-item" style="background-color: #00b7eb;"><a href="sql_injector.php" class="text-decoration-none">SQL Injector</a></li>
-            
             </ul>
             <br>
         </div>
