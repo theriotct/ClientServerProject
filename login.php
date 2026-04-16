@@ -42,11 +42,11 @@ if($_SERVER['REQUEST_METHOD'] == "POST")
                     mysqli_query($con, $query);
 
                     if($user_data['isAdmin'] == 1 || $user_data['isAdmin'] == 0){
-                        if(is_null($user_data['auth_key'])){
-                            header("Location: admin/2fa.php");
+                        if($user_data['auth_key'] == 0){
+                            header("Location: admin/authSetUp.php");
                             exit;
                         }else{
-                            header("Location: admin/authSetUp.php");
+                            header("Location: admin/2fa.php");
                             exit;
                         }
                     }
