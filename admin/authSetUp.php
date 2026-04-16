@@ -19,6 +19,8 @@
     $query = "UPDATE `user` SET `auth_key` = '$secret' WHERE `username`='$username' LIMIT 1";
         $result = mysqli_query($con, $query);
 
+    alert($secret);
+    
     echo '<p>Scan this QR Code With Google Authenicator</p>
     <img style="width: 200px;" src="'.$qrCodeUrl.'"><br><br>
     <form method="post">
