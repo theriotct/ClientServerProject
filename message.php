@@ -7,12 +7,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
     <style>
-      body {background-color: #ffe1ca;}
+      body {background-color: #ffe1cb;}
     </style>
   </head>
   <body>
-    <!-- Navbar -->
-    <?php set_header(); ?>
+    
 
     <main class="content">
       <div class="container p-0">
