@@ -10,6 +10,7 @@
     <style>
       body{
 		  margin-top:20px;
+		  body {background-color: lightblue;}
 	  }
 
 		.chat-online {
