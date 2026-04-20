@@ -21,7 +21,33 @@
 
 		$senderID = $user_data['userID'];
 
-		$query = "SELECT u.userID, u.username, COALESCE(unread.unreadCount, 0) AS unreadCount FROM user u JOIN (SELECT recipID AS uid FROM messages WHERE authorID = $senderID UNION SELECT authorID AS uid FROM messages WHERE recipID = $senderID LEFT JOIN (SELECT authorID AS uid, COUNT(*) AS unreadCount FROM messages WHERE recipID = $senderID AND isRead = 0 GROUP BY authorID) unread ON unread.uid = u.userID;";
+		$query = "SELECT 
+						u.userID,
+						u.username,
+						COALESCE(unread.unreadCount, 0) AS unreadCount
+					FROM user u
+					JOIN (
+						SELECT recipID AS uid
+						FROM messages
+						WHERE authorID = $senderID
+
+						UNION
+
+						SELECT authorID AS uid
+						FROM messages
+						WHERE recipID = $senderID
+					) t ON u.userID = t.uid
+
+					LEFT JOIN (
+						SELECT 
+							authorID AS uid,
+							COUNT(*) AS unreadCount
+						FROM messages
+						WHERE recipID = $senderID
+						AND isRead = 0
+						GROUP BY authorID
+					) unread ON unread.uid = u.userID;
+					";
 
 		$result = mysqli_query($con, $query);
 
