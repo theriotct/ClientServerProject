@@ -26,6 +26,7 @@
         
         if ($checkResult) 
         {
+            $_SESSION['2fa_verified'] = true; // Set a session variable to indicate successful 2FA verification
             echo 'OTP is Validated Succesfully';
             header('Location: dashboard.php');
             exit;

@@ -6,7 +6,7 @@
 
     $user_data = check_login($con);
 
-    if(!$user_data || is_null($user_data['isAdmin'])){
+    if(!$user_data || is_null($user_data['isAdmin']) || $_SESSION['2fa_verified'] !== true) {
         forbidden();
     }
 ?>
@@ -47,7 +47,7 @@
                 <li class="list-group-item" style="background-color: #00b7eb;">Full Database Access</li>
                 <li class="list-group-item" style="background-color: #00b7eb;">System Settings</li>
                 <li class="list-group-item" style="background-color: #00b7eb;">View All Logs</li>
-                <li class="list-group-item" style="background-color: #00b7eb;"><a href="sql_injector.php" class="text-decoration-none">SQL Injector</a></li>
+                <li class="list-group-item" style="background-color: #00b7eb;"><a style="color: black;" href="super/sql_injector.php" class="text-decoration-none">SQL Injector</a></li>
             </ul>
             <br>
         </div>
