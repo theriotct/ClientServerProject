@@ -277,7 +277,7 @@
 								<form action="message.php" method="POST">
 								    <input type="hidden" name="recipientID" value="<?php echo $recipientID; ?>">
 								    <input type="text" class="form-control" name="body" placeholder="Type your message">
-								    <button class="btn btn-primary" type="submit">Send</button>
+								    <input type="submit" class="btn btn-primary" value="Send">
 								</form>
 						    </div>
 					    </div>
