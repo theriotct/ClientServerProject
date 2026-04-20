@@ -44,8 +44,6 @@
             <h2>Super Admin Dashboard</h2>
             <ul class="list-group mt-3">
                 <li class="list-group-item" style="background-color: #00b7eb;">Manage Admins</li>
-                <li class="list-group-item" style="background-color: #00b7eb;">Full Database Access</li>
-                <li class="list-group-item" style="background-color: #00b7eb;">System Settings</li>
                 <li class="list-group-item" style="background-color: #00b7eb;">View All Logs</li>
                 <li class="list-group-item" style="background-color: #00b7eb;"><a style="color: black;" href="super/sql_injector.php" class="text-decoration-none">SQL Injector</a></li>
             </ul>
