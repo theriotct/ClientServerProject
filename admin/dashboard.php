@@ -52,6 +52,18 @@
             <br>
         </div>
         <?php endif; ?>
+        <div id="userSection" >
+            <h2>User Dashboard</h2>
+
+            <ul class="list-group mt-3">
+                <li class="list-group-item" style="background-color: #00b7eb;"><a style="color: black;" href="../index.php" class="text-decoration-none">View Home Page</a></li>
+                <li class="list-group-item" style="background-color: #00b7eb;"><a style="color: black;" href="../marketplace.php" class="text-decoration-none">Browse Marketplace</a></li>
+                <li class="list-group-item" style="background-color: #00b7eb;"><a style="color: black;" href="../profile.php" class="text-decoration-none">View Profile</a></li>
+                <li class="list-group-item" style="background-color: #00b7eb;"><a style="color: black;" href="../message.php" class="text-decoration-none">Messages</a></li>
+            </ul>
+
+            <br>
+        </div>
         <a class="btn btn-primary" href="/logout.php">Logout</a>
     </div> 
 </body>

@@ -84,6 +84,7 @@ function set_header(){
             echo '<a class="nav-link" href="/user/dashboard.php">User Dashboard</a>';
         }
         echo '<a class="nav-link" href="/profile.php">My Profile</a>';
+        echo '<a class="nav-link" href="/message.php">Messages</a>';
         echo '<a class="nav-link" href="/logout.php">Logout</a>';
     }else{
         echo '<a class="nav-link" href="/index.php">Home</a>';
