@@ -28,8 +28,6 @@
             $_SESSION['2fa_verified'] = true;
             header('Location: dashboard.php');
             exit;
-        } else {
-            echo "<script>let element = document.getElementByName('code'); element.style.border = '1px solid red';</script>";
         }
     }
 ?>
@@ -105,7 +103,13 @@
         <h2>2FA Verification</h2>
         <form method="post">
             <p>Enter your 6-digit code from Google Authenticator</p>
-            <input type="password" placeholder="123456" name="code" required>
+            <?php
+                if (isset($_POST['submit']) && !$checkResult) {
+                    echo '<input type="password" placeholder="123456" name="code" required style="border-color: red;">';
+                }else{
+                    echo '<input type="password" placeholder="123456" name="code" required>';
+                }
+            ?>
             <input type="submit" name="submit" value="Verify">
         </form>
     </div>
