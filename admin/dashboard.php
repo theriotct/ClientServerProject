@@ -53,7 +53,7 @@
         </div>
         <?php endif; ?>
         <div id="userSection" >
-            <h2>User Dashboard</h2>
+            <h2>Account Dashboard</h2>
 
             <ul class="list-group mt-3">
                 <li class="list-group-item" style="background-color: #00b7eb;"><a style="color: black;" href="../index.php" class="text-decoration-none">View Home Page</a></li>
