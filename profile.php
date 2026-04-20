@@ -67,7 +67,7 @@
             <h6 class="text-center" style="margin-top: 0px;"><?php echo $profile_user_data['username']; ?></h6>
             <div style=" vertical-align: middle; text-align: center;">
                 <button> Follow</button>
-                <button> Message </button>
+                <a href="message.php?userID=<?php echo $userID; ?>"><button> Message </button></a>
                 <button> Report </button>
             </div>
             
