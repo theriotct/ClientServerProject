@@ -131,8 +131,8 @@
     </style>
   </head>
   <body>
-    <?php set_header(); ?>
-
+    <?php //set_header(); ?>
+	<br>
     <main class="content">
       <div class="container p-0">
 
@@ -186,7 +186,11 @@
 										    exit;
 									    }
 									    // Mark messages as read
-									    $updateQuery = "UPDATE messages SET isRead = 1 WHERE recipID = $recipientID AND authorID = $senderID";
+									    $updateQuery = "UPDATE messages
+															SET isRead = 1
+															WHERE recipID = $senderID
+															AND authorID = $recipientID
+															AND isRead = 0;";
 									    mysqli_query($con, $updateQuery);
 
 									    // Fetch messages
