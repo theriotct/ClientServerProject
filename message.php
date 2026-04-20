@@ -25,6 +25,19 @@
 		$recipientID = null;
 	}
 
+	if($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['recipientID']) && isset($_POST['body'])) {
+		$senderID = $user_data['userID'];
+		$recipientID = intval($_POST['recipientID']);
+		$body = mysqli_real_escape_string($con, $_POST['body']);
+
+		if (!empty($body)) {
+			$insertQuery = "INSERT INTO messages (authorID, recipID, body) VALUES ($senderID, $recipientID, '$body')";
+			mysqli_query($con, $insertQuery);
+			header("Location: message.php?userID=$recipientID");
+			exit;
+		}
+	}
+
 	//SELECT u.userID, u.username, COALESCE(unread.unreadCount, 0) AS unreadCount FROM user u JOIN (SELECT recipID AS uid FROM messages WHERE authorID = $senderID UNION SELECT authorID AS uid FROM messages WHERE recipID = $senderID LEFT JOIN (SELECT authorID AS uid, COUNT(*) AS unreadCount FROM messages WHERE recipID = $senderID AND isRead = 0 GROUP BY authorID) unread ON unread.uid = u.userID;
 
 	//SELECT body, authorID, recipID, date, CASE  WHEN authorID = $senderID THEN 1 ELSE 0 END AS isSentByMe FROM messages WHERE (authorID = $senderID AND recipID = $recipientID) OR (authorID = $senderID AND recipID = $recipientID) ORDER BY date DESC;
@@ -261,8 +274,11 @@
 
 					    <div class="flex-grow-0 py-3 px-4 border-top">
 						    <div class="input-group">
-							    <input type="text" class="form-control" placeholder="Type your message">
-							    <button class="btn btn-primary">Send</button>
+								<form action="message.php" method="POST">
+								    <input type="hidden" name="recipientID" value="<?php echo $recipientID; ?>">
+								    <input type="text" class="form-control" name="body" placeholder="Type your message">
+								    <button class="btn btn-primary" type="submit">Send</button>
+								</form>
 						    </div>
 					    </div>
 
