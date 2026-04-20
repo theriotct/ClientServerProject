@@ -61,9 +61,7 @@
     </style>
   </head>
   <body>
-    <header>
-    	<?php set_header(); ?>
-  	</header>
+    
 
     <main class="content">
       <div class="container p-0">
