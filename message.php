@@ -75,6 +75,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css'>
+	<script src='https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js'></script>
     <style>
 		body, html{
 			margin: 0;
@@ -135,7 +137,7 @@
     <main class="content">
       <div class="container p-0">
 
-		    <h1 class="h3 mb-3">Messages</h1>
+		    <h1 class="h3 mb-3" style="padding-top: 20px;">Messages</h1>
 
 		    <div class="card">
 			    <div class="row g-0">
