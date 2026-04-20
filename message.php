@@ -75,12 +75,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-	<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css'>
-	<script src='https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js'></script>
     <style>
-      body{
-		  margin-top:20px;
-	  }
+		body, html{
+			margin: 0;
+		}
 
 		.chat-online {
     		color: #34ce57
@@ -127,12 +125,13 @@
 		}
 		main {
 			background-color: lightblue;
+			margin: 0;
+			padding: 0;
 		}
     </style>
   </head>
   <body>
     <?php //set_header(); ?>
-	<br>
     <main class="content">
       <div class="container p-0">
 
