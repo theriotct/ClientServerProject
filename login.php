@@ -41,7 +41,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST")
                     $query = "UPDATE `user` SET `lastLogin` = CURRENT_TIMESTAMP WHERE `userID` = ".$user_data['userID'];
                     mysqli_query($con, $query);
 
-                    if($user_data['isAdmin'] === 1 || $user_data['isAdmin'] === 0){
+                    if($user_data['isAdmin'] == 1 || $user_data['isAdmin'] == 0){
                         if($user_data['auth_key'] == 0){
                             header("Location: admin/authSetUp.php");
                             exit;
@@ -54,28 +54,6 @@ if($_SERVER['REQUEST_METHOD'] == "POST")
                     exit;
                 }
             }
-        }else{
-            $query = "select * from login where email = '$user_name' limit 1";
-            $result = mysqli_query($con, $query);
-            if($result && mysqli_num_rows($result) > 0)
-            {
-                $user_data = mysqli_fetch_assoc($result);
-                if(password_verify($password . $pepper, $user_data['password'])){
-                    $_SESSION['userID'] = $user_data['userID'];
-                    $_SESSION['username'] = $user_name;
-                    $_SESSION['isAdmin'] = $user_data['isAdmin'];
-                    $query = "UPDATE `user` SET `lastLogin` = CURRENT_TIMESTAMP WHERE `userID` = ".$user_data['userID'];
-                    mysqli_query($con, $query);
-
-                    if($user_data['isAdmin'] == 1){
-                        header("Location: admin/dashboard.php");
-                        exit;
-                    }
-                    header("Location: user/dashboard.php");
-                    exit;
-                }
-            }
-            alert("Wrong Username Or Password!");
         }
     }else{
         alert("Wrong Username Or Password!");
@@ -105,7 +83,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST")
 
         <form method="post">
             <div class="mb-3">
-                <label>Username / Email</label>
+                <label>Username</label>
                 <input type="text" class="form-control" name="user_name">
             </div>
 
