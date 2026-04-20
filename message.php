@@ -53,7 +53,7 @@
 
 		if ($result) {
 			while ($row = mysqli_fetch_assoc($result)) {
-				echo '<a href="#" class="list-group-item list-group-item-action border-0">';
+				echo '<a href="message.php?userID=' . $row['userID'] . '" class="list-group-item list-group-item-action border-0">';
 				if ($row['unreadCount'] > 0) {
 					echo '<div class="badge bg-success float-right">' . $row['unreadCount'] . '</div>';
 				}
@@ -131,7 +131,7 @@
     </style>
   </head>
   <body>
-    
+    <?php set_header(); ?>
 
     <main class="content">
       <div class="container p-0">
@@ -168,139 +168,69 @@
 					    <div class="position-relative">
 						    <div class="chat-messages p-4">
 
-							    <div class="chat-message-right pb-4">
-								    <div>
-									    <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40">
-									    <div class="text-muted small text-nowrap mt-2">2:33 am</div>
-								    </div>
-								    <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-									    <div class="font-weight-bold mb-1">You</div>
-									    Lorem ipsum dolor sit amet, vis erat denique in, dicunt prodesset te vix.
-								    </div>
-							    </div>
+							    <?php
+								    // Fetch messages between the logged-in user and the selected contact
+								    // Mark messages as read if they were sent by the contact and not yet read
+								    // Display messages in the chat area
 
-							    <div class="chat-message-left pb-4">
-								    <div>
-									    <img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40">
-									    <div class="text-muted small text-nowrap mt-2">2:34 am</div>
-								    </div>
-								    <div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-									    <div class="font-weight-bold mb-1">Sharon Lessman</div>
-									    Sit meis deleniti eu, pri vidit meliore docendi ut, an eum erat animal commodo.
-								    </div>
-							    </div>
+									if (isset($_GET['userID'])) {
+									    $recipientID = intval($_GET['userID']);
+									    $senderID = $user_data['userID'];
 
-							    <div class="chat-message-right mb-4">
-								    <div>
-									    <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40">
-									    <div class="text-muted small text-nowrap mt-2">2:35 am</div>
-								    </div>
-								    <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-									    <div class="font-weight-bold mb-1">You</div>
-									    Cum ea graeci tractatos.
-								    </div>
-							    </div>
+										$contact_query = "SELECT * FROM user WHERE userID = $recipientID";
+										$contact_result = mysqli_query($con, $contact_query);
+										if ($contact_result && mysqli_num_rows($contact_result) > 0) {
+										    $contact_data = mysqli_fetch_assoc($contact_result);
+									    } else {
+										    alert("Contact not found.");
+										    exit;
+									    }
+									    // Mark messages as read
+									    $updateQuery = "UPDATE messages SET isRead = 1 WHERE recipID = $recipientID AND authorID = $senderID";
+									    mysqli_query($con, $updateQuery);
 
-							    <div class="chat-message-left pb-4">
-								    <div>
-									    <img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40">
-									    <div class="text-muted small text-nowrap mt-2">2:36 am</div>
-								    </div>
-								    <div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-									    <div class="font-weight-bold mb-1">Sharon Lessman</div>
-									    Sed pulvinar, massa vitae interdum pulvinar, risus lectus porttitor magna, vitae commodo lectus mauris et velit.
-									    Proin ultricies placerat imperdiet. Morbi varius quam ac venenatis tempus.
-								    </div>
-							    </div>
+									    // Fetch messages
+									    $query = "SELECT body, authorID, recipID, date, CASE  WHEN authorID = $senderID THEN 1 ELSE 0 END AS isSentByMe FROM messages WHERE (authorID = $senderID AND recipID = $recipientID) OR (authorID = $senderID AND recipID = $recipientID) ORDER BY date DESC";
+									    $result = mysqli_query($con, $query);
 
-							    <div class="chat-message-left pb-4">
-								    <div>
-									    <img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40">
-									    <div class="text-muted small text-nowrap mt-2">2:37 am</div>
-								    </div>
-								    <div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-									    <div class="font-weight-bold mb-1">Sharon Lessman</div>
-									    Cras pulvinar, sapien id vehicula aliquet, diam velit elementum orci.
-								    </div>
-							    </div>
+									    if ($result) {
+										    while ($row = mysqli_fetch_assoc($result)) {
+											    if($row['isSentByMe'] == 1) {
+												    // Message sent by the logged-in user
+													echo '<div class="chat-message-right mb-4">
+														<div>
+															<img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle mr-1" alt="'.$user_data['username'].'" width="40" height="40">
+															<div class="text-muted small text-nowrap mt-2">'.$row['date'].'</div>
+														</div>
+														<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
+															<div class="font-weight-bold mb-1">You</div>
+															'.$row['body'].'
+														</div>
+													</div>';
 
-							    <div class="chat-message-right mb-4">
-								    <div>
-									    <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40">
-									    <div class="text-muted small text-nowrap mt-2">2:38 am</div>
-								    </div>
-								    <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-									    <div class="font-weight-bold mb-1">You</div>
-									    Lorem ipsum dolor sit amet, vis erat denique in, dicunt prodesset te vix.
-								    </div>
-							    </div>
-
-							    <div class="chat-message-left pb-4">
-								    <div>
-									    <img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40">
-									    <div class="text-muted small text-nowrap mt-2">2:39 am</div>
-								    </div>
-								    <div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-									    <div class="font-weight-bold mb-1">Sharon Lessman</div>
-									    Sit meis deleniti eu, pri vidit meliore docendi ut, an eum erat animal commodo.
-								    </div>
-							    </div>
-
-							    <div class="chat-message-right mb-4">
-								    <div>
-									    <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40">
-									    <div class="text-muted small text-nowrap mt-2">2:40 am</div>
-								    </div>
-								    <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-									    <div class="font-weight-bold mb-1">You</div>
-									    Cum ea graeci tractatos.
-								    </div>
-							    </div>
-
-							    <div class="chat-message-right mb-4">
-								    <div>
-									    <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40">
-									    <div class="text-muted small text-nowrap mt-2">2:41 am</div>
-								    </div>
-								    <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-									    <div class="font-weight-bold mb-1">You</div>
-									    Morbi finibus, lorem id placerat ullamcorper, nunc enim ultrices massa, id dignissim metus urna eget purus.
-								    </div>
-							    </div>
-
-							    <div class="chat-message-left pb-4">
-								    <div>
-									    <img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40">
-									    <div class="text-muted small text-nowrap mt-2">2:42 am</div>
-								    </div>
-								    <div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-									    <div class="font-weight-bold mb-1">Sharon Lessman</div>
-									    Sed pulvinar, massa vitae interdum pulvinar, risus lectus porttitor magna, vitae commodo lectus mauris et velit.
-									    Proin ultricies placerat imperdiet. Morbi varius quam ac venenatis tempus.
-								    </div>
-							    </div>
-
-							    <div class="chat-message-right mb-4">
-								    <div>
-									    <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40">
-									    <div class="text-muted small text-nowrap mt-2">2:43 am</div>
-								    </div>
-								    <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-									    <div class="font-weight-bold mb-1">You</div>
-									    Lorem ipsum dolor sit amet, vis erat denique in, dicunt prodesset te vix.
-								    </div>
-							    </div>
-
-							    <div class="chat-message-left pb-4">
-								    <div>
-									    <img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40">
-									    <div class="text-muted small text-nowrap mt-2">2:44 am</div>
-								    </div>
-								    <div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-									    <div class="font-weight-bold mb-1">Sharon Lessman</div>
-									    Sit meis deleniti eu, pri vidit meliore docendi ut, an eum erat animal commodo.
-								    </div>
-							    </div>
+											    } else {
+												    // Message sent by the contact
+												    echo '<div class="chat-message-left pb-4">
+														<div>
+															<img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="rounded-circle mr-1" alt="'.$contact_data['username'].'" width="40" height="40">
+															<div class="text-muted small text-nowrap mt-2">'.$row['date'].'</div>
+														</div>
+														<div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
+															<div class="font-weight-bold mb-1">'.$contact_data['username'].'</div>
+															'.$row['body'].'
+														</div>
+													</div>';
+											    }
+										    }
+									    }else{
+											echo "<p>Be the first to send a message!</p>";
+										}
+								    } else {
+									    echo '<div class="text-center m-5">
+										    <p>Select a contact to start chatting</p>
+									    </div>';
+								    }
+								?>
 
 						    </div>
 					    </div>
