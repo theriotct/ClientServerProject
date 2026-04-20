@@ -22,7 +22,7 @@
     <!-- Navbar -->
     <?php set_header(); ?>
 
-    <div class="p-5 bg-warning text-white rounded text-center">
+    <div class="p-5 text-white rounded text-center" style="background-color: #ff5c00;">
       <h1 style="color: blue;">The Awesome Marketplace</h1>
       <p style="color: blue;">Selling things that are awesome!</p>
     </div><br>
