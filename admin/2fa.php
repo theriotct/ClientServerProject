@@ -18,7 +18,7 @@
 
     if($_SERVER['REQUEST_METHOD'] == "POST")
     {
-        $otp = $_POST['code'].trim();
+        $otp = trim($_POST['code']);
         $tolerance = 1;
         
         $checkResult = $authenticator->verifyCode($secret, $otp, $tolerance);    
