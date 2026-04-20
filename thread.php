@@ -1,4 +1,4 @@
-<?php 
+<?php
     session_start();
     include 'connection.php';
     include 'functions.php';
@@ -18,7 +18,7 @@
         include('404.html');
         die;
     }
-      
+
     $user_data = check_login($con);
 
     if($_SERVER['REQUEST_METHOD'] == "POST")
@@ -53,11 +53,44 @@
         body {background-color: #fed8b1;}
 
         .right {
-            float: right;
-            margin-left: 10px;
+          float: right;
+          margin-left: 10px;
         }
 
+        /* Validation error styles */
+        .error-input {
+          border: 2px solid #f44336 !important;
+          background-color: #ffe6e6 !important;
+          box-shadow: 0 0 5px rgba(244, 67, 54, 0.3);
+        }
 
+        .error-message {
+          color: #f44336;
+          font-size: 13px;
+          margin-top: 5px;
+          display: block;
+          font-weight: bold;
+        }
+
+        .success-input {
+          border: 2px solid #4CAF50 !important;
+          background-color: #e6ffe6 !important;
+        }
+
+        .global-error {
+          background-color: #f44336;
+          color: white;
+          padding: 10px 15px;
+          border-radius: 4px;
+          margin-bottom: 15px;
+          display: none;
+          font-weight: bold;
+        }
+
+        .btn-primary:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
     </style>
   </head>
   <body>
@@ -116,10 +149,12 @@
         <h4>Add a Reply</h4>
       </div>
       <div class="panel-body">
+        <div class="global-error" id="globalError"></div>
+
         <?php if($user_data == null){ ?>
           <form action="login.php" method="get">
         <?php } else { ?>
-          <form method="post">
+          <form method="post" id="replyForm">
         <?php } ?>
           <div class="form-group">
             <?php if($user_data == null){ ?>
@@ -129,12 +164,14 @@
             <?php } ?>
           </div>
 
+          <span class="error-message" id="replyError"></span>
+
           <span id="charCount">0/1000</span><br><br>
 
           <?php if($user_data == null){ ?>
             <input type="submit" class="btn btn-primary" value="Click Here To Login" >
           <?php } else { ?>
-            <input type="submit" class="btn btn-primary" value="Post Reply">
+            <input type="submit" class="btn btn-primary" id="submitBtn" value="Post Reply">
           <?php } ?>
         </form>
       </div>
@@ -144,21 +181,165 @@
 
 
   <script>
+  <?php if($user_data != null){ ?>
+    // Get form elements
     const textArea = document.getElementById("reply");
     const charCounter = document.getElementById("charCount");
+    const submitBtn = document.getElementById("submitBtn");
+    const replyForm = document.getElementById("replyForm");
+    const replyError = document.getElementById("replyError");
+    const globalError = document.getElementById("globalError");
     const maxChars = 1000;
+
+    // Function to remove error styling
+    function removeError() {
+      textArea.classList.remove('error-input');
+      textArea.classList.remove('success-input');
+      replyError.textContent = '';
+      globalError.style.display = 'none';
+    }
+
+    // Function to add error styling
+    function addError(message) {
+      textArea.classList.add('error-input');
+      textArea.classList.remove('success-input');
+      replyError.textContent = message;
+    }
+
+    // Function to add success styling
+    function addSuccess() {
+      textArea.classList.remove('error-input');
+      textArea.classList.add('success-input');
+      replyError.textContent = '';
+    }
+
+    // Validate the reply
+    function validateReply() {
+      const replyText = textArea.value.trim();
+
+      // Check if reply is empty or only whitespace
+      if (replyText === '') {
+        addError('Reply cannot be empty. Please enter a message.');
+        return false;
+      }
+
+      // Check minimum length (optional - adjust as needed)
+      if (replyText.length < 3) {
+        addError('Reply is too short. Please enter at least 3 characters.');
+        return false;
+      }
+
+      // Check if only whitespace characters (redundant but thorough)
+      if (replyText.length > 0 && replyText.replace(/\s/g, '').length === 0) {
+        addError('Reply cannot contain only spaces. Please enter a meaningful message.');
+        return false;
+      }
+
+      // All validation passed
+      addSuccess();
+      globalError.style.display = 'none';
+      return true;
+    }
+
+    // Real-time validation as user types
     textArea.addEventListener("input", () => {
       const enteredChars = textArea.value.length;
       const remainingChars = maxChars - enteredChars;
       charCounter.textContent = `${enteredChars}/${maxChars}`;
-      // Change color if limit is exceeded
+
+      // Change color if limit is approached
       if (remainingChars < 10) {
-          charCounter.style.color = "red";
+        charCounter.style.color = "red";
       } else if (remainingChars <= 200) {
-          charCounter.style.color = "orange";
+        charCounter.style.color = "orange";
       } else {
-          charCounter.style.color = "black";
+        charCounter.style.color = "black";
+      }
+
+      // Real-time validation
+      const replyText = textArea.value;
+
+      if (replyText.trim() === '') {
+        removeError();
+      } else if (replyText.trim().length >= 3 && replyText.trim().replace(/\s/g, '').length > 0) {
+        addSuccess();
+      } else if (replyText.trim().length < 3 && replyText.trim().length > 0) {
+        addError('Reply is too short. Please enter at least 3 characters.');
+      }
+
+      // Clear global error when user starts typing
+      if (globalError.style.display === 'block') {
+        globalError.style.display = 'none';
       }
     });
+
+    // Handle form submission
+    if (replyForm) {
+      replyForm.addEventListener('submit', function(event) {
+        // Validate before submitting
+        if (!validateReply()) {
+          event.preventDefault(); // Stop form submission
+
+          // Scroll to the error message
+          document.querySelector('.panel-default').scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+
+          // Optional: Show a global error as well
+          globalError.textContent = 'Please fix the errors above before submitting.';
+      globalError.style.display = 'block';
+
+      // Disable submit button briefly to prevent multiple clicks
+      submitBtn.disabled = true;
+      setTimeout(() => {
+        submitBtn.disabled = false;
+      }, 2000);
+        }
+      });
+    }
+
+    // Add character limit warning before submit
+    function checkCharacterLimit() {
+      const replyText = textArea.value;
+      if (replyText.length > maxChars) {
+        addError(`Reply exceeds ${maxChars} characters. Please shorten your message.`);
+        return false;
+      }
+      return true;
+    }
+
+    // Prevent form submission if character limit is exceeded
+    if (replyForm) {
+      replyForm.addEventListener('submit', function(event) {
+        if (!checkCharacterLimit()) {
+          event.preventDefault();
+        }
+      });
+    }
+
+    // Uncomment to enable auto-resizing
+    // textArea.addEventListener('input', autoResize);
+
+    <?php } else { ?>
+      // For logged-out users, just maintain the character counter
+      const textArea = document.getElementById("reply");
+      if(textArea) {
+        const charCounter = document.getElementById("charCount");
+        const maxChars = 1000;
+        textArea.addEventListener("input", () => {
+          const enteredChars = textArea.value.length;
+          const remainingChars = maxChars - enteredChars;
+          charCounter.textContent = `${enteredChars}/${maxChars}`;
+          if (remainingChars < 10) {
+            charCounter.style.color = "red";
+          } else if (remainingChars <= 200) {
+            charCounter.style.color = "orange";
+          } else {
+            charCounter.style.color = "black";
+          }
+        });
+      }
+      <?php } ?>
 </script>
 </body>
