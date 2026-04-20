@@ -1,3 +1,47 @@
+<?php
+	session_start();
+
+	include 'connection.php';
+	include 'functions.php';
+
+	$user_data = check_login($con);
+
+	if(!$user_data) {
+		forbidden();
+	}
+
+	//SELECT u.userID, u.username, COALESCE(unread.unreadCount, 0) AS unreadCount FROM user u JOIN (SELECT recipID AS uid FROM messages WHERE authorID = $senderID UNION SELECT authorID AS uid FROM messages WHERE recipID = $senderID LEFT JOIN (SELECT authorID AS uid, COUNT(*) AS unreadCount FROM messages WHERE recipID = $senderID AND isRead = 0 GROUP BY authorID) unread ON unread.uid = u.userID;
+
+	//SELECT body, authorID, recipID, date, CASE  WHEN authorID = $senderID THEN 1 ELSE 0 END AS isSentByMe FROM messages WHERE (authorID = $senderID AND recipID = $recipientID) OR (authorID = $senderID AND recipID = $recipientID) ORDER BY date DESC;
+
+	//UPDATE messages SET isRead = 1 WHERE recipID = $recipientID AND authorID = $senderID;
+
+	function get_contacts() {
+		global $con, $user_data;
+
+		$senderID = $user_data['userID'];
+
+		$query = "SELECT u.userID, u.username, COALESCE(unread.unreadCount, 0) AS unreadCount FROM user u JOIN (SELECT recipID AS uid FROM messages WHERE authorID = $senderID UNION SELECT authorID AS uid FROM messages WHERE recipID = $senderID LEFT JOIN (SELECT authorID AS uid, COUNT(*) AS unreadCount FROM messages WHERE recipID = $senderID AND isRead = 0 GROUP BY authorID) unread ON unread.uid = u.userID;";
+
+		$result = mysqli_query($con, $query);
+
+		if ($result) {
+			while ($row = mysqli_fetch_assoc($result)) {
+				echo '<a href="#" class="list-group-item list-group-item-action border-0">';
+				if ($row['unreadCount'] > 0) {
+					echo '<div class="badge bg-success float-right">' . $row['unreadCount'] . '</div>';
+				}
+				echo '<div class="d-flex align-items-start">';
+				echo '<img src="https://bootdey.com/img/Content/avatar/avatar2.png" class="rounded-circle mr-1" alt="' . htmlspecialchars($row['username']) . '" width="40" height="40">';
+				echo '<div class="flex-grow-1 ml-3">' . htmlspecialchars($row['username']) . '</div>';
+				echo '</div>';
+				echo '</a>';
+			}
+		} else {
+			alert("Error fetching contacts: " . mysqli_error($con));
+		}
+	}
+?>
 <!DOCTYPE html>
 <html>
   <head>
@@ -79,73 +123,7 @@
 							    </div>
 						    </div>
 					    </div>
-
-					    <a href="#" class="list-group-item list-group-item-action border-0">
-						    <div class="badge bg-success float-right">5</div>
-						    <div class="d-flex align-items-start">
-							    <img src="https://bootdey.com/img/Content/avatar/avatar5.png" class="rounded-circle mr-1" alt="Vanessa Tucker" width="40" height="40">
-							    <div class="flex-grow-1 ml-3">
-								    Vanessa Tucker
-							    </div>
-						    </div>
-					    </a>
-					    <a href="#" class="list-group-item list-group-item-action border-0">
-						    <div class="badge bg-success float-right">2</div>
-						    <div class="d-flex align-items-start">
-							    <img src="https://bootdey.com/img/Content/avatar/avatar2.png" class="rounded-circle mr-1" alt="William Harris" width="40" height="40">
-							    <div class="flex-grow-1 ml-3">
-								    William Harris
-							    </div>
-						    </div>
-					    </a>
-					    <a href="#" class="list-group-item list-group-item-action border-0">
-						    <div class="d-flex align-items-start">
-							    <img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40">
-							    <div class="flex-grow-1 ml-3">
-								    Sharon Lessman
-							    </div>
-						    </div>
-					    </a>
-					    <a href="#" class="list-group-item list-group-item-action border-0">
-						    <div class="d-flex align-items-start">
-							    <img src="https://bootdey.com/img/Content/avatar/avatar4.png" class="rounded-circle mr-1" alt="Christina Mason" width="40" height="40">
-							    <div class="flex-grow-1 ml-3">
-								    Christina Mason
-							    </div>
-						    </div>
-					    </a>
-					    <a href="#" class="list-group-item list-group-item-action border-0">
-						    <div class="d-flex align-items-start">
-							    <img src="https://bootdey.com/img/Content/avatar/avatar5.png" class="rounded-circle mr-1" alt="Fiona Green" width="40" height="40">
-							    <div class="flex-grow-1 ml-3">
-								    Fiona Green
-							    </div>
-						    </div>
-					    </a>
-					    <a href="#" class="list-group-item list-group-item-action border-0">
-						    <div class="d-flex align-items-start">
-							    <img src="https://bootdey.com/img/Content/avatar/avatar2.png" class="rounded-circle mr-1" alt="Doris Wilder" width="40" height="40">
-							    <div class="flex-grow-1 ml-3">
-								    Doris Wilder
-							    </div>
-						    </div>
-					    </a>
-					    <a href="#" class="list-group-item list-group-item-action border-0">
-						    <div class="d-flex align-items-start">
-							    <img src="https://bootdey.com/img/Content/avatar/avatar4.png" class="rounded-circle mr-1" alt="Haley Kennedy" width="40" height="40">
-							    <div class="flex-grow-1 ml-3">
-								    Haley Kennedy
-							    </div>
-						    </div>
-					    </a>
-					    <a href="#" class="list-group-item list-group-item-action border-0">
-						    <div class="d-flex align-items-start">
-							    <img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="rounded-circle mr-1" alt="Jennifer Chang" width="40" height="40">
-							    <div class="flex-grow-1 ml-3">
-								    Jennifer Chang
-							    </div>
-						    </div>
-					    </a>
+						<?php get_contacts(); ?>
 
 					    <hr class="d-block d-lg-none mt-1 mb-0">
 				    </div>
