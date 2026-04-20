@@ -190,7 +190,21 @@
 									    mysqli_query($con, $updateQuery);
 
 									    // Fetch messages
-									    $query = "SELECT body, authorID, recipID, date, CASE  WHEN authorID = $senderID THEN 1 ELSE 0 END AS isSentByMe FROM messages WHERE (authorID = $senderID AND recipID = $recipientID) OR (authorID = $senderID AND recipID = $recipientID) ORDER BY date DESC";
+									    $query =   "SELECT 
+														body,
+														authorID,
+														recipID,
+														date,
+														CASE  
+															WHEN authorID = $senderID THEN 1 
+															ELSE 0 
+														END AS isSentByMe
+													FROM messages
+													WHERE 
+														(authorID = $senderID AND recipID = $recipientID)
+														OR
+														(authorID = $recipientID AND recipID = $senderID)
+													ORDER BY date DESC;";
 									    $result = mysqli_query($con, $query);
 
 									    if ($result) {
