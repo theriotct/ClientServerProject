@@ -41,17 +41,18 @@ if($_SERVER['REQUEST_METHOD'] == "POST")
                     $query = "UPDATE `user` SET `lastLogin` = CURRENT_TIMESTAMP WHERE `userID` = ".$user_data['userID'];
                     mysqli_query($con, $query);
 
-                    if($user_data['isAdmin'] == 1 || $user_data['isAdmin'] == 0){
+                    if($user_data['isAdmin'] !== NULL){
+
                         if($user_data['auth_key'] == 0){
                             header("Location: admin/authSetUp.php");
                             exit;
-                        }else{
+                        }
+                        else{
                             header("Location: admin/2fa.php");
                             exit;
                         }
+
                     }
-                    header("Location: user/dashboard.php");
-                    exit;
                 }
             }
         }
