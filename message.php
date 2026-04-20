@@ -195,7 +195,7 @@
 					    </div>
 
 					    <div class="position-relative">
-						    <div class="chat-messages p-4">
+						    <div class="chat-messages p-4" id="chatBox">
 
 							    <?php
 								    // Fetch messages between the logged-in user and the selected contact
@@ -286,4 +286,8 @@
 	    </div>
     </main>
   </body>
+	<script>
+		const chatBox = document.getElementById("chatBox");
+		chatBox.scrollTop = chatBox.scrollHeight;
+	</script>
 </html>
