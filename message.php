@@ -227,7 +227,7 @@
 														(authorID = $senderID AND recipID = $recipientID)
 														OR
 														(authorID = $recipientID AND recipID = $senderID)
-													ORDER BY date DESC;";
+													ORDER BY date ASC;";
 									    $result = mysqli_query($con, $query);
 
 									    if ($result) {
@@ -273,13 +273,11 @@
 					    </div>
 
 					    <div class="flex-grow-0 py-3 px-4 border-top">
-						    <div class="input-group">
-								<form action="message.php" method="POST">
-								    <input type="hidden" name="recipientID" value="<?php echo $recipientID; ?>">
-								    <input type="text" class="form-control" name="body" placeholder="Type your message">
-								    <input type="submit" class="btn btn-primary" value="Send">
-								</form>
-						    </div>
+							<form action="message.php" method="POST" class="input-group">
+								<input type="hidden" name="recipientID" value="<?php echo $recipientID; ?>">
+								<input type="text" class="form-control" name="body" placeholder="Type your message">
+								<input type="submit" class="btn btn-primary" value="Send">
+							</form>
 					    </div>
 
 				    </div>
