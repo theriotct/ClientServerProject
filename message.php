@@ -10,6 +10,21 @@
 		forbidden();
 	}
 
+	if (isset($_GET['userID'])) {
+		$recipientID = intval($_GET['userID']);
+
+		$contact_query = "SELECT * FROM user WHERE userID = $recipientID";
+		$contact_result = mysqli_query($con, $contact_query);
+		if ($contact_result && mysqli_num_rows($contact_result) > 0) {
+			$contact_data = mysqli_fetch_assoc($contact_result);
+		} else {
+			alert("Contact not found.");
+			exit;
+		}
+	} else {
+		$recipientID = null;
+	}
+
 	//SELECT u.userID, u.username, COALESCE(unread.unreadCount, 0) AS unreadCount FROM user u JOIN (SELECT recipID AS uid FROM messages WHERE authorID = $senderID UNION SELECT authorID AS uid FROM messages WHERE recipID = $senderID LEFT JOIN (SELECT authorID AS uid, COUNT(*) AS unreadCount FROM messages WHERE recipID = $senderID AND isRead = 0 GROUP BY authorID) unread ON unread.uid = u.userID;
 
 	//SELECT body, authorID, recipID, date, CASE  WHEN authorID = $senderID THEN 1 ELSE 0 END AS isSentByMe FROM messages WHERE (authorID = $senderID AND recipID = $recipientID) OR (authorID = $senderID AND recipID = $recipientID) ORDER BY date DESC;
@@ -133,7 +148,7 @@
     </style>
   </head>
   <body>
-    <?php //set_header(); ?>
+    <?php set_header(); ?>
     <main class="content">
       <div class="container p-0">
 
@@ -158,10 +173,10 @@
 					    <div class="py-2 px-4 border-bottom d-none d-lg-block">
 						    <div class="d-flex align-items-center py-1">
 							    <div class="position-relative">
-								    <img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40">
+								    <img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="rounded-circle mr-1" alt="<?php echo htmlspecialchars($contact_data['username']); ?>" width="40" height="40">
 							    </div>
 							    <div class="flex-grow-1 pl-3">
-								    <strong>Sharon Lessman</strong>
+								    <strong><?php echo htmlspecialchars($contact_data['username']); ?></strong>
 							    </div>
 						    </div>
 					    </div>
@@ -174,18 +189,8 @@
 								    // Mark messages as read if they were sent by the contact and not yet read
 								    // Display messages in the chat area
 
-									if (isset($_GET['userID'])) {
-									    $recipientID = intval($_GET['userID']);
+									if($recipientID) {
 									    $senderID = $user_data['userID'];
-
-										$contact_query = "SELECT * FROM user WHERE userID = $recipientID";
-										$contact_result = mysqli_query($con, $contact_query);
-										if ($contact_result && mysqli_num_rows($contact_result) > 0) {
-										    $contact_data = mysqli_fetch_assoc($contact_result);
-									    } else {
-										    alert("Contact not found.");
-										    exit;
-									    }
 									    // Mark messages as read
 									    $updateQuery = "UPDATE messages
 															SET isRead = 1
