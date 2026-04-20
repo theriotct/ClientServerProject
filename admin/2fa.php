@@ -18,7 +18,7 @@
 
     if($_SERVER['REQUEST_METHOD'] == "POST")
     {
-        $otp = $_POST['code'];
+        $otp = $_POST['code'].trim();
         $tolerance = 1;
         
         $checkResult = $authenticator->verifyCode($secret, $otp, $tolerance);    
@@ -29,7 +29,7 @@
             header('Location: dashboard.php');
             exit;
         } else {
-            echo "<script>alert('Invalid OTP. Please try again.');</script>";
+            echo "<script>let element = document.getElementByName('code'); element.style.border = '1px solid red';</script>";
         }
     }
 ?>
@@ -44,7 +44,7 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            background: linear-gradient(135deg, #89afbb, #ADD8E6);
             height: 100vh;
             display: flex;
             justify-content: center;
@@ -72,7 +72,7 @@
         }
 
         input[type="password"] {
-            width: 100%;
+            width: 90%;
             padding: 12px;
             margin-bottom: 15px;
             border: 1px solid #ccc;
