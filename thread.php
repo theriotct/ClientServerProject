@@ -61,13 +61,14 @@
             }
         }
         if(isset($_POST['like'])){
-          $postID = $_POST['postID'];
+          $postLikedID = $_POST['postID'];
           $userID = $user_data['userID'];
-          $query = "SELECT * FROM `like` WHERE userID = '$userID' AND postID = '$postID';";
+          $query = "SELECT * FROM `like` WHERE userID = '$userID' AND postID = '$postLikedID';";
           $result = mysqli_query($con, $query);
           if(!$result){
-            $query = "INSERT INTO `like` (userID, refPostID, `like/dislike`) VALUES ($userID, $postID, 1);";
-            
+            $query = "INSERT INTO `like` (userID, refPostID, `like/dislike`) VALUES ($userID, $postLikedID, 1);";
+            mysqli_query($con, $query);
+            header('Location: thread.php?postID='.$postID);
           }
         }
         if(isset($_POST['dislike'])){
