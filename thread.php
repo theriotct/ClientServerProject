@@ -166,6 +166,7 @@
                 </div>
                 <div class="panel-footer">
                   <form action="" method="POST">
+                    <input type="text" value="'.$posts[$i]['postID'].'" name="postID" hidden>
                     <input class="btn btn-sm btn-default" type="submit" name="like" value="Like: '.$posts[$i]['totalLikes'].'">
                     <input class="btn btn-sm btn-default" type="submit" name="dislike" value="Dislike: '.$posts[$i]['totalDislikes'].'">
                     <input class="btn btn-sm btn-default" type="submit" name="dislike" value="Report">
