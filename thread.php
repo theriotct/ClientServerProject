@@ -65,20 +65,74 @@
       }
       if(isset($_POST['like']))
       {
-        $postLikedID = $_POST['postID'];
-        $userID = $user_data['userID'];
-        $query = "SELECT * FROM `like` WHERE userID = '$userID' AND refPostID = '$postLikedID';";
-        $result = mysqli_query($con, $query);
-        if(mysqli_num_rows($result) == 0)
-        {
-          $query = "INSERT INTO `like` (userID, refPostID, `like/dislike`) VALUES ($userID, $postLikedID, 1);";
+          $postLikedID = (int)$_POST['postID'];
+          $userID = (int)$user_data['userID'];
+
+          // Check existing reaction
+          $checkQuery = "SELECT `like/dislike` FROM `like`
+                        WHERE userID = $userID AND refPostID = $postLikedID";
+          $result = mysqli_query($con, $checkQuery);
+
+          if(mysqli_num_rows($result) > 0)
+          {
+              $row = mysqli_fetch_assoc($result);
+
+              if($row['like/dislike'] == 1)
+              {
+                  $query = "DELETE FROM `like`
+                            WHERE userID = $userID AND refPostID = $postLikedID";
+              }
+              else
+              {
+                  $query = "UPDATE `like`
+                            SET `like/dislike` = 1
+                            WHERE userID = $userID AND refPostID = $postLikedID";
+              }
+          }
+          else
+          {
+              $query = "INSERT INTO `like` (userID, refPostID, `like/dislike`)
+                        VALUES ($userID, $postLikedID, 1)";
+          }
+
           mysqli_query($con, $query);
           header('Location: thread.php?postID='.$postID);
-        }
+          exit;
       }
       if(isset($_POST['dislike']))
       {
+          $postLikedID = (int)$_POST['postID'];
+          $userID = (int)$user_data['userID'];
 
+          $checkQuery = "SELECT `like/dislike` FROM `like`
+                        WHERE userID = $userID AND refPostID = $postLikedID";
+          $result = mysqli_query($con, $checkQuery);
+
+          if(mysqli_num_rows($result) > 0)
+          {
+              $row = mysqli_fetch_assoc($result);
+
+              if($row['like/dislike'] == 0)
+              {
+                  $query = "DELETE FROM `like`
+                            WHERE userID = $userID AND refPostID = $postLikedID";
+              }
+              else
+              {
+                  $query = "UPDATE `like`
+                            SET `like/dislike` = 0
+                            WHERE userID = $userID AND refPostID = $postLikedID";
+              }
+          }
+          else
+          {
+              $query = "INSERT INTO `like` (userID, refPostID, `like/dislike`)
+                        VALUES ($userID, $postLikedID, 0)";
+          }
+
+          mysqli_query($con, $query);
+          header('Location: thread.php?postID='.$postID);
+          exit;
       }
     }
   }
