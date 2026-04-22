@@ -5,7 +5,30 @@
 
     if($_GET['postID']){
         $postID = (int)$_GET['postID'];
-        $query = "WITH RECURSIVE thread AS ( SELECT * FROM posts WHERE postID = $postID UNION ALL SELECT p.* FROM posts p INNER JOIN thread t ON p.parentID = t.postID ) SELECT t.*, u.username FROM thread t JOIN `user` u ON u.userID = t.authorID ORDER BY date ASC;";
+        $query = "WITH RECURSIVE thread AS (
+                      SELECT * FROM posts WHERE postID = $postID
+                      UNION ALL
+                      SELECT p.* 
+                      FROM posts p
+                      INNER JOIN thread t ON p.parentID = t.postID
+                  )
+                  SELECT 
+                      t.*, 
+                      u.username,
+                      COALESCE(r.likes, 0) AS totalLikes,
+                      COALESCE(r.dislikes, 0) AS totalDislikes
+                  FROM thread t
+                  JOIN `user` u ON u.userID = t.authorID
+                  LEFT JOIN (
+                      SELECT 
+                          refPostID,
+                          SUM(CASE WHEN like_dislike = 1 THEN 1 ELSE 0 END) AS likes,
+                          SUM(CASE WHEN like_dislike = 0 THEN 1 ELSE 0 END) AS dislikes
+                      FROM PostReactions
+                      GROUP BY refPostID
+                  ) r ON r.refPostID = t.postID
+                  ORDER BY t.date ASC;
+                  ";
         $result = mysqli_query($con, $query);
         $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
         if(count($posts) == 0 && $posts[0]['title'] === NULL){
@@ -112,8 +135,8 @@
         </p>
       </div>
       <div class="panel-footer">
-        <a href="#" class="btn btn-sm btn-default">Like: ###</a>
-        <a href="#" class="btn btn-sm btn-default">Dislike: ###</a>
+        <a href="#" class="btn btn-sm btn-default">Like: <?php echo $posts[0]['totalLikes']?></a>
+        <a href="#" class="btn btn-sm btn-default">Dislike: <?php echo $posts[0]['totalDislikes']?></a>
         <a href="#" class="btn btn-sm btn-default">Report</a>
         <a href="#" class="btn btn-sm btn-default btn-danger right">Delete</a>
         <a href="#" class="btn btn-sm btn-default right">Edit</a>
@@ -133,8 +156,8 @@
                   '.$posts[$i]['body'].'
                 </div>
                 <div class="panel-footer">
-                  <a href="#" class="btn btn-sm btn-default">Like: ###</a>
-                  <a href="#" class="btn btn-sm btn-default">Dislike: ###</a>
+                  <a href="#" class="btn btn-sm btn-default">Like: '.$posts[$i]['totalLikes'].'</a>
+                  <a href="#" class="btn btn-sm btn-default">Dislike: '.$posts[$i]['totalDislikes'].'</a>
                   <a href="#" class="btn btn-sm btn-default">Report</a>
                   <a href="#" class="btn btn-sm btn-default btn-danger right" >Delete</a>
                   <a href="#" class="btn btn-sm btn-default right">Edit</a>
