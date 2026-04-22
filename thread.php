@@ -63,7 +63,7 @@
         if(isset($_POST['like'])){
           $postLikedID = $_POST['postID'];
           $userID = $user_data['userID'];
-          $query = "SELECT * FROM `like` WHERE userID = '$userID' AND postID = '$postLikedID';";
+          $query = "SELECT * FROM `like` WHERE userID = '$userID' AND refPostID = '$postLikedID';";
           $result = mysqli_query($con, $query);
           if(!$result){
             $query = "INSERT INTO `like` (userID, refPostID, `like/dislike`) VALUES ($userID, $postLikedID, 1);";
