@@ -31,7 +31,7 @@
             <h2>Admin Dashboard</h2>
 
             <ul class="list-group mt-3">
-                <li class="list-group-item" style="background-color: #00b7eb;">Manage Users</li>
+                <li class="list-group-item" style="background-color: #00b7eb;"><a style="color: black;" href="manageUsers.php" class="text-decoration-none">Manage Users</a></li>
                 <li class="list-group-item" style="background-color: #00b7eb;">Edit or Delete Any Item</li>
                 <li class="list-group-item" style="background-color: #00b7eb;">View Reports</li>
 

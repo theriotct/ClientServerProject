@@ -1,3 +1,16 @@
+<?php
+    session_start();
+
+    include '../connection.php';
+    include '../functions.php';
+
+    $user_data = check_login($con);
+
+    if(!$user_data || is_null($user_data['isAdmin']) || $_SESSION['2fa_verified'] !== true) {
+        forbidden();
+    }
+?>
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -8,7 +21,8 @@
 	  <link rel='stylesheet' href='https://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'>
 	  <script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'></script>
     <style>
-        body{margin-top:20px;}
+        body{margin-top:20px;
+			 background-color: #b22222;}
 
 
 /* USER LIST TABLE */
@@ -186,6 +200,7 @@
     </style>
   </head>
   <body>
+	<?php set_header(); ?>
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 <div class="container">
 <div class="row">
