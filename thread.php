@@ -1,80 +1,87 @@
 <?php
-    session_start();
-    include 'connection.php';
-    include 'functions.php';
+  session_start();
+  include 'connection.php';
+  include 'functions.php';
 
-    if($_GET['postID']){
-        $postID = (int)$_GET['postID'];
-        $query = "WITH RECURSIVE thread AS (
-                      SELECT * FROM posts WHERE postID = $postID
-                      UNION ALL
-                      SELECT p.* 
-                      FROM posts p
-                      INNER JOIN thread t ON p.parentID = t.postID
-                  )
-                  SELECT 
-                      t.*, 
-                      u.username,
-                      COALESCE(r.likes, 0) AS totalLikes,
-                      COALESCE(r.dislikes, 0) AS totalDislikes
-                  FROM thread t
-                  JOIN `user` u ON u.userID = t.authorID
-                  LEFT JOIN (
-                      SELECT 
-                          refPostID,
-                          SUM(CASE WHEN `like/dislike` = 1 THEN 1 ELSE 0 END) AS likes,
-                          SUM(CASE WHEN `like/dislike` = 0 THEN 1 ELSE 0 END) AS dislikes
-                      FROM `like`
-                      GROUP BY refPostID
-                  ) r ON r.refPostID = t.postID
-                  ORDER BY t.date ASC;
-                  ";
-        $result = mysqli_query($con, $query);
-        $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        if(count($posts) == 0 && $posts[0]['title'] === NULL){
-            header("HTTP/1.1 404 Not Found");
-            include('404.html');
-            die;
-        }
-    }else{
-        header("HTTP/1.1 404 Not Found");
-        include('404.html');
-        die;
-    }
+  if($_GET['postID']){
+      $postID = (int)$_GET['postID'];
+      $query = "WITH RECURSIVE thread AS (
+                    SELECT * FROM posts WHERE postID = $postID
+                    UNION ALL
+                    SELECT p.* 
+                    FROM posts p
+                    INNER JOIN thread t ON p.parentID = t.postID
+                )
+                SELECT 
+                    t.*, 
+                    u.username,
+                    COALESCE(r.likes, 0) AS totalLikes,
+                    COALESCE(r.dislikes, 0) AS totalDislikes
+                FROM thread t
+                JOIN `user` u ON u.userID = t.authorID
+                LEFT JOIN (
+                    SELECT 
+                        refPostID,
+                        SUM(CASE WHEN `like/dislike` = 1 THEN 1 ELSE 0 END) AS likes,
+                        SUM(CASE WHEN `like/dislike` = 0 THEN 1 ELSE 0 END) AS dislikes
+                    FROM `like`
+                    GROUP BY refPostID
+                ) r ON r.refPostID = t.postID
+                ORDER BY t.date ASC;
+                ";
+      $result = mysqli_query($con, $query);
+      $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
+      if(count($posts) == 0 && $posts[0]['title'] === NULL){
+          header("HTTP/1.1 404 Not Found");
+          include('404.html');
+          die;
+      }
+  }else{
+      header("HTTP/1.1 404 Not Found");
+      include('404.html');
+      die;
+  }
 
-    $user_data = check_login($con);
+  $user_data = check_login($con);
 
-    if($_SERVER['REQUEST_METHOD'] == "POST")
+  if($_SERVER['REQUEST_METHOD'] == "POST")
+  {
+    if(isset($_SESSION['userID']))
     {
-        if(isset($_POST['reply'])){
-            $reply = $_POST['reply'];
-            $userID = $user_data['userID'];
-            $i = count($posts)-1;
-            $parentID = $posts[$i]['postID'];
-            $query = "INSERT INTO `posts` (`parentID`, `authorID`, `title`, `body`, `date`) VALUES ('$parentID ', '$userID', NULL, '$reply', CURRENT_TIMESTAMP);";
-            $result = mysqli_query($con, $query);
-            if($result){
-                header('Location: thread.php?postID='.$postID);
-                exit;
-            }else{
-                alert('Error posting reply');
-            }
-        }
-        if(isset($_POST['like'])){
-          $postLikedID = $_POST['postID'];
-          $userID = $user_data['userID'];
-          $query = "SELECT * FROM `like` WHERE userID = '$userID' AND refPostID = '$postLikedID';";
-          $result = mysqli_query($con, $query);
-          if(!$result){
-            $query = "INSERT INTO `like` (userID, refPostID, `like/dislike`) VALUES ($userID, $postLikedID, 1);";
-            mysqli_query($con, $query);
+      if(isset($_POST['reply']))
+      {
+        $reply = $_POST['reply'];
+        $userID = $user_data['userID'];
+        $i = count($posts)-1;
+        $parentID = $posts[$i]['postID'];
+        $query = "INSERT INTO `posts` (`parentID`, `authorID`, `title`, `body`, `date`) VALUES ('$parentID ', '$userID', NULL, '$reply', CURRENT_TIMESTAMP);";
+        $result = mysqli_query($con, $query);
+        if($result){
             header('Location: thread.php?postID='.$postID);
-          }
+            exit;
+        }else{
+            alert('Error posting reply');
         }
-        if(isset($_POST['dislike'])){
+      }
+      if(isset($_POST['like']))
+      {
+        $postLikedID = $_POST['postID'];
+        $userID = $user_data['userID'];
+        $query = "SELECT * FROM `like` WHERE userID = '$userID' AND refPostID = '$postLikedID';";
+        $result = mysqli_query($con, $query);
+        if(!$result)
+        {
+          $query = "INSERT INTO `like` (userID, refPostID, `like/dislike`) VALUES ($userID, $postLikedID, 1);";
+          mysqli_query($con, $query);
+          header('Location: thread.php?postID='.$postID);
+        }
+      }
+      if(isset($_POST['dislike']))
+      {
 
-        }
+      }
     }
+  }
 ?>
 <!DOCTYPE html>
 <html>
