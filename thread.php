@@ -156,11 +156,13 @@
                   '.$posts[$i]['body'].'
                 </div>
                 <div class="panel-footer">
-                  <a href="#" class="btn btn-sm btn-default">Like: '.$posts[$i]['totalLikes'].'</a>
-                  <a href="#" class="btn btn-sm btn-default">Dislike: '.$posts[$i]['totalDislikes'].'</a>
-                  <a href="#" class="btn btn-sm btn-default">Report</a>
-                  <a href="#" class="btn btn-sm btn-default btn-danger right" >Delete</a>
-                  <a href="#" class="btn btn-sm btn-default right">Edit</a>
+                  <form action="" method="POST">
+                    <input class="btn btn-sm btn-default" type="submit" name="like" value="Like: '.$posts[$i]['totalLikes'].'">
+                    <input class="btn btn-sm btn-default" type="submit" name="dislike" value="Dislike: '.$posts[$i]['totalDislikes'].'">
+                    <input class="btn btn-sm btn-default" type="submit" name="dislike" value="Report">
+                    <input class="btn btn-sm btn-default btn-danger right" type="submit" name="dislike" value="Delete">
+                    <input class="btn btn-sm btn-default right" type="submit" name="dislike" value="Edit">
+                  </form>
                 </div>
               </div>';
       }
