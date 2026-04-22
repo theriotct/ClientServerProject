@@ -143,8 +143,8 @@
       <div class="panel-footer">
         <form action="" method="POST">
           <input type="text" value="<?php echo $posts[0]['postID']?>" name="postID" hidden>
-          <input class="btn btn-sm btn-default" type="submit" name="like" value="Like: <?php echo $posts[$i]['totalLikes']?>">
-          <input class="btn btn-sm btn-default" type="submit" name="dislike" value="Dislike: <?php echo $posts[$i]['totalDislikes']?>">
+          <input class="btn btn-sm btn-default" type="submit" name="like" value="Like: <?php echo $posts[0]['totalLikes']?>">
+          <input class="btn btn-sm btn-default" type="submit" name="dislike" value="Dislike: <?php echo $posts[0]['totalDislikes']?>">
           <input class="btn btn-sm btn-default" type="submit" name="dislike" value="Report">
           <input class="btn btn-sm btn-default btn-danger right" type="submit" name="dislike" value="Delete">
           <input class="btn btn-sm btn-default right" type="submit" name="dislike" value="Edit">
