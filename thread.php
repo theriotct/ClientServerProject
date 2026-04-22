@@ -22,9 +22,9 @@
                   LEFT JOIN (
                       SELECT 
                           refPostID,
-                          SUM(CASE WHEN like_dislike = 1 THEN 1 ELSE 0 END) AS likes,
-                          SUM(CASE WHEN like_dislike = 0 THEN 1 ELSE 0 END) AS dislikes
-                      FROM PostReactions
+                          SUM(CASE WHEN `like/dislike` = 1 THEN 1 ELSE 0 END) AS likes,
+                          SUM(CASE WHEN `like/dislike` = 0 THEN 1 ELSE 0 END) AS dislikes
+                      FROM `like`
                       GROUP BY refPostID
                   ) r ON r.refPostID = t.postID
                   ORDER BY t.date ASC;
