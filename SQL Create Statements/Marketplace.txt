@@ -1,0 +1,19 @@
+CREATE TABLE `client_server_db`.`marketplace_items` (
+  `itemID` INT NOT NULL AUTO_INCREMENT,
+  `sellerID` INT NOT NULL,
+  `title` VARCHAR(100) NOT NULL,
+  `description` TEXT NOT NULL,
+  `price` DECIMAL(10,2) NOT NULL,
+  `category` VARCHAR(50) NOT NULL DEFAULT 'General',
+  `itemCondition` VARCHAR(30) NOT NULL DEFAULT 'Used',
+  `imageURL` VARCHAR(500) NULL,
+  `isSold` TINYINT(1) NOT NULL DEFAULT 0,
+  `createdOn` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedOn` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`itemID`),
+  INDEX `idx_sellerID` (`sellerID`),
+  CONSTRAINT `fk_marketplace_seller`
+    FOREIGN KEY (`sellerID`)
+    REFERENCES `client_server_db`.`user` (`userID`)
+    ON DELETE CASCADE
+);

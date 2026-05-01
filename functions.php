@@ -76,18 +76,23 @@ function set_header(){
         <a class="navbar-brand fw-bold link-primary" href="/index.php">Awesome Site</a>
 
         <div class="navbar-nav ms-auto">';
+
     if(isset($_SESSION['userID'])){
         echo '<a class="nav-link" href="/index.php">Home</a>';
+        echo '<a class="nav-link" href="/marketplace.php">Marketplace</a>';
+
         if(isset($_SESSION['isAdmin']) && ($_SESSION['isAdmin'] == 1 || $_SESSION['isAdmin'] == 0)){
             echo '<a class="nav-link" href="/admin/dashboard.php">Admin Panel</a>';
         }else{
             echo '<a class="nav-link" href="/user/dashboard.php">User Dashboard</a>';
         }
+
         echo '<a class="nav-link" href="/profile.php">My Profile</a>';
         echo '<a class="nav-link" href="/message.php">Messages</a>';
         echo '<a class="nav-link" href="/logout.php">Logout</a>';
     }else{
         echo '<a class="nav-link" href="/index.php">Home</a>';
+        echo '<a class="nav-link" href="/marketplace.php">Marketplace</a>';
         echo '<a class="nav-link" href="/login.php">Login</a>';
         echo '<a class="nav-link" href="/register.php">Register</a>';
     }
