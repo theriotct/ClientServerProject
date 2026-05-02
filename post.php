@@ -4,6 +4,7 @@
   include("functions.php");
 
   $user_data = check_login($con);
+  $GETpost_data;
   if(!$user_data){
 	header("Location: login.php");
 	die;
@@ -30,7 +31,7 @@
 	$title = $_POST['title'];
 	$body = $_POST['description'];
 
-	if(!$GETpost_data){
+	if(is_null($GETpost_data)){
 		if(!empty($title)){
 		$user_id = $user_data['userID'];
 		$query = "INSERT INTO posts (authorID, title, body) VALUES ('$user_id', '$title', '$body')";
