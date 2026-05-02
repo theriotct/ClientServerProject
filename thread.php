@@ -236,11 +236,14 @@
                 <div class="panel-footer">
                   <form action="" method="POST">
                     <input type="text" value="'.$posts[$i]['postID'].'" name="postID" hidden>
-                    <input class="btn btn-sm btn-default" type="submit" name="like" value="Like: '.$posts[$i]['totalLikes'].'">
-                    <input class="btn btn-sm btn-default" type="submit" name="dislike" value="Dislike: '.$posts[$i]['totalDislikes'].'">
-                    <input class="btn btn-sm btn-default" type="submit" name="dislike" value="Report">
-                    <input class="btn btn-sm btn-default btn-danger right" type="submit" name="dislike" value="Delete">
-                    <input class="btn btn-sm btn-default right" type="submit" name="dislike" value="Edit">
+                    <input class="btn btn-sm btn-default" type="submit" name="like" value="Like: '.$posts[$i]['totalLikes'].'" '.(!user_data ? ' disabled' : '').'>
+                    <input class="btn btn-sm btn-default" type="submit" name="dislike" value="Dislike: '.$posts[$i]['totalDislikes'].'" '.(!user_data ? ' disabled' : '').'>
+                    <input class="btn btn-sm btn-default" type="submit" name="dislike" value="Report" '.(!user_data ? ' disabled' : '').'>';
+                    if($user_data && ($user_data['userID'] == $posts[$i]['authorID'] ) || !isnull($user_data['isAdmin'])){
+                      echo '<input class="btn btn-sm btn-default btn-danger right" type="submit" name="dislike" value="Delete">
+                            <input class="btn btn-sm btn-default right" type="submit" name="dislike" value="Edit">';
+                    }
+                    echo '
                   </form>
                 </div>
               </div>';
