@@ -134,6 +134,12 @@
           header('Location: thread.php?postID='.$postID);
           exit;
       }
+      if(isset($_POST['edit']))
+      {
+          $postID = $_POST['postID'];
+          header('Location: post.php?postID='.$postID);
+          exit;
+      }
     }
   }
 ?>

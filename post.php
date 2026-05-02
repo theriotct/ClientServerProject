@@ -4,21 +4,56 @@
   include("functions.php");
 
   $user_data = check_login($con);
-  
+  if(!$user_data){
+	header("Location: login.php");
+	die;
+  }
+  if($_SERVER['REQUEST_METHOD'] == "GET"){
+	if(isset($_GET['postID'])){
+	  $postID = $_GET['postID'];
+	  $query = "SELECT * FROM posts WHERE postID = '$postID' LIMIT 1";
+	  $result = mysqli_query($con, $query);
+	  if($result && mysqli_num_rows($result) > 0){
+		$GETpost_data = mysqli_fetch_assoc($result);
+	  
+		if(is_null($user_data['isAdmin'])){
+			if(($user_data["userID"] != $GETpost_data['authorID'])){
+			forbidden();
+			}
+		}
+	  }
+	}
+  }
+
+
   if($_SERVER['REQUEST_METHOD'] == "POST"){
 	$title = $_POST['title'];
 	$body = $_POST['description'];
 
-	if(!empty($title)){
-	  $user_id = $user_data['userID'];
-	  $query = "INSERT INTO posts (authorID, title, body) VALUES ('$user_id', '$title', '$body')";
-	  mysqli_query($con, $query);
-	  header("Location: index.php");
-	  die;
+	if(!$GETpost_data){
+		if(!empty($title)){
+		$user_id = $user_data['userID'];
+		$query = "INSERT INTO posts (authorID, title, body) VALUES ('$user_id', '$title', '$body')";
+		mysqli_query($con, $query);
+		header("Location: index.php");
+		die;
+		}else{
+		echo "Please enter a title";
+		}
 	}else{
-	  echo "Please enter a title";
+		if(!empty($title)){
+			$query = "UPDATE posts SET title = '$title', body = '$body' WHERE postID = ".$GETpost_data['postID'];
+			mysqli_query($con, $query);
+			header("Location: index.php");
+			die;
+		}else{
+			$query = "UPDATE posts SET body = '$body' WHERE postID = ".$GETpost_data['postID'];
+			mysqli_query($con, $query);
+			header("Location: index.php");
+			die;
+		}
 	}
-  }
+}
 
 ?>
 
@@ -50,12 +85,12 @@
 						
 						<div class="form-group">
 							<label for="title">Title <span class="require">*</span></label>
-							<input type="text" class="form-control" name="title" />
+							<input type="text" class="form-control" name="title" <?php if(!isset($GETpost_data['parentID'])){echo 'value="'.$GETpost_data['title'].'"';}?>>
 						</div>
 						
 						<div class="form-group">
 							<label for="description">Description</label>
-							<textarea rows="5" class="form-control" name="description" ></textarea>
+							<textarea rows="5" class="form-control" name="description" ><?php if(isset($GETpost_data['body'])){echo $GETpost_data['body'];}?></textarea>
 						</div>
 						
 						<div class="form-group">
