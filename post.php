@@ -94,7 +94,8 @@
 						<div class="form-group">
 							<label for="title">Title <span class="require">*</span></label>
 							<input type="text" class="form-control" name="title"
-								value="<?php echo isset($GETpost_data['title']) ||  ? htmlspecialchars($GETpost_data['title']).'"' : '"'; if($GETpost_data != null){echo ' disabled';} ?>">
+								value="<?php echo isset($GETpost_data['title']) ? htmlspecialchars($GETpost_data['title']) : ''; ?>"
+								<?php echo ($GETpost_data != null) ? 'disabled' : ''; ?>>
 						</div>
 						
 						<div class="form-group">
