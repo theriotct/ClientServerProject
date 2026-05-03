@@ -43,12 +43,16 @@
 		}
 	}else{
 		if(!empty($title)){
-			$query = "UPDATE posts SET title = '$title', body = '$body' WHERE postID = ".$GETpost_data['postID'];
+			$postID = (int)$_POST['postID'];
+
+			$query = "UPDATE posts SET title = '$title', body = '$body' WHERE postID = $postID";
+			
 			mysqli_query($con, $query);
 			header("Location: index.php");
 			die;
 		}else{
-			$query = "UPDATE posts SET body = '$body' WHERE postID = ".$GETpost_data['postID'];
+			$postID = (int)$_POST['postID'];
+			$query = "UPDATE posts SET body = '$body' WHERE postID = '$postID'";
 			mysqli_query($con, $query);
 			header("Location: index.php");
 			die;
