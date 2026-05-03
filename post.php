@@ -4,14 +4,14 @@
   include("functions.php");
 
   $user_data = check_login($con);
-  $GETpost_data;
+  $GETpost_data = null;
   if(!$user_data){
 	header("Location: login.php");
 	die;
   }
   if($_SERVER['REQUEST_METHOD'] == "GET"){
 	if(isset($_GET['postID'])){
-	  $postID = $_GET['postID'];
+	  $postID = (int)$_GET['postID'];
 	  $query = "SELECT * FROM posts WHERE postID = '$postID' LIMIT 1";
 	  $result = mysqli_query($con, $query);
 	  if($result && mysqli_num_rows($result) > 0){
@@ -86,12 +86,23 @@
 						
 						<div class="form-group">
 							<label for="title">Title <span class="require">*</span></label>
-							<input type="text" class="form-control" name="title" <?php if(!isset($GETpost_data['parentID'])){echo 'value="'.$GETpost_data['title'].'"';}?>>
+							<input type="text" class="form-control" name="title"
+								<?php 
+								if(isset($GETpost_data['title'])){
+									echo 'value="'.$GETpost_data['title'].'"';
+								}else{
+									echo ' disabled';
+								}
+								?>>
 						</div>
 						
 						<div class="form-group">
 							<label for="description">Description</label>
-							<textarea rows="5" class="form-control" name="description" ><?php if(isset($GETpost_data['body'])){echo $GETpost_data['body'];}?></textarea>
+							<textarea rows="5" class="form-control" name="description"><?php 
+								if(isset($GETpost_data['body'])){
+									echo $GETpost_data['body'];
+								}
+								?></textarea>
 						</div>
 						
 						<div class="form-group">
