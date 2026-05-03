@@ -28,8 +28,8 @@
 
 
   if($_SERVER['REQUEST_METHOD'] == "POST"){
-	$title = $_POST['title'] ?? '';
-	$body  = $_POST['description'] ?? '';
+	$title = trim($_POST['title'] ?? '');
+	$body  = trim($_POST['description'] ?? '');	
 
 	if(is_null($GETpost_data)){
 		if(!empty($title)){
@@ -86,14 +86,7 @@
 						
 						<div class="form-group">
 							<label for="title">Title <span class="require">*</span></label>
-							<input type="text" class="form-control" name="title"
-								<?php 
-								if(isset($GETpost_data['title'])){
-									echo 'value="'.$GETpost_data['title'].'"';
-								}else{
-									echo ' disabled';
-								}
-								?>>
+							<input type="text" class="form-control" name="title" value="<?php echo isset($GETpost_data['title']) ? htmlspecialchars($GETpost_data['title']) : ''; ?>">
 						</div>
 						
 						<div class="form-group">
