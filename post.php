@@ -28,8 +28,8 @@
 
 
   if($_SERVER['REQUEST_METHOD'] == "POST"){
-	$title = $_POST['title'];
-	$body = $_POST['description'];
+	$title = $_POST['title'] ?? '';
+	$body  = $_POST['description'] ?? '';
 
 	if(is_null($GETpost_data)){
 		if(!empty($title)){
