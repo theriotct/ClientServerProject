@@ -3,40 +3,67 @@
   include 'connection.php';
   include 'functions.php';
 
-  if($_GET['postID']){
+  if(isset($_GET['postID']))
+  {
       $postID = (int)$_GET['postID'];
+
+      // 🔼 CLIMB TO ROOT (highest parent chain)
+      $currentID = $postID;
+
+      while(true)
+      {
+          $res = mysqli_query($con, "SELECT parentID FROM posts WHERE postID = $currentID LIMIT 1");
+          $row = mysqli_fetch_assoc($res);
+
+          if(!$row || $row['parentID'] === NULL){
+              break;
+          }
+
+          $currentID = (int)$row['parentID'];
+      }
+
+      // If user didn't already request root, redirect
+      if($currentID != $postID){
+          header("Location: thread.php?postID=".$currentID);
+          exit;
+      }
+
+      // 🔽 NOW RUN YOUR THREAD QUERY FROM ROOT ONLY
       $query = "WITH RECURSIVE thread AS (
-                    SELECT * FROM posts WHERE postID = $postID
-                    UNION ALL
-                    SELECT p.* 
-                    FROM posts p
-                    INNER JOIN thread t ON p.parentID = t.postID
-                )
-                SELECT 
-                    t.*, 
-                    u.username,
-                    COALESCE(r.likes, 0) AS totalLikes,
-                    COALESCE(r.dislikes, 0) AS totalDislikes
-                FROM thread t
-                JOIN `user` u ON u.userID = t.authorID
-                LEFT JOIN (
-                    SELECT 
-                        refPostID,
-                        SUM(CASE WHEN `like/dislike` = 1 THEN 1 ELSE 0 END) AS likes,
-                        SUM(CASE WHEN `like/dislike` = 0 THEN 1 ELSE 0 END) AS dislikes
-                    FROM `like`
-                    GROUP BY refPostID
-                ) r ON r.refPostID = t.postID
-                ORDER BY t.date ASC;
-                ";
+                  SELECT * FROM posts WHERE postID = $postID
+                  UNION ALL
+                  SELECT p.* 
+                  FROM posts p
+                  INNER JOIN thread t ON p.parentID = t.postID
+              )
+              SELECT 
+                  t.*, 
+                  u.username,
+                  COALESCE(r.likes, 0) AS totalLikes,
+                  COALESCE(r.dislikes, 0) AS totalDislikes
+              FROM thread t
+              JOIN `user` u ON u.userID = t.authorID
+              LEFT JOIN (
+                  SELECT 
+                      refPostID,
+                      SUM(CASE WHEN `like/dislike` = 1 THEN 1 ELSE 0 END) AS likes,
+                      SUM(CASE WHEN `like/dislike` = 0 THEN 1 ELSE 0 END) AS dislikes
+                  FROM `like`
+                  GROUP BY refPostID
+              ) r ON r.refPostID = t.postID
+              ORDER BY t.date ASC";
+
       $result = mysqli_query($con, $query);
       $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
-      if(count($posts) == 0 && $posts[0]['title'] === NULL){
+
+      if(count($posts) == 0){
           header("HTTP/1.1 404 Not Found");
           include('404.html');
           die;
       }
-  }else{
+  }
+  else
+  {
       header("HTTP/1.1 404 Not Found");
       include('404.html');
       die;
@@ -54,7 +81,7 @@
         $userID = $user_data['userID'];
         $i = count($posts)-1;
         $parentID = $posts[$i]['postID'];
-        $query = "INSERT INTO `posts` (`parentID`, `authorID`, `title`, `body`, `date`) VALUES ('$parentID ', '$userID', NULL, '$reply', CURRENT_TIMESTAMP);";
+        $query = "INSERT INTO `posts` (`parentID`, `authorID`, `title`, `body`, `date`) VALUES ('$parentID', '$userID', NULL, '$reply', CURRENT_TIMESTAMP);";
         $result = mysqli_query($con, $query);
         if($result){
             header('Location: thread.php?postID='.$postID);
@@ -138,6 +165,55 @@
       {
           $postID = $_POST['postID'];
           header('Location: post.php?postID='.$postID);
+          exit;
+      }
+      if(isset($_POST['delete']))
+      {
+          $deleteID = (int)$_POST['postID'];
+
+
+          $res = mysqli_query($con, "SELECT parentID FROM posts WHERE postID = $deleteID");
+          $row = mysqli_fetch_assoc($res);
+
+          if(!$row){
+              header('Location: thread.php?postID='.$postID);
+              exit;
+          }
+
+          $parentID = $row['parentID'];
+
+
+          if($parentID === NULL)
+          {
+              $query = "WITH RECURSIVE thread AS (
+                          SELECT postID FROM posts WHERE postID = $deleteID
+                          UNION ALL
+                          SELECT p.postID
+                          FROM posts p
+                          INNER JOIN thread t ON p.parentID = t.postID
+                        )
+                        DELETE FROM posts 
+                        WHERE postID IN (SELECT postID FROM thread)";
+
+              mysqli_query($con, $query);
+
+              header('Location: index.php');
+              exit;
+          }
+
+
+          $parentValue = is_null($parentID) ? "NULL" : (int)$parentID;
+
+          mysqli_query($con, "
+              UPDATE posts 
+              SET parentID = $parentValue
+              WHERE parentID = $deleteID
+          ");
+
+
+          mysqli_query($con, "DELETE FROM posts WHERE postID = $deleteID");
+
+          header('Location: thread.php?postID='.$postID);
           exit;
       }
     }
