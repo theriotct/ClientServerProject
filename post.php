@@ -31,7 +31,7 @@
 	$title = trim($_POST['title'] ?? '');
 	$body  = trim($_POST['description'] ?? '');	
 
-	if(is_null($GETpost_data)){
+	if(!isset($_POST['postID'])){
 		if(!empty($title)){
 		$user_id = $user_data['userID'];
 		$query = "INSERT INTO posts (authorID, title, body) VALUES ('$user_id', '$title', '$body')";
@@ -83,10 +83,14 @@
 					<h1>Create post</h1>
 					
 					<form action="" method="POST">
+						<?php if(isset($GETpost_data['postID'])): ?>
+							<input type="hidden" name="postID" value="<?php echo $GETpost_data['postID']; ?>">
+						<?php endif; ?>
 						
 						<div class="form-group">
 							<label for="title">Title <span class="require">*</span></label>
-							<input type="text" class="form-control" name="title" value="<?php echo isset($GETpost_data['title']) ? htmlspecialchars($GETpost_data['title'].'"') : '" disabled'; ?>>
+							<input type="text" class="form-control" name="title"
+								value="<?php echo isset($GETpost_data['title']) ? htmlspecialchars($GETpost_data['title']) : ''; ?>">
 						</div>
 						
 						<div class="form-group">
