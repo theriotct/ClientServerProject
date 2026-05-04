@@ -216,7 +216,14 @@
           <input class="btn btn-sm btn-default" type="submit" name="dislike" value="Dislike: <?php echo $posts[0]['totalDislikes']?>">
           <input class="btn btn-sm btn-default" type="submit" name="dislike" value="Report">
           <input class="btn btn-sm btn-default btn-danger right" type="submit" name="dislike" value="Delete">
-          <input class="btn btn-sm btn-default right" type="submit" name="dislike" value="Edit">
+          <?php if($posts[0]['authorID'] == $user_data['userID']): ?>
+            <a 
+              href="createPost.php?editPostID=<?php echo $posts[0]['postID']; ?>" 
+              class="btn btn-sm btn-default right"
+            >
+              Edit
+            </a>
+          <?php endif; ?>
         </form>
       </div>
     </div>
@@ -240,7 +247,9 @@
                     <input class="btn btn-sm btn-default" type="submit" name="dislike" value="Dislike: '.$posts[$i]['totalDislikes'].'">
                     <input class="btn btn-sm btn-default" type="submit" name="dislike" value="Report">
                     <input class="btn btn-sm btn-default btn-danger right" type="submit" name="dislike" value="Delete">
-                    <input class="btn btn-sm btn-default right" type="submit" name="dislike" value="Edit">
+                    '.(($posts[$i]['authorID'] == $user_data['userID']) 
+                      ? '<a href="createPost.php?editPostID='.$posts[$i]['postID'].'" class="btn btn-sm btn-default right">Edit</a>' 
+                      : '').'
                   </form>
                 </div>
               </div>';
