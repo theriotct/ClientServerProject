@@ -52,13 +52,13 @@
 			background-color: #eee;
 		}
 		.table thead > tr > th {
-			border-bottom: 1px solid #91abfa;
+			border-bottom: 1px solid #aec2fc;
 			padding-bottom: 0;
 			background: #fcab47;
 		}
 		.table tbody > tr > td {
 			font-size: 0.875em;
-			background: #91abfa;
+			background: #aec2fc;
 			border-top: 10px solid #fcab47;
 			vertical-align: middle;
 			padding: 12px 8px;
@@ -68,7 +68,7 @@
 			padding-left: 20px;
 		}
 		.table thead > tr > th span {
-			border-bottom: 2px solid #91abfa;
+			border-bottom: 2px solid #aec2fc;
 			display: inline-block;
 			padding: 0 5px;
 			padding-bottom: 5px;
