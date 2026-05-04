@@ -3,8 +3,9 @@
   include 'connection.php';
   include 'functions.php';
 
-  if($_GET['postID']){
+  if(isset($_GET['postID'])){
       $postID = (int)$_GET['postID'];
+
       $query = "WITH RECURSIVE thread AS (
                     SELECT * FROM posts WHERE postID = $postID
                     UNION ALL
@@ -27,11 +28,12 @@
                     FROM `like`
                     GROUP BY refPostID
                 ) r ON r.refPostID = t.postID
-                ORDER BY t.date ASC;
-                ";
+                ORDER BY t.date ASC;";
+
       $result = mysqli_query($con, $query);
       $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
-      if(count($posts) == 0 && $posts[0]['title'] === NULL){
+
+      if(count($posts) == 0){
           header("HTTP/1.1 404 Not Found");
           include('404.html');
           die;
@@ -44,53 +46,68 @@
 
   $user_data = check_login($con);
 
-  if($_SERVER['REQUEST_METHOD'] == "POST")
-  {
-    if(isset($_SESSION['userID']))
-    {
-      if(isset($_POST['reply']))
-      {
-        $reply = $_POST['reply'];
-        $userID = $user_data['userID'];
-        $i = count($posts)-1;
-        $parentID = $posts[$i]['postID'];
-        $query = "INSERT INTO `posts` (`parentID`, `authorID`, `title`, `body`, `date`) VALUES ('$parentID ', '$userID', NULL, '$reply', CURRENT_TIMESTAMP);";
-        $result = mysqli_query($con, $query);
-        if($result){
-            header('Location: thread.php?postID='.$postID);
-            exit;
-        }else{
-            alert('Error posting reply');
-        }
+  /*
+    Build an array of post IDs already reported by this user.
+    This allows the page to show "Reported" instead of allowing repeat reports.
+  */
+  $myReports = [];
+
+  if($user_data != null){
+      $reportQuery = "SELECT postID FROM reports WHERE reporterID = ?";
+      $reportStatement = mysqli_prepare($con, $reportQuery);
+      mysqli_stmt_bind_param($reportStatement, 'i', $user_data['userID']);
+      mysqli_stmt_execute($reportStatement);
+
+      $reportResult = mysqli_stmt_get_result($reportStatement);
+
+      while($reportRow = mysqli_fetch_assoc($reportResult)){
+          $myReports[] = (int)$reportRow['postID'];
       }
-      if(isset($_POST['like']))
-      {
+  }
+
+  if($_SERVER['REQUEST_METHOD'] == "POST"){
+      if(isset($_POST['reply']) && $user_data != null){
+          $reply = trim($_POST['reply']);
+          $userID = (int)$user_data['userID'];
+          $lastPostIndex = count($posts) - 1;
+          $parentID = (int)$posts[$lastPostIndex]['postID'];
+
+          if(!empty($reply)){
+              $query = "INSERT INTO `posts` (`parentID`, `authorID`, `title`, `body`, `date`) 
+                        VALUES ('$parentID', '$userID', NULL, '$reply', CURRENT_TIMESTAMP);";
+
+              $result = mysqli_query($con, $query);
+
+              if($result){
+                  header('Location: thread.php?postID='.$postID);
+                  exit;
+              }else{
+                  alert('Error posting reply');
+              }
+          }
+      }
+
+      elseif(isset($_POST['like']) && $user_data != null){
           $postLikedID = (int)$_POST['postID'];
           $userID = (int)$user_data['userID'];
 
-          // Check existing reaction
           $checkQuery = "SELECT `like/dislike` FROM `like`
-                        WHERE userID = $userID AND refPostID = $postLikedID";
+                         WHERE userID = $userID AND refPostID = $postLikedID";
+
           $result = mysqli_query($con, $checkQuery);
 
-          if(mysqli_num_rows($result) > 0)
-          {
+          if(mysqli_num_rows($result) > 0){
               $row = mysqli_fetch_assoc($result);
 
-              if($row['like/dislike'] == 1)
-              {
+              if($row['like/dislike'] == 1){
                   $query = "DELETE FROM `like`
                             WHERE userID = $userID AND refPostID = $postLikedID";
-              }
-              else
-              {
+              }else{
                   $query = "UPDATE `like`
                             SET `like/dislike` = 1
                             WHERE userID = $userID AND refPostID = $postLikedID";
               }
-          }
-          else
-          {
+          }else{
               $query = "INSERT INTO `like` (userID, refPostID, `like/dislike`)
                         VALUES ($userID, $postLikedID, 1)";
           }
@@ -99,33 +116,28 @@
           header('Location: thread.php?postID='.$postID);
           exit;
       }
-      if(isset($_POST['dislike']))
-      {
+
+      elseif(isset($_POST['dislike']) && $user_data != null){
           $postLikedID = (int)$_POST['postID'];
           $userID = (int)$user_data['userID'];
 
           $checkQuery = "SELECT `like/dislike` FROM `like`
-                        WHERE userID = $userID AND refPostID = $postLikedID";
+                         WHERE userID = $userID AND refPostID = $postLikedID";
+
           $result = mysqli_query($con, $checkQuery);
 
-          if(mysqli_num_rows($result) > 0)
-          {
+          if(mysqli_num_rows($result) > 0){
               $row = mysqli_fetch_assoc($result);
 
-              if($row['like/dislike'] == 0)
-              {
+              if($row['like/dislike'] == 0){
                   $query = "DELETE FROM `like`
                             WHERE userID = $userID AND refPostID = $postLikedID";
-              }
-              else
-              {
+              }else{
                   $query = "UPDATE `like`
                             SET `like/dislike` = 0
                             WHERE userID = $userID AND refPostID = $postLikedID";
               }
-          }
-          else
-          {
+          }else{
               $query = "INSERT INTO `like` (userID, refPostID, `like/dislike`)
                         VALUES ($userID, $postLikedID, 0)";
           }
@@ -134,28 +146,87 @@
           header('Location: thread.php?postID='.$postID);
           exit;
       }
-    }
+
+      elseif(isset($_POST['report_post']) && $user_data != null){
+          $reportPostID = (int)$_POST['report_post_id'];
+          $reporterID = (int)$user_data['userID'];
+
+          $query = "INSERT IGNORE INTO reports (postID, reporterID) VALUES (?, ?)";
+          $statement = mysqli_prepare($con, $query);
+          mysqli_stmt_bind_param($statement, 'ii', $reportPostID, $reporterID);
+
+          if(mysqli_stmt_execute($statement)){
+              header('Location: thread.php?postID='.$postID);
+              exit;
+          }
+      }
+
+      elseif(isset($_POST['edit_post']) && $user_data != null){
+          $editPostID = (int)$_POST['edit_post_id'];
+          $editBody = trim($_POST['edit_body'] ?? '');
+
+          $isAdmin = isset($user_data['isAdmin']) && $user_data['isAdmin'] !== null;
+
+          $checkQuery = "SELECT authorID, title FROM posts WHERE postID = ? LIMIT 1";
+          $checkStatement = mysqli_prepare($con, $checkQuery);
+          mysqli_stmt_bind_param($checkStatement, 'i', $editPostID);
+          mysqli_stmt_execute($checkStatement);
+
+          $editPost = mysqli_fetch_assoc(mysqli_stmt_get_result($checkStatement));
+
+          if($editPost && ((int)$editPost['authorID'] === (int)$user_data['userID'] || $isAdmin)){
+              if(isset($_POST['edit_title']) && $editPost['title'] !== null){
+                  $editTitle = trim($_POST['edit_title'] ?? '');
+
+                  $updateQuery = "UPDATE posts SET body = ?, title = ? WHERE postID = ?";
+                  $updateStatement = mysqli_prepare($con, $updateQuery);
+                  mysqli_stmt_bind_param($updateStatement, 'ssi', $editBody, $editTitle, $editPostID);
+              }else{
+                  $updateQuery = "UPDATE posts SET body = ? WHERE postID = ?";
+                  $updateStatement = mysqli_prepare($con, $updateQuery);
+                  mysqli_stmt_bind_param($updateStatement, 'si', $editBody, $editPostID);
+              }
+
+              if(mysqli_stmt_execute($updateStatement)){
+                  header('Location: thread.php?postID='.$postID);
+                  exit;
+              }
+          }
+      }
   }
 ?>
+
 <!DOCTYPE html>
 <html>
   <head>
     <title>The Power of Awesome Ideas</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+    <link 
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
+      rel="stylesheet"
+    >
+
+    <link 
+      rel="stylesheet" 
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    >
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
     <style>
-        body {background-color: #fed8b1;}
+        body {
+          background-color: #fed8b1;
+        }
 
         .right {
           float: right;
           margin-left: 10px;
         }
 
-        /* Validation error styles */
         .error-input {
           border: 2px solid #f44336 !important;
           background-color: #ffe6e6 !important;
@@ -189,270 +260,502 @@
           opacity: 0.6;
           cursor: not-allowed;
         }
+
+        .edit-box {
+          display: none;
+          padding: 10px 15px;
+          background-color: #f8f9fa;
+          border-top: 1px solid #ddd;
+        }
     </style>
   </head>
+
   <body>
-    <!-- Navbar -->
     <?php set_header(); ?>
 
-  <!-- Thread Content -->
-  <div class="container" style="margin-top:20px;">
+    <div class="container" style="margin-top:20px;">
 
-    <!-- Original Post -->
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3><?php echo $posts[0]['title']; ?></h3>
-        <small>Posted by <?php echo $posts[0]['username']; ?> • <?php echo $posts[0]['date']; ?></small>
-      </div>
-      <div class="panel-body">
-        <p>
-          <?php echo $posts[0]['body']; ?>
-        </p>
-      </div>
-      <div class="panel-footer">
-        <form action="" method="POST">
-          <input type="text" value="<?php echo $posts[0]['postID']?>" name="postID" hidden>
-          <input class="btn btn-sm btn-default" type="submit" name="like" value="Like: <?php echo $posts[0]['totalLikes']?>">
-          <input class="btn btn-sm btn-default" type="submit" name="dislike" value="Dislike: <?php echo $posts[0]['totalDislikes']?>">
-          <input class="btn btn-sm btn-default" type="submit" name="dislike" value="Report">
-          <input class="btn btn-sm btn-default btn-danger right" type="submit" name="dislike" value="Delete">
-          <?php if($posts[0]['authorID'] == $user_data['userID']): ?>
-            <a 
-              href="createPost.php?editPostID=<?php echo $posts[0]['postID']; ?>" 
-              class="btn btn-sm btn-default right"
+      <!-- Original Post -->
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3><?php echo htmlspecialchars($posts[0]['title']); ?></h3>
+          <small>
+            Posted by 
+            <?php echo htmlspecialchars($posts[0]['username']); ?> 
+            • 
+            <?php echo htmlspecialchars($posts[0]['date']); ?>
+          </small>
+        </div>
+
+        <div class="panel-body">
+          <p>
+            <?php echo nl2br(htmlspecialchars($posts[0]['body'])); ?>
+          </p>
+        </div>
+
+        <div class="panel-footer">
+          <?php if($user_data == null): ?>
+            <a href="login.php" class="btn btn-sm btn-default">
+              Like: <?php echo $posts[0]['totalLikes']; ?>
+            </a>
+
+            <a href="login.php" class="btn btn-sm btn-default">
+              Dislike: <?php echo $posts[0]['totalDislikes']; ?>
+            </a>
+          <?php else: ?>
+            <form action="" method="POST" style="display:inline;">
+              <input type="hidden" value="<?php echo (int)$posts[0]['postID']; ?>" name="postID">
+
+              <input 
+                class="btn btn-sm btn-default" 
+                type="submit" 
+                name="like" 
+                value="Like: <?php echo $posts[0]['totalLikes']; ?>"
+              >
+
+              <input 
+                class="btn btn-sm btn-default" 
+                type="submit" 
+                name="dislike" 
+                value="Dislike: <?php echo $posts[0]['totalDislikes']; ?>"
+              >
+            </form>
+          <?php endif; ?>
+
+          <?php if($user_data == null): ?>
+            <a href="login.php" class="btn btn-sm btn-default">Report</a>
+          <?php elseif(in_array((int)$posts[0]['postID'], $myReports)): ?>
+            <span class="btn btn-sm btn-default disabled">Reported</span>
+          <?php else: ?>
+            <form method="POST" style="display:inline;">
+              <input type="hidden" name="report_post" value="1">
+              <input 
+                type="hidden" 
+                name="report_post_id" 
+                value="<?php echo (int)$posts[0]['postID']; ?>"
+              >
+
+              <button type="submit" class="btn btn-sm btn-default">
+                Report
+              </button>
+            </form>
+          <?php endif; ?>
+
+          <a href="#" class="btn btn-sm btn-default btn-danger right">
+            Delete
+          </a>
+
+          <?php 
+            $canEditOriginal = $user_data != null && (
+              (int)$user_data['userID'] === (int)$posts[0]['authorID'] ||
+              (isset($user_data['isAdmin']) && $user_data['isAdmin'] !== null)
+            );
+          ?>
+
+          <?php if($canEditOriginal): ?>
+            <button 
+              type="button" 
+              class="btn btn-sm btn-default right" 
+              onclick="toggleEdit('edit-post-0')"
             >
               Edit
-            </a>
+            </button>
           <?php endif; ?>
-        </form>
-      </div>
-    </div>
+        </div>
 
-    <!-- Replies Section -->
-    <h4>Replies</h4>
+        <?php if($canEditOriginal): ?>
+          <div id="edit-post-0" class="edit-box">
+            <form method="POST">
+              <input type="hidden" name="edit_post" value="1">
 
-    <?php
-      for($i = 1; $i < count($posts); $i++){
-        echo '<div class="panel panel-info">
-                <div class="panel-heading">
-                  <strong><a href="profile.php?userID='.$posts[$i]['authorID'].'">'.$posts[$i]['username'].'</a></strong> • '.$posts[$i]['date'].'
-                </div>
-                <div class="panel-body">
-                  '.$posts[$i]['body'].'
-                </div>
-                <div class="panel-footer">
-                  <form action="" method="POST">
-                    <input type="text" value="'.$posts[$i]['postID'].'" name="postID" hidden>
-                    <input class="btn btn-sm btn-default" type="submit" name="like" value="Like: '.$posts[$i]['totalLikes'].'">
-                    <input class="btn btn-sm btn-default" type="submit" name="dislike" value="Dislike: '.$posts[$i]['totalDislikes'].'">
-                    <input class="btn btn-sm btn-default" type="submit" name="dislike" value="Report">
-                    <input class="btn btn-sm btn-default btn-danger right" type="submit" name="dislike" value="Delete">
-                    '.(($posts[$i]['authorID'] == $user_data['userID']) 
-                      ? '<a href="createPost.php?editPostID='.$posts[$i]['postID'].'" class="btn btn-sm btn-default right">Edit</a>' 
-                      : '').'
-                  </form>
-                </div>
-              </div>';
-      }
-    ?>
+              <input 
+                type="hidden" 
+                name="edit_post_id" 
+                value="<?php echo (int)$posts[0]['postID']; ?>"
+              >
 
-    <!-- Reply Form -->
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h4>Add a Reply</h4>
-      </div>
-      <div class="panel-body">
-        <div class="global-error" id="globalError"></div>
+              <div class="form-group">
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  name="edit_title" 
+                  value="<?php echo htmlspecialchars($posts[0]['title']); ?>" 
+                  maxlength="255" 
+                  style="margin-bottom:6px;" 
+                  placeholder="Title"
+                >
+              </div>
 
-        <?php if($user_data == null){ ?>
-          <form action="login.php" method="get">
-        <?php } else { ?>
-          <form method="post" id="replyForm">
-        <?php } ?>
-          <div class="form-group">
-            <?php if($user_data == null){ ?>
-              <textarea class="form-control" id="reply" name="reply" rows="5" placeholder="Please log in to reply" disabled></textarea>
-            <?php } else { ?>
-              <textarea class="form-control" id="reply" name="reply" rows="5" maxlength="1000" placeholder="Write your reply..."></textarea>
-            <?php } ?>
+              <div class="form-group">
+                <textarea 
+                  class="form-control" 
+                  name="edit_body" 
+                  rows="4" 
+                  maxlength="1000"
+                ><?php echo htmlspecialchars($posts[0]['body']); ?></textarea>
+              </div>
+
+              <button 
+                type="submit" 
+                class="btn btn-sm btn-primary" 
+                style="margin-top:6px;"
+              >
+                Save
+              </button>
+
+              <button 
+                type="button" 
+                class="btn btn-sm btn-default" 
+                style="margin-top:6px;" 
+                onclick="toggleEdit('edit-post-0')"
+              >
+                Cancel
+              </button>
+            </form>
           </div>
+        <?php endif; ?>
+      </div>
 
-          <span class="error-message" id="replyError"></span>
+      <!-- Replies Section -->
+      <h4>Replies</h4>
 
-          <span id="charCount">0/1000</span><br><br>
+      <?php
+        for($i = 1; $i < count($posts); $i++){
+            $canEdit = $user_data != null && (
+                (int)$user_data['userID'] === (int)$posts[$i]['authorID'] ||
+                (isset($user_data['isAdmin']) && $user_data['isAdmin'] !== null)
+            );
+
+            $isReported = in_array((int)$posts[$i]['postID'], $myReports);
+
+            $replyPostID = (int)$posts[$i]['postID'];
+            $replyAuthorID = (int)$posts[$i]['authorID'];
+            $replyUsername = htmlspecialchars($posts[$i]['username']);
+            $replyDate = htmlspecialchars($posts[$i]['date']);
+            $replyBody = nl2br(htmlspecialchars($posts[$i]['body']));
+            $replyBodyForEdit = htmlspecialchars($posts[$i]['body']);
+            $replyLikes = (int)$posts[$i]['totalLikes'];
+            $replyDislikes = (int)$posts[$i]['totalDislikes'];
+
+            echo '<div class="panel panel-info">
+                    <div class="panel-heading">
+                      <strong>
+                        <a href="profile.php?userID='.$replyAuthorID.'">'.$replyUsername.'</a>
+                      </strong> 
+                      • '.$replyDate.'
+                    </div>
+
+                    <div class="panel-body">
+                      '.$replyBody.'
+                    </div>
+
+                    <div class="panel-footer">';
+
+            if($user_data == null){
+                echo '<a href="login.php" class="btn btn-sm btn-default">Like: '.$replyLikes.'</a>
+                      <a href="login.php" class="btn btn-sm btn-default">Dislike: '.$replyDislikes.'</a>';
+            }else{
+                echo '<form action="" method="POST" style="display:inline;">
+                        <input type="hidden" value="'.$replyPostID.'" name="postID">
+
+                        <input 
+                          class="btn btn-sm btn-default" 
+                          type="submit" 
+                          name="like" 
+                          value="Like: '.$replyLikes.'"
+                        >
+
+                        <input 
+                          class="btn btn-sm btn-default" 
+                          type="submit" 
+                          name="dislike" 
+                          value="Dislike: '.$replyDislikes.'"
+                        >
+                      </form>';
+            }
+
+            if($user_data == null){
+                echo '<a href="login.php" class="btn btn-sm btn-default">Report</a>';
+            }elseif($isReported){
+                echo '<span class="btn btn-sm btn-default disabled">Reported</span>';
+            }else{
+                echo '<form method="POST" style="display:inline;">
+                        <input type="hidden" name="report_post" value="1">
+                        <input type="hidden" name="report_post_id" value="'.$replyPostID.'">
+                        <button type="submit" class="btn btn-sm btn-default">Report</button>
+                      </form>';
+            }
+
+            echo '<a href="#" class="btn btn-sm btn-default btn-danger right">Delete</a>';
+
+            if($canEdit){
+                echo '<button 
+                        type="button" 
+                        class="btn btn-sm btn-default right" 
+                        onclick="toggleEdit(\'edit-post-'.$i.'\')"
+                      >
+                        Edit
+                      </button>';
+            }
+
+            echo '</div>';
+
+            if($canEdit){
+                echo '<div id="edit-post-'.$i.'" class="edit-box">
+                        <form method="POST">
+                          <input type="hidden" name="edit_post" value="1">
+                          <input type="hidden" name="edit_post_id" value="'.$replyPostID.'">
+
+                          <div class="form-group">
+                            <textarea 
+                              class="form-control" 
+                              name="edit_body" 
+                              rows="3" 
+                              maxlength="1000"
+                            >'.$replyBodyForEdit.'</textarea>
+                          </div>
+
+                          <button 
+                            type="submit" 
+                            class="btn btn-sm btn-primary" 
+                            style="margin-top:6px;"
+                          >
+                            Save
+                          </button>
+
+                          <button 
+                            type="button" 
+                            class="btn btn-sm btn-default" 
+                            style="margin-top:6px;" 
+                            onclick="toggleEdit(\'edit-post-'.$i.'\')"
+                          >
+                            Cancel
+                          </button>
+                        </form>
+                      </div>';
+            }
+
+            echo '</div>';
+        }
+      ?>
+
+      <!-- Reply Form -->
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4>Add a Reply</h4>
+        </div>
+
+        <div class="panel-body">
+          <div class="global-error" id="globalError"></div>
 
           <?php if($user_data == null){ ?>
-            <input type="submit" class="btn btn-primary" value="Click Here To Login" >
+            <form action="login.php" method="get">
           <?php } else { ?>
-            <input type="submit" class="btn btn-primary" id="submitBtn" value="Post Reply">
+            <form method="post" id="replyForm">
           <?php } ?>
-        </form>
+
+            <div class="form-group">
+              <?php if($user_data == null){ ?>
+                <textarea 
+                  class="form-control" 
+                  id="reply" 
+                  name="reply" 
+                  rows="5" 
+                  placeholder="Please log in to reply" 
+                  disabled
+                ></textarea>
+              <?php } else { ?>
+                <textarea 
+                  class="form-control" 
+                  id="reply" 
+                  name="reply" 
+                  rows="5" 
+                  maxlength="1000" 
+                  placeholder="Write your reply..."
+                ></textarea>
+              <?php } ?>
+            </div>
+
+            <span class="error-message" id="replyError"></span>
+
+            <span id="charCount">0/1000</span>
+            <br><br>
+
+            <?php if($user_data == null){ ?>
+              <input 
+                type="submit" 
+                class="btn btn-primary" 
+                value="Click Here To Login"
+              >
+            <?php } else { ?>
+              <input 
+                type="submit" 
+                class="btn btn-primary" 
+                id="submitBtn" 
+                value="Post Reply"
+              >
+            <?php } ?>
+          </form>
+        </div>
       </div>
     </div>
 
-  </div>
+    <script>
+      function toggleEdit(id) {
+        var editBox = document.getElementById(id);
 
-
-  <script>
-  <?php if($user_data != null){ ?>
-    // Get form elements
-    const textArea = document.getElementById("reply");
-    const charCounter = document.getElementById("charCount");
-    const submitBtn = document.getElementById("submitBtn");
-    const replyForm = document.getElementById("replyForm");
-    const replyError = document.getElementById("replyError");
-    const globalError = document.getElementById("globalError");
-    const maxChars = 1000;
-
-    // Function to remove error styling
-    function removeError() {
-      textArea.classList.remove('error-input');
-      textArea.classList.remove('success-input');
-      replyError.textContent = '';
-      globalError.style.display = 'none';
-    }
-
-    // Function to add error styling
-    function addError(message) {
-      textArea.classList.add('error-input');
-      textArea.classList.remove('success-input');
-      replyError.textContent = message;
-    }
-
-    // Function to add success styling
-    function addSuccess() {
-      textArea.classList.remove('error-input');
-      textArea.classList.add('success-input');
-      replyError.textContent = '';
-    }
-
-    // Validate the reply
-    function validateReply() {
-      const replyText = textArea.value.trim();
-
-      // Check if reply is empty or only whitespace
-      if (replyText === '') {
-        addError('Reply cannot be empty. Please enter a message.');
-        return false;
-      }
-
-      // Check minimum length (optional - adjust as needed)
-      if (replyText.length < 3) {
-        addError('Reply is too short. Please enter at least 3 characters.');
-        return false;
-      }
-
-      // Check if only whitespace characters (redundant but thorough)
-      if (replyText.length > 0 && replyText.replace(/\s/g, '').length === 0) {
-        addError('Reply cannot contain only spaces. Please enter a meaningful message.');
-        return false;
-      }
-
-      // All validation passed
-      addSuccess();
-      globalError.style.display = 'none';
-      return true;
-    }
-
-    // Real-time validation as user types
-    textArea.addEventListener("input", () => {
-      const enteredChars = textArea.value.length;
-      const remainingChars = maxChars - enteredChars;
-      charCounter.textContent = `${enteredChars}/${maxChars}`;
-
-      // Change color if limit is approached
-      if (remainingChars < 10) {
-        charCounter.style.color = "red";
-      } else if (remainingChars <= 200) {
-        charCounter.style.color = "orange";
-      } else {
-        charCounter.style.color = "black";
-      }
-
-      // Real-time validation
-      const replyText = textArea.value;
-
-      if (replyText.trim() === '') {
-        removeError();
-      } else if (replyText.trim().length >= 3 && replyText.trim().replace(/\s/g, '').length > 0) {
-        addSuccess();
-      } else if (replyText.trim().length < 3 && replyText.trim().length > 0) {
-        addError('Reply is too short. Please enter at least 3 characters.');
-      }
-
-      // Clear global error when user starts typing
-      if (globalError.style.display === 'block') {
-        globalError.style.display = 'none';
-      }
-    });
-
-    // Handle form submission
-    if (replyForm) {
-      replyForm.addEventListener('submit', function(event) {
-        // Validate before submitting
-        if (!validateReply()) {
-          event.preventDefault(); // Stop form submission
-
-          // Scroll to the error message
-          document.querySelector('.panel-default').scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
-          });
-
-          // Optional: Show a global error as well
-          globalError.textContent = 'Please fix the errors above before submitting.';
-      globalError.style.display = 'block';
-
-      // Disable submit button briefly to prevent multiple clicks
-      submitBtn.disabled = true;
-      setTimeout(() => {
-        submitBtn.disabled = false;
-      }, 2000);
+        if(editBox){
+          if(editBox.style.display === 'none' || editBox.style.display === ''){
+            editBox.style.display = 'block';
+          }else{
+            editBox.style.display = 'none';
+          }
         }
-      });
-    }
-
-    // Add character limit warning before submit
-    function checkCharacterLimit() {
-      const replyText = textArea.value;
-      if (replyText.length > maxChars) {
-        addError(`Reply exceeds ${maxChars} characters. Please shorten your message.`);
-        return false;
       }
-      return true;
-    }
 
-    // Prevent form submission if character limit is exceeded
-    if (replyForm) {
-      replyForm.addEventListener('submit', function(event) {
-        if (!checkCharacterLimit()) {
-          event.preventDefault();
-        }
-      });
-    }
-
-    // Uncomment to enable auto-resizing
-    // textArea.addEventListener('input', autoResize);
-
-    <?php } else { ?>
-      // For logged-out users, just maintain the character counter
-      const textArea = document.getElementById("reply");
-      if(textArea) {
+      <?php if($user_data != null){ ?>
+        const textArea = document.getElementById("reply");
         const charCounter = document.getElementById("charCount");
+        const submitBtn = document.getElementById("submitBtn");
+        const replyForm = document.getElementById("replyForm");
+        const replyError = document.getElementById("replyError");
+        const globalError = document.getElementById("globalError");
         const maxChars = 1000;
+
+        function removeError() {
+          textArea.classList.remove('error-input');
+          textArea.classList.remove('success-input');
+          replyError.textContent = '';
+          globalError.style.display = 'none';
+        }
+
+        function addError(message) {
+          textArea.classList.add('error-input');
+          textArea.classList.remove('success-input');
+          replyError.textContent = message;
+        }
+
+        function addSuccess() {
+          textArea.classList.remove('error-input');
+          textArea.classList.add('success-input');
+          replyError.textContent = '';
+        }
+
+        function validateReply() {
+          const replyText = textArea.value.trim();
+
+          if(replyText === '') {
+            addError('Reply cannot be empty. Please enter a message.');
+            return false;
+          }
+
+          if(replyText.length < 3) {
+            addError('Reply is too short. Please enter at least 3 characters.');
+            return false;
+          }
+
+          if(replyText.length > 0 && replyText.replace(/\s/g, '').length === 0) {
+            addError('Reply cannot contain only spaces. Please enter a meaningful message.');
+            return false;
+          }
+
+          addSuccess();
+          globalError.style.display = 'none';
+          return true;
+        }
+
         textArea.addEventListener("input", () => {
           const enteredChars = textArea.value.length;
           const remainingChars = maxChars - enteredChars;
+
           charCounter.textContent = `${enteredChars}/${maxChars}`;
-          if (remainingChars < 10) {
+
+          if(remainingChars < 10) {
             charCounter.style.color = "red";
-          } else if (remainingChars <= 200) {
+          }else if(remainingChars <= 200) {
             charCounter.style.color = "orange";
-          } else {
+          }else{
             charCounter.style.color = "black";
           }
+
+          const replyText = textArea.value;
+
+          if(replyText.trim() === '') {
+            removeError();
+          }else if(replyText.trim().length >= 3 && replyText.trim().replace(/\s/g, '').length > 0) {
+            addSuccess();
+          }else if(replyText.trim().length < 3 && replyText.trim().length > 0) {
+            addError('Reply is too short. Please enter at least 3 characters.');
+          }
+
+          if(globalError.style.display === 'block') {
+            globalError.style.display = 'none';
+          }
         });
-      }
+
+        if(replyForm) {
+          replyForm.addEventListener('submit', function(event) {
+            if(!validateReply()) {
+              event.preventDefault();
+
+              document.querySelector('.panel-default').scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              });
+
+              globalError.textContent = 'Please fix the errors above before submitting.';
+              globalError.style.display = 'block';
+
+              submitBtn.disabled = true;
+
+              setTimeout(() => {
+                submitBtn.disabled = false;
+              }, 2000);
+            }
+          });
+        }
+
+        function checkCharacterLimit() {
+          const replyText = textArea.value;
+
+          if(replyText.length > maxChars) {
+            addError(`Reply exceeds ${maxChars} characters. Please shorten your message.`);
+            return false;
+          }
+
+          return true;
+        }
+
+        if(replyForm) {
+          replyForm.addEventListener('submit', function(event) {
+            if(!checkCharacterLimit()) {
+              event.preventDefault();
+            }
+          });
+        }
+      <?php } else { ?>
+        const textArea = document.getElementById("reply");
+
+        if(textArea) {
+          const charCounter = document.getElementById("charCount");
+          const maxChars = 1000;
+
+          textArea.addEventListener("input", () => {
+            const enteredChars = textArea.value.length;
+            const remainingChars = maxChars - enteredChars;
+
+            charCounter.textContent = `${enteredChars}/${maxChars}`;
+
+            if(remainingChars < 10) {
+              charCounter.style.color = "red";
+            }else if(remainingChars <= 200) {
+              charCounter.style.color = "orange";
+            }else{
+              charCounter.style.color = "black";
+            }
+          });
+        }
       <?php } ?>
-</script>
-</body>
+    </script>
+  </body>
+</html>
