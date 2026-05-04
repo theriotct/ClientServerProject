@@ -19,27 +19,59 @@
   }
 
   function get_posts($con, $userID){
-    try {
-        $query = "WITH RECURSIVE thread AS ( SELECT p.postID AS replyID, p.parentID, p.title, p.body, p.authorID, p.date, p.postID AS originalReplyID FROM posts p WHERE p.authorID = $userID UNION ALL SELECT parent.postID AS replyID, parent.parentID, parent.title, parent.body, parent.authorID, parent.date, t.originalReplyID FROM posts parent JOIN thread t ON t.parentID = parent.postID ) SELECT root.postID AS parentID, root.title AS parentTitle, root.authorID AS parentAuthorID, root.date AS parentDate, reply.postID AS replyID, reply.parentID AS replyParentID, reply.authorID AS replyAuthorID, reply.body AS replyBody, reply.title AS replyTitle, reply.date AS replyDate FROM thread t JOIN posts root ON root.postID = t.replyID AND root.parentID IS NULL JOIN posts reply ON reply.postID = t.originalReplyID ORDER BY reply.date DESC;";
-        $result = mysqli_query($con, $query);
-    } catch (Exception $e) {
-        echo '<div class="" style="background-color: rgb(234, 234, 234); padding: 10px; border-radius: 5px; margin-top: 10px; margin-bottom: 10px;"><h4>User Has No Posts</h4></div>';
+
+    $query = "WITH RECURSIVE thread AS (
+                SELECT p.postID AS replyID, p.parentID, p.title, p.body, p.authorID, p.date, p.postID AS originalReplyID
+                FROM posts p
+                WHERE p.authorID = $userID
+
+                UNION ALL
+
+                SELECT parent.postID AS replyID, parent.parentID, parent.title, parent.body, parent.authorID, parent.date, t.originalReplyID
+                FROM posts parent
+                JOIN thread t ON t.parentID = parent.postID
+              )
+              SELECT 
+                root.postID AS parentID,
+                root.title AS parentTitle,
+                root.authorID AS parentAuthorID,
+                root.date AS parentDate,
+                reply.postID AS replyID,
+                reply.parentID AS replyParentID,
+                reply.authorID AS replyAuthorID,
+                reply.body AS replyBody,
+                reply.title AS replyTitle,
+                reply.date AS replyDate
+              FROM thread t
+              JOIN posts root ON root.postID = t.replyID AND root.parentID IS NULL
+              JOIN posts reply ON reply.postID = t.originalReplyID
+              ORDER BY reply.date DESC";
+
+    $result = mysqli_query($con, $query);
+
+    if (!$result) {
+        echo '<div style="background-color:#eee;padding:10px;margin:10px;">
+                <h4>SQL Error</h4>
+                <p>User Has No Posts</p>
+              </div>';
         return;
     }
 
-    if($result){
-        if($result && mysqli_num_rows($result) > 0)
-        {
-            foreach($result as $post){
-                if($post){
-                  echo '<div class="" style="background-color: rgb(234, 234, 234); padding: 10px; border-radius: 5px; margin-top: 10px; margin-bottom: 10px;"><h4><a href="thread.php?postID='.$post['parentID'].'">'.$post['parentTitle'].'</a></h4><p>'.$post['replyBody'].'</p><p>'.$post['replyDate'].'</p></div>';
-                }
-            }
-        }
-    }else{
-        echo 'Error fetching posts';
-    }  
-  }
+    if (mysqli_num_rows($result) === 0) {
+        echo '<div style="background-color:#eee;padding:10px;margin:10px;">
+                <h4>User Has No Posts</h4>
+              </div>';
+        return;
+    }
+
+    while($post = mysqli_fetch_assoc($result)){
+        echo '<div style="background-color:#eee;padding:10px;margin:10px;">
+                <h4><a href="thread.php?postID='.$post['parentID'].'">'.$post['parentTitle'].'</a></h4>
+                <p>'.$post['replyBody'].'</p>
+                <p>'.$post['replyDate'].'</p>
+              </div>';
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
