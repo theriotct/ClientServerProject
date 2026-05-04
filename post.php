@@ -84,7 +84,7 @@
 				
 				<div class="col-md-8 col-md-offset-2">
 					
-					<h1>Create post</h1>
+					<h1><?php echo $editingPost ? "Edit post" : "Create post"; ?></h1>
 					
 					<form action="" method="POST">
 						<?php if(isset($GETpost_data['postID'])): ?>
@@ -113,7 +113,7 @@
 						
 						<div class="form-group">
 							<button type="submit" class="btn btn-primary">
-								Create
+								<?php echo $editingPost ? "Save Changes" : "Create"; ?>
 							</button>
 							<button class="btn btn-default">
 								Cancel
