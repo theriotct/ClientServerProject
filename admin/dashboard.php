@@ -43,7 +43,7 @@
         <div id="superAdminSection">           
             <h2>Super Admin Dashboard</h2>
             <ul class="list-group mt-3">
-                <li class="list-group-item" style="background-color: #00b7eb;">Manage Admins</li>
+                <li class="list-group-item" style="background-color: #00b7eb;"><a style="color: black;" href="manageAdmins.php" class="text-decoration-none">Manage Admins</a></li>
                 <li class="list-group-item" style="background-color: #00b7eb;">View All Logs</li>
                 <li class="list-group-item" style="background-color: #00b7eb;"><a style="color: black;" href="super/sql_injector.php" class="text-decoration-none">SQL Injector</a></li>
             </ul>
