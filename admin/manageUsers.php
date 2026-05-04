@@ -524,40 +524,7 @@
 									</a>
 								</td>
 							</tr>
-							<tr>
-								<td>
-									<img src="https://bootdey.com/img/Content/avatar/avatar6.png" alt="">
-									<a href="#" class="user-link">Robert Downey Jr.</a>
-								
-								</td>
-								<td>
-									2013/12/31
-								</td>
 							
-								<td>	
-									<a href="#">spencer@tracy</a>
-								</td>
-								<td style="width: 20%;">
-									<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-									<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-									<a href="#" class="table-link danger">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-								</td>
-							</tr>
 						</tbody>
 					</table>
 				</div>
