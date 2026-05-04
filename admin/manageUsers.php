@@ -54,10 +54,11 @@
 		.table thead > tr > th {
 			border-bottom: 1px solid #C2C2C2;
 			padding-bottom: 0;
+			background: #bda58f;
 		}
 		.table tbody > tr > td {
 			font-size: 0.875em;
-			background: #f5f5f5;
+			background: #8f9ebd;
 			border-top: 10px solid #fff;
 			vertical-align: middle;
 			padding: 12px 8px;
