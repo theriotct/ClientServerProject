@@ -14,7 +14,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Manage Users</title>
+    <title>Manage Admins</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -54,12 +54,12 @@
 		.table thead > tr > th {
 			border-bottom: 1px solid #fcddae;
 			padding-bottom: 0;
-			background: #aec2fc;
+			background: #4257fc;
 		}
 		.table tbody > tr > td {
 			font-size: 0.875em;
 			background: #fcddae;
-			border-top: 10px solid #aec2fc;
+			border-top: 10px solid #4257fc;
 			vertical-align: middle;
 			padding: 12px 8px;
 		}
