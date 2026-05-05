@@ -202,26 +202,6 @@
 		.table-stats .table-line-plus .status-social-icon {
 			color: #a75d54;
 		}
-		.btn-icon {
-			background: none;
-			border: none;
-			padding: 0;
-			margin: 0;
-			cursor: pointer;
-			color: #e74c3c; /* forces red danger color */
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-		}
-
-		.btn-icon .fa-stack {
-			font-size: 14px; /* controls icon size */
-			line-height: 1;
-		}
-
-		.btn-icon:hover {
-			opacity: 0.8;
-		}
     </style>
   </head>
   <body>
@@ -582,12 +562,16 @@
 											<i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
 										</span>
 									</a>
-									<a href="#" class="table-link danger">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
+									<form action="manageAdmins.php" method="post">
+										<button type="submit" name="deleteUser" style="border:none; background:none; padding:0; margin:0;">
+											<a href="#" class="table-link danger">
+												<span class="fa-stack">
+													<i class="fa fa-square fa-stack-2x"></i>
+													<i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+												</span>
+											</a>
+										</button>
+									</form>
 								</td>
 							</tr>
 						</tbody>
