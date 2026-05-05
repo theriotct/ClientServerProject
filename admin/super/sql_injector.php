@@ -52,8 +52,8 @@ if (isset($_POST['sql_query'])) {
                             if (strpos($mime, 'image/') === 0) {
                                 // It's an image, display it
                                 $base64 = base64_encode($value);
-                                echo "<td><i>[BLOB Data - " . strlen($value) . " bytes]</i></td><br>";
-                                echo "<img src='../../image.php?id=" . $item['itemID'] . "' style='max-height:100px;'><br>";
+                                echo "<td><i>[BLOB Data - " . strlen($value) . " bytes]</i><br>";
+                                echo "<img src='../../image.php?id=" . $item['itemID'] . "' style='max-height:100px;'><br></td>";
                             } else {
                                 // Not an image, just show blob info
                                 echo "<td><i>[BLOB Data - " . strlen($value) . " bytes]</i></td>";
