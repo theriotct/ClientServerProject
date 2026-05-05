@@ -89,15 +89,53 @@
             </div>
             <?php endif; ?>
         </div>
-        <?php if ($user_data['isAdmin'] == 1):?>
-        <div id="superAdminSection">           
-            <h2>Super Admin Dashboard</h2>
-            <ul class="list-group mt-3">
-                <li class="list-group-item" style="background-color: #00b7eb;"><a style="color: black;" href="manageAdmins.php" class="text-decoration-none">Manage Admins</a></li>
-                <li class="list-group-item" style="background-color: #00b7eb;">View All Logs</li>
-                <li class="list-group-item" style="background-color: #00b7eb;"><a style="color: black;" href="super/sql_injector.php" class="text-decoration-none">SQL Injector</a></li>
-            </ul>
-            <br>
+
+        <!-- Recent Activity -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h4>Recent Users</h4>
+                <div style="background-color:white; border-radius:8px; padding:10px;">
+                <table class="table table-sm mb-0">
+                    <thead><tr><th>ID</th><th>Username</th><th>Joined</th></tr></thead>
+                    <tbody>
+                    <?php while($u = mysqli_fetch_assoc($recentUsersResult)): ?>
+                        <tr>
+                            <td><?php echo (int)$u['userID']; ?></td>
+                            <td><?php echo htmlspecialchars($u['username']); ?></td>
+                            <td><?php echo htmlspecialchars($u['createdOn']); ?></td>
+                        </tr>
+                    <?php endwhile; ?>
+                    </tbody>
+                </table>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h4>Recent Reports</h4>
+                <div style="background-color:white; border-radius:8px; padding:10px;">
+                <table class="table table-sm mb-0">
+                    <thead><tr><th>ID</th><th>Post</th><th>Reporter</th><th>Status</th></tr></thead>
+                    <tbody>
+                    <?php while($r = mysqli_fetch_assoc($recentReportsResult)): ?>
+                        <?php
+                            $badgeClass = match($r['status']) {
+                                'Pending'   => 'bg-warning text-dark',
+                                'Reviewed'  => 'bg-success',
+                                'Dismissed' => 'bg-secondary',
+                                'Removed'   => 'bg-danger',
+                                default     => 'bg-secondary',
+                            };
+                        ?>
+                        <tr>
+                            <td><?php echo (int)$r['reportID']; ?></td>
+                            <td><?php echo htmlspecialchars($r['bodyPreview']); ?>…</td>
+                            <td><?php echo htmlspecialchars($r['reporter']); ?></td>
+                            <td><span class="badge <?php echo $badgeClass; ?>"><?php echo $r['status']; ?></span></td>
+                        </tr>
+                    <?php endwhile; ?>
+                    </tbody>
+                </table>
+                </div>
+            </div>
         </div>
 
         <!-- Account Links -->
