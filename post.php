@@ -8,9 +8,11 @@
   if(!$user_data){
 	header("Location: login.php");
 	die;
-  }
-  if($_SERVER['REQUEST_METHOD'] == "GET"){
+	}
+	$editingPost = false;
+	if($_SERVER['REQUEST_METHOD'] == "GET"){
 	if(isset($_GET['postID'])){
+	  $editingPost = true;
 	  $postID = (int)$_GET['postID'];
 	  $query = "SELECT * FROM posts WHERE postID = '$postID' LIMIT 1";
 	  $result = mysqli_query($con, $query);
