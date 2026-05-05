@@ -202,7 +202,26 @@
 		.table-stats .table-line-plus .status-social-icon {
 			color: #a75d54;
 		}
+		.btn-icon {
+			background: none;
+			border: none;
+			padding: 0;
+			margin: 0;
+			cursor: pointer;
+			color: #e74c3c; /* forces red danger color */
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+		}
 
+		.btn-icon .fa-stack {
+			font-size: 14px; /* controls icon size */
+			line-height: 1;
+		}
+
+		.btn-icon:hover {
+			opacity: 0.8;
+		}
     </style>
   </head>
   <body>
