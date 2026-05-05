@@ -105,12 +105,10 @@
                   $priceValue = (float)$price;
 
                   $query = "INSERT INTO marketplace_items 
-                            (sellerID, title, description, price, category, itemCondition, ImageData)
+                            (sellerID, title, description, price, category, itemCondition, imageData)
                             VALUES (?, ?, ?, ?, ?, ?, ?)";
 
                   $statement = mysqli_prepare($con, $query);
-                  
-                  $blob = null;
 
                   mysqli_stmt_bind_param(
                       $statement,
@@ -121,13 +119,8 @@
                       $priceValue,
                       $category,
                       $itemCondition,
-                      $blob
+                      $image
                   );
-
-
-                  if ($image !== null && strlen($image) > 0) {
-                      mysqli_stmt_send_long_data($statement, 6, $image);
-                  }
 
                   if(mysqli_stmt_execute($statement)){
                       header('Location: marketplace.php?created=1');
