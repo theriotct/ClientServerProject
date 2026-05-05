@@ -32,10 +32,36 @@ if (isset($_POST['sql_query'])) {
                 while ($row = mysqli_fetch_assoc($result)) {
                     echo "<tr>";
                     foreach ($columns as $col) {
-                        if (is_null($row[$col->name])) {
+                        $value = $row[$col->name];
+
+                        if (is_null($value)) {
                             echo "<td><i>NULL</i></td>";
+                            continue;
+                        }
+
+                        // Try to detect blob/image fields
+                        $fieldType = $col->type; // MySQL field type code
+
+                        // LONGBLOB / BLOB detection
+                        if ($fieldType == MYSQLI_TYPE_BLOB) {
+
+                            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                            $mime = finfo_buffer($finfo, $value);
+                            finfo_close($finfo);
+
+                            // Only render if it's actually an image
+                            if (strpos($mime, 'image/') === 0) {
+                                $base64 = base64_encode($value);
+
+                                echo "<td>
+                                        <img src='data:$mime;base64,$base64' style='max-width:150px; max-height:150px;'>
+                                    </td>";
+                            } else {
+                                echo "<td><i>BLOB (" . strlen($value) . " bytes)</i></td>";
+                            }
+
                         } else {
-                            echo "<td>" . htmlspecialchars($row[$col->name]) . "</td>";
+                            echo "<td>" . htmlspecialchars($value) . "</td>";
                         }
                     }
                     echo "</tr>";
