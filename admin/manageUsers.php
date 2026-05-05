@@ -9,6 +9,11 @@
     if(!$user_data || is_null($user_data['isAdmin']) || $_SESSION['2fa_verified'] !== true) {
         forbidden();
     }
+
+	function get_users($con) {
+		$query = "SELECT * FROM user WHERE isAdmin IS NULL";
+		return mysqli_query($con, $query);
+	}
 ?>
 
 <!DOCTYPE html>
@@ -218,346 +223,48 @@
 							</tr>
 						</thead>
 						<tbody>
+							<?php $users = get_users($con);
+							while($user = mysqli_fetch_assoc($users)): ?>
 							<tr>
 								<td>
-									<img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="">
-									<a href="#" class="user-link">Mila Kunis</a>
-									
+									<img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt=""><!-- Placeholder image -->
+									<a href="../profile.php?userID=<?= $user['userID'] ?>" class="user-link"><?= $user['fname']." ".$user['lname'] ?></a>
+									<span class="user-subhead"><?= $user['username'] ?></span>
 								</td>
 								<td>
-									2013/08/08
+									<?= date("Y/m/d", strtotime($user['createdOn'])) ?>
 								</td>
 							
 								<td>
-									<a href="#">mila@kunis.com</a>
+									<a href="mailto:<?= $user['email'] ?>"><?= $user['email'] ?></a>
 								</td>
 								<td style="width: 20%;">
-									<a href="#" class="table-link">
+									<a href="../profile.php?userID=<?= $user['userID'] ?>" class="table-link">
 										<span class="fa-stack">
 											<i class="fa fa-square fa-stack-2x"></i>
 											<i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
 										</span>
 									</a>
-										<a href="#" class="table-link">
+										<a href="#" class="table-link"><!-- Edit functionality not implemented yet -->
 										<span class="fa-stack">
 											<i class="fa fa-square fa-stack-2x"></i>
 											<i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
 										</span>
 									</a>
-									<a href="#" class="table-link danger">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
+									<form action="manageAdmins.php" method="post" style="display:contents;">
+										<input type="hidden" name="userID" value="<?= $user['userID'] ?>">
+										<button type="submit" name="deleteUser" style="border:none; background:none; padding:0; margin:0;">
+											<a href="#" class="table-link danger">
+												<span class="fa-stack">
+													<i class="fa fa-square fa-stack-2x"></i>
+													<i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+												</span>
+											</a>
+										</button>
+									</form>
 								</td>
 							</tr>
-							<tr>
-								<td>
-									<img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="">
-									<a href="#" class="user-link">George Clooney</a>
-								
-								</td>
-								<td>
-									2013/08/12
-								</td>
-							
-								<td>
-									<a href="#">marlon@brando.com</a>
-								</td>
-								<td style="width: 20%;">
-									<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-									<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-									<a href="#" class="table-link danger">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="">
-									<a href="#" class="user-link">Ryan Gossling</a>
-								
-								</td>
-								<td>
-									2013/03/03
-								</td>
-							
-								<td>
-									<a href="#">jack@nicholson</a>
-								</td>
-								<td style="width: 20%;">
-									<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-									<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-									<a href="#" class="table-link danger">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<img src="https://bootdey.com/img/Content/avatar/avatar4.png" alt="">
-									<a href="#" class="user-link">Emma Watson</a>
-								
-								</td>
-								<td>
-									2004/01/24
-								</td>
-							
-								<td>
-									<a href="#">humphrey@bogart.com</a>
-								</td>
-								<td style="width: 20%;">
-									<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-									<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-									<a href="#" class="table-link danger">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<img src="https://bootdey.com/img/Content/avatar/avatar5.png" alt="">
-									<a href="#" class="user-link">Robert Downey Jr.</a>
-								
-								</td>
-								<td>
-									2013/12/31
-								</td>
-							
-								<td>
-									<a href="#">spencer@tracy</a>
-								</td>
-								<td style="width: 20%;">
-									<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-									<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-									<a href="#" class="table-link danger">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<img src="https://bootdey.com/img/Content/avatar/avatar6.png" alt="">
-									<a href="#" class="user-link">Mila Kunis</a>
-								
-								</td>
-								<td>
-									2013/08/08
-								</td>
-							
-								<td>
-									<a href="#">mila@kunis.com</a>
-								</td>
-								<td style="width: 20%;">
-									<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-									<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-									<a href="#" class="table-link danger">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="">
-									<a href="#" class="user-link">George Clooney</a>
-								
-								</td>
-								<td>
-									2013/08/12
-								</td>
-							
-								<td>
-									<a href="#">marlon@brando.com</a>
-								</td>
-								<td style="width: 20%;">
-									<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-									<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-									<a href="#" class="table-link danger">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="">
-									<a href="#" class="user-link">Ryan Gossling</a>
-								
-								</td>
-								<td>
-									2013/03/03
-								</td>
-							
-								<td>
-									<a href="#">jack@nicholson</a>
-								</td>
-								<td style="width: 20%;">
-									<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-									<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-									<a href="#" class="table-link danger">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="">
-									<a href="#" class="user-link">Emma Watson</a>
-								
-								</td>
-								<td>
-									2004/01/24
-								</td>
-							
-								<td>
-									<a href="#">humphrey@bogart.com</a>
-								</td>
-								<td style="width: 20%;">
-									<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-									<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-									<a href="#" class="table-link danger">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<img src="https://bootdey.com/img/Content/avatar/avatar6.png" alt="">
-									<a href="#" class="user-link">Robert Downey Jr.</a>
-								
-								</td>
-								<td>
-									2013/12/31
-								</td>
-							
-								<td>	
-									<a href="#">spencer@tracy</a>
-								</td>
-								<td style="width: 20%;">
-									<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-									<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-									<a href="#" class="table-link danger">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-								</td>
-							</tr>
+							<?php endwhile; ?>
 						</tbody>
 					</table>
 				</div>
