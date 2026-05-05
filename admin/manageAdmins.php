@@ -251,9 +251,9 @@
 											<i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
 										</span>
 									</a>
-									<form action="manageAdmins.php" method="post">
+									<form action="manageAdmins.php" method="post" style="display:contents;">
 										<input type="hidden" name="userID" value="<?= $user['userID'] ?>">
-										<button type="submit" name="deleteUser" style="border:none; background:none; display:inline;">
+										<button type="submit" name="deleteUser" style="border:none; background:none; padding:0; margin:0;">
 											<a href="#" class="table-link danger">
 												<span class="fa-stack">
 													<i class="fa fa-square fa-stack-2x"></i>
