@@ -42,38 +42,41 @@ if (isset($_POST['sql_query'])) {
                     foreach ($columns as $col) {
                         $value = $row[$col->name];
 
+                        echo "<td>";
+
                         if (is_null($value)) {
-                            echo "<td><i>NULL</i></td>";
-                            continue;
-                        }
+                            echo "<i>NULL</i>";
+                        } else {
+                            $fieldType = $col->type;
 
-                        // Try to detect blob/image fields
-                        $fieldType = $col->type; // MySQL field type code
+                            // BLOB handling
+                            if ($fieldType == MYSQLI_TYPE_BLOB) {
 
-                        // LONGBLOB / BLOB detection
-                        if ($fieldType == MYSQLI_TYPE_BLOB) {
+                                $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                                $mime = finfo_buffer($finfo, $value);
+                                finfo_close($finfo);
 
-                            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-                            $mime = finfo_buffer($finfo, $value);
-                            finfo_close($finfo);
+                                if (strpos($mime, 'image/') === 0) {
 
-                            if (strpos($mime, 'image/') === 0) {
+                                    if ($primaryKey !== null && isset($row[$primaryKey])) {
+                                        echo "<img src='../../image.php?id=" . (int)$row[$primaryKey] . "' style='max-height:100px;'><br>";
+                                    } else {
+                                        echo "<i>[Image detected but no primary key available]</i><br>";
+                                    }
 
-                                echo "<td>";
+                                    echo "<small>" . strlen($value) . " bytes</small>";
 
-                                if ($primaryKey !== null && isset($row[$primaryKey])) {
-                                    echo "<img src='../../image.php?id=" . (int)$row[$primaryKey] . "' style='max-height:100px;'><br>";
                                 } else {
-                                    echo "<i>[Image detected but no primary key available]</i><br>";
+                                    echo "<i>[BLOB - " . strlen($value) . " bytes]</i>";
                                 }
 
-                                echo "<small>" . strlen($value) . " bytes</small>";
-                                echo "</td>";
-
                             } else {
-                                echo "<td><i>[BLOB - " . strlen($value) . " bytes]</i></td>";
+                                // NORMAL FIELDS (THIS WAS MISSING)
+                                echo htmlspecialchars($value);
                             }
                         }
+
+                        echo "</td>";
                     }
                     echo "</tr>";
                 }
