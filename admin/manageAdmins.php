@@ -563,7 +563,7 @@
 										</span>
 									</a>
 									<form action="manageAdmins.php" method="post">
-										<button type="submit" name="deleteUser" style="border:none; background:none; padding:0; margin:0;">
+										<button type="submit" name="deleteUser" style="border:none; background:none;">
 											<a href="#" class="table-link danger">
 												<span class="fa-stack">
 													<i class="fa fa-square fa-stack-2x"></i>
