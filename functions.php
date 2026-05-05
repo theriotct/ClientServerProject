@@ -98,3 +98,58 @@ function set_header(){
     }
     echo '</div></div></nav>';
 }
+
+// Ensure reports and admin_logs tables exist on every page load (fast no-op when already present)
+mysqli_query($con, "CREATE TABLE IF NOT EXISTS `reports` (
+  `reportID`   INT NOT NULL AUTO_INCREMENT,
+  `postID`     INT NOT NULL,
+  `reporterID` INT NOT NULL,
+  `reason`     VARCHAR(255) NULL,
+  `status`     VARCHAR(25)  NOT NULL DEFAULT 'Pending',
+  `adminNote`  VARCHAR(1000) NULL,
+  `createdOn`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `reviewedOn` TIMESTAMP NULL,
+  `reviewedBy` INT NULL,
+  PRIMARY KEY (`reportID`),
+  UNIQUE KEY `unique_report` (`postID`, `reporterID`)
+)");
+
+mysqli_query($con, "CREATE TABLE IF NOT EXISTS `admin_logs` (
+  `logID`      INT NOT NULL AUTO_INCREMENT,
+  `adminID`    INT NOT NULL,
+  `action`     VARCHAR(100) NOT NULL,
+  `targetType` VARCHAR(50)  NOT NULL,
+  `targetID`   INT NULL,
+  `note`       VARCHAR(1000) NULL,
+  `createdOn`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`logID`)
+)");
+
+function check_admin($con, $superOnly = false)
+{
+    $user_data = check_login($con);
+    if (!$user_data || is_null($user_data['isAdmin'])) {
+        header("HTTP/1.1 403 Forbidden");
+        include(dirname(__FILE__) . '/403.html');
+        die;
+    }
+    if ($superOnly && (int)$user_data['isAdmin'] !== 1) {
+        header("HTTP/1.1 403 Forbidden");
+        include(dirname(__FILE__) . '/403.html');
+        die;
+    }
+    if (empty($_SESSION['2fa_verified'])) {
+        header("HTTP/1.1 403 Forbidden");
+        include(dirname(__FILE__) . '/403.html');
+        die;
+    }
+    return $user_data;
+}
+
+function log_admin_action($con, $adminID, $action, $targetType, $targetID = null, $note = null)
+{
+    $stmt = mysqli_prepare($con,
+        "INSERT INTO admin_logs (adminID, action, targetType, targetID, note) VALUES (?, ?, ?, ?, ?)");
+    mysqli_stmt_bind_param($stmt, 'issis', $adminID, $action, $targetType, $targetID, $note);
+    mysqli_stmt_execute($stmt);
+}
