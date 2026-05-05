@@ -47,32 +47,27 @@ if (isset($_POST['sql_query'])) {
 
                         if ($value === null) {
                             echo "<i>NULL</i>";
-                        } else {
+                        }
+                        elseif ($name === "ImageData") {
+                            // ONLY treat this column as image/blob
 
-                            // detect blob by actual content, not mysql type
-                            if (is_string($value) && strlen($value) > 1000) {
-
+                            if (!empty($value)) {
                                 $finfo = finfo_open(FILEINFO_MIME_TYPE);
                                 $mime = finfo_buffer($finfo, $value);
                                 finfo_close($finfo);
 
                                 if (strpos($mime, 'image/') === 0) {
-
-                                    if ($primaryKey !== null && isset($row[$primaryKey])) {
-                                        echo "<img src='../../image.php?id=" . (int)$row[$primaryKey] . "' style='max-height:100px;'><br>";
-                                    } else {
-                                        echo "<i>[Image]</i><br>";
-                                    }
-
                                     echo "<small>" . strlen($value) . " bytes</small>";
-
                                 } else {
                                     echo "<i>[BLOB " . strlen($value) . " bytes]</i>";
                                 }
-
                             } else {
-                                echo htmlspecialchars((string)$value);
+                                echo "<i>NULL</i>";
                             }
+                        }
+                        else {
+                            // EVERYTHING ELSE IS NORMAL TEXT
+                            echo htmlspecialchars($value);
                         }
 
                         echo "</td>";
