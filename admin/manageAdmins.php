@@ -252,16 +252,16 @@
 											<i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
 										</span>
 									</a>
-									<form action="manageAdmins.php" method="POST">
+									<form action="manageAdmins.php" method="POST" style="display:inline;">
 										<input type="hidden" name="userID" value="<?= $user['userID'] ?>">
-										<input type="submit" value="Delete" class="table-link danger">
+
+										<button type="submit" name="deleteUser" class="table-link danger" style="background:none; border:none; padding:0;">
 											<span class="fa-stack">
 												<i class="fa fa-square fa-stack-2x"></i>
 												<i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
 											</span>
-										</a>
+										</button>
 									</form>
-									</a>
 								</td>
 							</tr>
 							<?php endwhile; ?>
