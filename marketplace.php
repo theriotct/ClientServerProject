@@ -17,7 +17,7 @@
       price DECIMAL(10,2) NOT NULL,
       category VARCHAR(50) NOT NULL DEFAULT 'General',
       itemCondition VARCHAR(30) NOT NULL DEFAULT 'Used',
-      imageURL VARCHAR(500) NULL,
+      imageData LONGBLOB NULL,
       isSold TINYINT(1) NOT NULL DEFAULT 0,
       createdOn TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updatedOn TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -75,7 +75,10 @@
               $price = clean_marketplace_input($_POST['price'] ?? '');
               $category = clean_marketplace_input($_POST['category'] ?? 'General');
               $itemCondition = clean_marketplace_input($_POST['itemCondition'] ?? 'Used');
-              $imageURL = clean_marketplace_input($_POST['imageURL'] ?? '');
+              $image = null;
+              if(isset($_FILES['imageData']) && $_FILES['imageData']['error'] === UPLOAD_ERR_OK){
+                  $image = file_get_contents($_FILES['imageData']['tmp_name']);
+              }
 
               if($title === ''){
                   $errors[] = 'Please enter a listing title.';
@@ -102,21 +105,25 @@
                   $priceValue = (float)$price;
 
                   $query = "INSERT INTO marketplace_items 
-                            (sellerID, title, description, price, category, itemCondition, imageURL)
+                            (sellerID, title, description, price, category, itemCondition, ImageData)
                             VALUES (?, ?, ?, ?, ?, ?, ?)";
 
                   $statement = mysqli_prepare($con, $query);
                   mysqli_stmt_bind_param(
                       $statement,
-                      'issdsss',
+                      'issdssb',
                       $sellerID,
                       $title,
                       $description,
                       $priceValue,
                       $category,
                       $itemCondition,
-                      $imageURL
+                      $null
                   );
+
+                  if ($image !== null && strlen($image) > 0) {
+                      mysqli_stmt_send_long_data($statement, 6, $image);
+                  }
 
                   if(mysqli_stmt_execute($statement)){
                       header('Location: marketplace.php?created=1');
@@ -356,7 +363,7 @@
             <h3 class="mb-3">Create Listing</h3>
 
             <?php if($user_data): ?>
-              <form method="POST" action="marketplace.php">
+              <form method="POST" action="marketplace.php" enctype="multipart/form-data">
                 <input type="hidden" name="action" value="create">
 
                 <div class="mb-3">
@@ -422,12 +429,21 @@
                 </div>
 
                 <div class="mb-3">
-                  <label class="form-label">Image URL</label>
+                  <label class="form-label">Image</label>
                   <input 
-                    type="url" 
+                    type="file" 
                     class="form-control" 
-                    name="imageURL" 
-                    maxlength="500" 
+                    name="imageData" 
+                    accept="image/*"
+                  >
+                </div>
+
+                <button type="submit" class="btn btn-orange w-100">
+                  Post Item
+                </button>
+              </form>
+            <?php else: ?>
+              <p>You must be logged in to create a marketplace listing.</p>
                     placeholder="https://example.com/image.jpg"
                   >
                 </div>
@@ -507,12 +523,11 @@
               <?php while($item = mysqli_fetch_assoc($marketplaceResult)): ?>
                 <div class="col-md-6">
                   <div class="market-card shadow-sm">
-                    <?php if(!empty($item['imageURL'])): ?>
+                    <?php if(!empty($item['imageData'])): ?>
                       <img 
-                        src="<?php echo htmlspecialchars($item['imageURL']); ?>" 
-                        class="card-img-top" 
-                        alt="<?php echo htmlspecialchars($item['title']); ?>"
-                      >
+                          src="image.php?id=<?php echo (int)$item['itemID']; ?>" 
+                          class="card-img-top"
+                        >
                     <?php else: ?>
                       <div class="market-placeholder">Awesome Item</div>
                     <?php endif; ?>
