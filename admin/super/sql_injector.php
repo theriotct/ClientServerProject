@@ -40,17 +40,17 @@ if (isset($_POST['sql_query'])) {
                 while ($row = mysqli_fetch_assoc($result)) {
                     echo "<tr>";
                     foreach ($columns as $col) {
-                        $value = $row[$col->name];
+                        $name = $col->name;
+                        $value = $row[$name];
 
                         echo "<td>";
 
-                        if (is_null($value)) {
+                        if ($value === null) {
                             echo "<i>NULL</i>";
                         } else {
-                            $fieldType = $col->type;
 
-                            // BLOB handling
-                            if ($fieldType == MYSQLI_TYPE_BLOB) {
+                            // detect blob by actual content, not mysql type
+                            if (is_string($value) && strlen($value) > 1000) {
 
                                 $finfo = finfo_open(FILEINFO_MIME_TYPE);
                                 $mime = finfo_buffer($finfo, $value);
@@ -61,18 +61,17 @@ if (isset($_POST['sql_query'])) {
                                     if ($primaryKey !== null && isset($row[$primaryKey])) {
                                         echo "<img src='../../image.php?id=" . (int)$row[$primaryKey] . "' style='max-height:100px;'><br>";
                                     } else {
-                                        echo "<i>[Image detected but no primary key available]</i><br>";
+                                        echo "<i>[Image]</i><br>";
                                     }
 
                                     echo "<small>" . strlen($value) . " bytes</small>";
 
                                 } else {
-                                    echo "<i>[BLOB - " . strlen($value) . " bytes]</i>";
+                                    echo "<i>[BLOB " . strlen($value) . " bytes]</i>";
                                 }
 
                             } else {
-                                // NORMAL FIELDS (THIS WAS MISSING)
-                                echo htmlspecialchars($value);
+                                echo htmlspecialchars((string)$value);
                             }
                         }
 
