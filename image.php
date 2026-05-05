@@ -10,10 +10,16 @@ mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 
 if ($row = mysqli_fetch_assoc($result)) {
+
     $img = $row['ImageData'];
 
     if (!empty($img)) {
-        header("Content-Type: image/jpeg");
+        // Try to detect image type
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime = finfo_buffer($finfo, $img);
+        finfo_close($finfo);
+
+        header("Content-Type: " . $mime);
         echo $img;
     }
 }
