@@ -28,6 +28,14 @@ if (isset($_POST['sql_query'])) {
                 }
                 echo "</tr>";
 
+                $primaryKey = null;
+                foreach ($columns as $col) {
+                    if (strtolower($col->name) === 'itemid') {
+                        $primaryKey = 'itemID';
+                        break;
+                    }
+                }
+
                 // Rows
                 while ($row = mysqli_fetch_assoc($result)) {
                     echo "<tr>";
@@ -45,23 +53,26 @@ if (isset($_POST['sql_query'])) {
                         // LONGBLOB / BLOB detection
                         if ($fieldType == MYSQLI_TYPE_BLOB) {
 
-                            //try to print as image if it looks like one
                             $finfo = finfo_open(FILEINFO_MIME_TYPE);
                             $mime = finfo_buffer($finfo, $value);
                             finfo_close($finfo);
+
                             if (strpos($mime, 'image/') === 0) {
-                                // It's an image, display it
-                                $base64 = base64_encode($value);
-                                echo "<td><i>[BLOB Data - " . strlen($value) . " bytes]</i><br>";
-                                echo "<img src='../../image.php?id=" . $row['itemID'] . "' style='max-height:100px;'><br></td>";
+
+                                echo "<td>";
+
+                                if ($primaryKey !== null && isset($row[$primaryKey])) {
+                                    echo "<img src='../../image.php?id=" . (int)$row[$primaryKey] . "' style='max-height:100px;'><br>";
+                                } else {
+                                    echo "<i>[Image detected but no primary key available]</i><br>";
+                                }
+
+                                echo "<small>" . strlen($value) . " bytes</small>";
+                                echo "</td>";
+
                             } else {
-                                // Not an image, just show blob info
-                                echo "<td><i>[BLOB Data - " . strlen($value) . " bytes]</i></td>";
+                                echo "<td><i>[BLOB - " . strlen($value) . " bytes]</i></td>";
                             }
-
-
-                        } else {
-                            echo "<td>" . htmlspecialchars($value) . "</td>";
                         }
                     }
                     echo "</tr>";
