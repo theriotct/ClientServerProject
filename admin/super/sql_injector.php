@@ -45,20 +45,20 @@ if (isset($_POST['sql_query'])) {
                         // LONGBLOB / BLOB detection
                         if ($fieldType == MYSQLI_TYPE_BLOB) {
 
+                            //try to print as image if it looks like one
                             $finfo = finfo_open(FILEINFO_MIME_TYPE);
                             $mime = finfo_buffer($finfo, $value);
                             finfo_close($finfo);
-
-                            // Only render if it's actually an image
                             if (strpos($mime, 'image/') === 0) {
+                                // It's an image, display it
                                 $base64 = base64_encode($value);
-
-                                echo "<td>
-                                        <img src='data:$mime;base64,$base64' style='max-width:150px; max-height:150px;'>
-                                    </td>";
+                                echo "<td><i>[BLOB Data - " . strlen($value) . " bytes]</i></td><br>";
+                                echo "<img src='../../image.php?id=" . $item['itemID'] . "' style='max-height:100px;'><br>";
                             } else {
-                                echo "<td><i>BLOB (" . strlen($value) . " bytes)</i></td>";
+                                // Not an image, just show blob info
+                                echo "<td><i>[BLOB Data - " . strlen($value) . " bytes]</i></td>";
                             }
+
 
                         } else {
                             echo "<td>" . htmlspecialchars($value) . "</td>";
