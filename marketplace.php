@@ -108,18 +108,20 @@
                             (sellerID, title, description, price, category, itemCondition, ImageData)
                             VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-                  $statement = mysqli_prepare($con, $query);
+                  $blob = null;
+
                   mysqli_stmt_bind_param(
                       $statement,
-                      'issdssb',
+                      'issdsss',
                       $sellerID,
                       $title,
                       $description,
                       $priceValue,
                       $category,
                       $itemCondition,
-                      $null
+                      $blob
                   );
+
 
                   if ($image !== null && strlen($image) > 0) {
                       mysqli_stmt_send_long_data($statement, 6, $image);
@@ -435,16 +437,6 @@
                     class="form-control" 
                     name="imageData" 
                     accept="image/*"
-                  >
-                </div>
-
-                <button type="submit" class="btn btn-orange w-100">
-                  Post Item
-                </button>
-              </form>
-            <?php else: ?>
-              <p>You must be logged in to create a marketplace listing.</p>
-                    placeholder="https://example.com/image.jpg"
                   >
                 </div>
 
