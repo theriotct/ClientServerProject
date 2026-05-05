@@ -14,6 +14,17 @@
 		$query = "SELECT * FROM user WHERE isAdmin IS NOT NULL";
 		return mysqli_query($con, $query);
 	}
+
+	if($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['deleteUser']))
+	{
+		$userID = $_POST['userID'];
+		if(!empty($userID) && is_numeric($userID)) {
+			$query = "DELETE FROM user WHERE userID = ?";
+			$stmt = mysqli_prepare($con, $query);
+			mysqli_stmt_bind_param($stmt, 'i', $userID);
+			mysqli_stmt_execute($stmt);
+		}
+	}
 ?>
 
 <!DOCTYPE html>

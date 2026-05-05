@@ -14,6 +14,17 @@
 		$query = "SELECT * FROM user WHERE isAdmin IS NULL";
 		return mysqli_query($con, $query);
 	}
+
+	if($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['deleteUser']))
+	{
+		$userID = $_POST['userID'];
+		if(!empty($userID) && is_numeric($userID)) {
+			$query = "DELETE FROM user WHERE userID = ?";
+			$stmt = mysqli_prepare($con, $query);
+			mysqli_stmt_bind_param($stmt, 'i', $userID);
+			mysqli_stmt_execute($stmt);
+		}
+	}
 ?>
 
 <!DOCTYPE html>
@@ -251,7 +262,7 @@
 											<i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
 										</span>
 									</a>
-									<form action="manageAdmins.php" method="post" style="display:contents;">
+									<form action="manageUsers.php" method="post" style="display:contents;">
 										<input type="hidden" name="userID" value="<?= $user['userID'] ?>">
 										<button type="submit" name="deleteUser" style="border:none; background:none; padding:0; margin:0;">
 											<a href="#" class="table-link danger">
