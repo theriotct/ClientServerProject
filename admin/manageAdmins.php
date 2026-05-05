@@ -14,7 +14,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Manage Users</title>
+    <title>Manage Admins</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -52,14 +52,14 @@
 			background-color: #eee;
 		}
 		.table thead > tr > th {
-			border-bottom: 1px solid #aec2fc;
+			border-bottom: 1px solid #fcb65b;
 			padding-bottom: 0;
-			background: #fcab47;
+			background: #4257fc;
 		}
 		.table tbody > tr > td {
 			font-size: 0.875em;
-			background: #aec2fc;
-			border-top: 10px solid #fcab47;
+			background: #fcb65b;
+			border-top: 10px solid #4257fc;
 			vertical-align: middle;
 			padding: 12px 8px;
 		}
@@ -68,7 +68,7 @@
 			padding-left: 20px;
 		}
 		.table thead > tr > th span {
-			border-bottom: 2px solid #aec2fc;
+			border-bottom: 2px solid #fcb65b;
 			display: inline-block;
 			padding: 0 5px;
 			padding-bottom: 5px;
@@ -211,7 +211,7 @@
 					<table class="table user-list">
 						<thead>
 							<tr>
-								<th><span>User</span></th>
+								<th><span>Admin</span></th>
 								<th><span>Created</span></th>
 								<th><span>Email</span></th>
 								<th>&nbsp;</th>

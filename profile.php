@@ -1,71 +1,77 @@
 <?php
-    session_start();
-    include "connection.php";
-    include "functions.php";
+  session_start();
+  include "connection.php";
+  include "functions.php";
 
-    $user_data = check_login($con);
+  $user_data = check_login($con);
 
-    if (!$user_data) {
-        header("Location: login.php");
-        die;
+  if(isset($_GET['userID'])){
+    $userID = $_GET['userID'];
+  } else {
+    $userID = $user_data['userID'];
+  }
+  $query = "SELECT `fname`, `lname`, `username` FROM `user` WHERE userID = $userID";
+  $profile_result = mysqli_query($con, $query);
+  if($profile_result && mysqli_num_rows($profile_result) > 0){
+      $profile_user_data = mysqli_fetch_assoc($profile_result);
+  }else{
+      not_found();
+  }
+
+  function get_posts($con, $userID){
+
+    $query = "WITH RECURSIVE thread AS (
+                SELECT p.postID AS replyID, p.parentID, p.title, p.body, p.authorID, p.date, p.postID AS originalReplyID
+                FROM posts p
+                WHERE p.authorID = $userID
+
+                UNION ALL
+
+                SELECT parent.postID AS replyID, parent.parentID, parent.title, parent.body, parent.authorID, parent.date, t.originalReplyID
+                FROM posts parent
+                JOIN thread t ON t.parentID = parent.postID
+              )
+              SELECT 
+                root.postID AS parentID,
+                root.title AS parentTitle,
+                root.authorID AS parentAuthorID,
+                root.date AS parentDate,
+                reply.postID AS replyID,
+                reply.parentID AS replyParentID,
+                reply.authorID AS replyAuthorID,
+                reply.body AS replyBody,
+                reply.title AS replyTitle,
+                reply.date AS replyDate
+              FROM thread t
+              JOIN posts root ON root.postID = t.replyID AND root.parentID IS NULL
+              JOIN posts reply ON reply.postID = t.originalReplyID
+              ORDER BY reply.date DESC";
+
+    $result = mysqli_query($con, $query);
+
+    if (!$result) {
+        echo '<div style="background-color:#eee;padding:10px;margin:10px;">
+                <h4>SQL Error</h4>
+                <p>User Has No Posts</p>
+              </div>';
+        return;
     }
 
-    $profileUserID = isset($_GET['userID']) ? (int)$_GET['userID'] : (int)$user_data['userID'];
-    $isOwnProfile  = ((int)$user_data['userID'] === $profileUserID);
-
-    // Fetch profile user
-    $stmt = mysqli_prepare($con,
-        "SELECT userID, fname, lname, displayName, username, biography, signature,
-                profilePicture, location, major, interests, createdOn, lastLogin
-         FROM user WHERE userID = ? LIMIT 1");
-    mysqli_stmt_bind_param($stmt, 'i', $profileUserID);
-    mysqli_stmt_execute($stmt);
-    $profile = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
-
-    if (!$profile) {
-        not_found();
+    if (mysqli_num_rows($result) === 0) {
+        echo '<div style="background-color:#eee;padding:10px;margin:10px;">
+                <h4>User Has No Posts</h4>
+              </div>';
+        return;
     }
 
-    // Post and reply counts
-    $statsStmt = mysqli_prepare($con,
-        "SELECT
-            COUNT(CASE WHEN parentID IS NULL     THEN 1 END) AS postCount,
-            COUNT(CASE WHEN parentID IS NOT NULL THEN 1 END) AS replyCount
-         FROM posts WHERE authorID = ?");
-    mysqli_stmt_bind_param($statsStmt, 'i', $profileUserID);
-    mysqli_stmt_execute($statsStmt);
-    $stats      = mysqli_fetch_assoc(mysqli_stmt_get_result($statsStmt));
-    $postCount  = (int)$stats['postCount'];
-    $replyCount = (int)$stats['replyCount'];
-
-    // Recent activity (10 most recent posts/replies)
-    $actStmt = mysqli_prepare($con,
-        "SELECT p.postID, p.parentID, p.title, p.body, p.date,
-                COALESCE(root.title, p.title)   AS threadTitle,
-                COALESCE(root.postID, p.postID) AS threadID
-         FROM posts p
-         LEFT JOIN posts root ON root.postID = p.parentID
-         WHERE p.authorID = ?
-         ORDER BY p.date DESC
-         LIMIT 10");
-    mysqli_stmt_bind_param($actStmt, 'i', $profileUserID);
-    mysqli_stmt_execute($actStmt);
-    $activityPosts = mysqli_fetch_all(mysqli_stmt_get_result($actStmt), MYSQLI_ASSOC);
-
-    // Display name: displayName > fname+lname > username
-    $displayName = !empty($profile['displayName'])
-        ? $profile['displayName']
-        : trim(($profile['fname'] ?? '') . ' ' . ($profile['lname'] ?? ''));
-    if ($displayName === '') {
-        $displayName = $profile['username'];
+    while($post = mysqli_fetch_assoc($result)){
+        echo '<div style="background-color:#eee;padding:10px;margin:10px;">
+                <h4><a href="thread.php?postID='.$post['parentID'].'">'.$post['parentTitle'].'</a></h4>
+                <p>'.$post['replyBody'].'</p>
+                <p>'.$post['replyDate'].'</p>
+              </div>';
     }
-
-    $avatar         = !empty($profile['profilePicture']) ? $profile['profilePicture'] : 'images/download.jpg';
-    $joinedDate     = date('M j, Y', strtotime($profile['createdOn']));
-    $lastActiveDate = !empty($profile['lastLogin'])
-        ? date('M j, Y', strtotime($profile['lastLogin']))
-        : 'Never';
-    $successMessage = isset($_GET['updated']) ? 'Profile updated successfully.' : '';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

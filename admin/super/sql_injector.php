@@ -28,15 +28,42 @@ if (isset($_POST['sql_query'])) {
                 }
                 echo "</tr>";
 
+                $primaryKey = null;
+                foreach ($columns as $col) {
+                    if (strtolower($col->name) === 'itemid') {
+                        $primaryKey = 'itemID';
+                        break;
+                    }
+                }
+
                 // Rows
                 while ($row = mysqli_fetch_assoc($result)) {
                     echo "<tr>";
                     foreach ($columns as $col) {
-                        if (is_null($row[$col->name])) {
-                            echo "<td><i>NULL</i></td>";
-                        } else {
-                            echo "<td>" . htmlspecialchars($row[$col->name]) . "</td>";
+                        $name = $col->name;
+                        $value = $row[$name];
+
+                        echo "<td>";
+
+                        if ($value === null) {
+                            echo "<i>NULL</i>";
                         }
+                        elseif ($name === "ImageData") {
+                            // ONLY treat this column as image/blob
+
+                            if (!empty($value)) {
+                                echo "<img src='../../image.php?id=" . $row[$primaryKey] . "' style='max-height:100px; width:auto;'/><br>";
+                                echo "<small>Blob data (" . strlen($value) . " bytes)</small>";
+                            } else {
+                                echo "<i>NULL</i>";
+                            }
+                        }
+                        else {
+                            // EVERYTHING ELSE IS NORMAL TEXT
+                            echo htmlspecialchars($value);
+                        }
+
+                        echo "</td>";
                     }
                     echo "</tr>";
                 }

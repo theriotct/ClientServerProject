@@ -4,63 +4,59 @@
   include("functions.php");
 
   $user_data = check_login($con);
-
-	$editingPost = false;
-	$editPostID = 0;
-	$editTitle = "";
-	$editBody = "";
-
-	if(isset($_GET['editPostID'])){
-		$editPostID = (int)$_GET['editPostID'];
-
-		$query = "SELECT * FROM posts WHERE postID = '$editPostID' LIMIT 1";
-		$result = mysqli_query($con, $query);
-
-		if($result && mysqli_num_rows($result) > 0){
-			$post_data = mysqli_fetch_assoc($result);
-
-			if($post_data['authorID'] == $user_data['userID']){
-				$editingPost = true;
-				$editTitle = $post_data['title'];
-				$editBody = $post_data['body'];
-			}else{
-				echo "You are not allowed to edit this post.";
-				die;
+  $GETpost_data = null;
+  if(!$user_data){
+	header("Location: login.php");
+	die;
+  }
+  if($_SERVER['REQUEST_METHOD'] == "GET"){
+	if(isset($_GET['postID'])){
+	  $postID = (int)$_GET['postID'];
+	  $query = "SELECT * FROM posts WHERE postID = '$postID' LIMIT 1";
+	  $result = mysqli_query($con, $query);
+	  if($result && mysqli_num_rows($result) > 0){
+		$GETpost_data = mysqli_fetch_assoc($result);
+	  
+		if(is_null($user_data['isAdmin'])){
+			if(($user_data["userID"] != $GETpost_data['authorID'])){
+			forbidden();
 			}
-		}else{
-			echo "Post not found.";
-			die;
 		}
+	  }
 	}
-  
+  }
+
+
   if($_SERVER['REQUEST_METHOD'] == "POST"){
-	$title = $_POST['title'];
-	$body = $_POST['description'];
+	$title = trim($_POST['title'] ?? '');
+	$body  = trim($_POST['description'] ?? '');	
 
-	if(!empty($title)){
+	if(!isset($_POST['postID'])){
+		if(!empty($title)){
 		$user_id = $user_data['userID'];
+		$query = "INSERT INTO posts (authorID, title, body) VALUES ('$user_id', '$title', '$body')";
+		mysqli_query($con, $query);
+		header("Location: index.php");
+		die;
+		}else{
+		echo "Please enter a title";
+		}
+	}else{
+		if(!empty($title)){
+			$postID = (int)$_POST['postID'];
 
-		if(isset($_POST['editPostID']) && !empty($_POST['editPostID'])){
-			$editPostID = (int)$_POST['editPostID'];
-
-			$query = "UPDATE posts 
-					  SET title = '$title', body = '$body' 
-					  WHERE postID = '$editPostID' 
-					  AND authorID = '$user_id'";
-
+			$query = "UPDATE posts SET title = '$title', body = '$body' WHERE postID = $postID";
+			
 			mysqli_query($con, $query);
-
-			header("Location: thread.php?postID=".$editPostID);
+			header("Location: index.php");
 			die;
 		}else{
-			$query = "INSERT INTO posts (authorID, title, body) VALUES ('$user_id', '$title', '$body')";
+			$postID = (int)$_POST['postID'];
+			$query = "UPDATE posts SET body = '$body' WHERE postID = '$postID'";
 			mysqli_query($con, $query);
-
 			header("Location: index.php");
 			die;
 		}
-	}else{
-		echo "Please enter a title";
 	}
 }
 
@@ -91,18 +87,24 @@
 					<h1><?php echo $editingPost ? "Edit post" : "Create post"; ?></h1>
 					
 					<form action="" method="POST">
-						<?php if($editingPost): ?>
-							<input type="hidden" name="editPostID" value="<?php echo $editPostID; ?>">
+						<?php if(isset($GETpost_data['postID'])): ?>
+							<input type="hidden" name="postID" value="<?php echo $GETpost_data['postID']; ?>">
 						<?php endif; ?>
 						
 						<div class="form-group">
 							<label for="title">Title <span class="require">*</span></label>
-							<input type="text" class="form-control" name="title" value="<?php echo htmlspecialchars($editTitle);?>"
+							<input type="text" class="form-control" name="title"
+								value="<?php echo isset($GETpost_data['title']) ? htmlspecialchars($GETpost_data['title']) : ''; ?>"
+								<?php echo ($GETpost_data != null) ? 'disabled' : ''; ?>>
 						</div>
 						
 						<div class="form-group">
 							<label for="description">Description</label>
-							<textarea rows="5" class="form-control" name="description"><?php echo htmlspecialchars($editBody); ?></textarea>
+							<textarea rows="5" class="form-control" name="description"><?php 
+								if(isset($GETpost_data['body'])){
+									echo $GETpost_data['body'];
+								}
+								?></textarea>
 						</div>
 						
 						<div class="form-group">

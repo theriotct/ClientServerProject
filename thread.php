@@ -3,32 +3,55 @@
   include 'connection.php';
   include 'functions.php';
 
-  if(isset($_GET['postID'])){
+  if(isset($_GET['postID']))
+  {
       $postID = (int)$_GET['postID'];
 
+      // 🔼 CLIMB TO ROOT (highest parent chain)
+      $currentID = $postID;
+
+      while(true)
+      {
+          $res = mysqli_query($con, "SELECT parentID FROM posts WHERE postID = $currentID LIMIT 1");
+          $row = mysqli_fetch_assoc($res);
+
+          if(!$row || $row['parentID'] === NULL){
+              break;
+          }
+
+          $currentID = (int)$row['parentID'];
+      }
+
+      // If user didn't already request root, redirect
+      if($currentID != $postID){
+          header("Location: thread.php?postID=".$currentID);
+          exit;
+      }
+
+      // 🔽 NOW RUN YOUR THREAD QUERY FROM ROOT ONLY
       $query = "WITH RECURSIVE thread AS (
-                    SELECT * FROM posts WHERE postID = $postID
-                    UNION ALL
-                    SELECT p.* 
-                    FROM posts p
-                    INNER JOIN thread t ON p.parentID = t.postID
-                )
-                SELECT 
-                    t.*, 
-                    u.username,
-                    COALESCE(r.likes, 0) AS totalLikes,
-                    COALESCE(r.dislikes, 0) AS totalDislikes
-                FROM thread t
-                JOIN `user` u ON u.userID = t.authorID
-                LEFT JOIN (
-                    SELECT 
-                        refPostID,
-                        SUM(CASE WHEN `like/dislike` = 1 THEN 1 ELSE 0 END) AS likes,
-                        SUM(CASE WHEN `like/dislike` = 0 THEN 1 ELSE 0 END) AS dislikes
-                    FROM `like`
-                    GROUP BY refPostID
-                ) r ON r.refPostID = t.postID
-                ORDER BY t.date ASC;";
+                  SELECT * FROM posts WHERE postID = $postID
+                  UNION ALL
+                  SELECT p.* 
+                  FROM posts p
+                  INNER JOIN thread t ON p.parentID = t.postID
+              )
+              SELECT 
+                  t.*, 
+                  u.username,
+                  COALESCE(r.likes, 0) AS totalLikes,
+                  COALESCE(r.dislikes, 0) AS totalDislikes
+              FROM thread t
+              JOIN `user` u ON u.userID = t.authorID
+              LEFT JOIN (
+                  SELECT 
+                      refPostID,
+                      SUM(CASE WHEN `like/dislike` = 1 THEN 1 ELSE 0 END) AS likes,
+                      SUM(CASE WHEN `like/dislike` = 0 THEN 1 ELSE 0 END) AS dislikes
+                  FROM `like`
+                  GROUP BY refPostID
+              ) r ON r.refPostID = t.postID
+              ORDER BY t.date ASC";
 
       $result = mysqli_query($con, $query);
       $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -38,7 +61,9 @@
           include('404.html');
           die;
       }
-  }else{
+  }
+  else
+  {
       header("HTTP/1.1 404 Not Found");
       include('404.html');
       die;
@@ -46,45 +71,24 @@
 
   $user_data = check_login($con);
 
-  /*
-    Build an array of post IDs already reported by this user.
-    This allows the page to show "Reported" instead of allowing repeat reports.
-  */
-  $myReports = [];
-
-  if($user_data != null){
-      $reportQuery = "SELECT postID FROM reports WHERE reporterID = ?";
-      $reportStatement = mysqli_prepare($con, $reportQuery);
-      mysqli_stmt_bind_param($reportStatement, 'i', $user_data['userID']);
-      mysqli_stmt_execute($reportStatement);
-
-      $reportResult = mysqli_stmt_get_result($reportStatement);
-
-      while($reportRow = mysqli_fetch_assoc($reportResult)){
-          $myReports[] = (int)$reportRow['postID'];
-      }
-  }
-
-  if($_SERVER['REQUEST_METHOD'] == "POST"){
-      if(isset($_POST['reply']) && $user_data != null){
-          $reply = trim($_POST['reply']);
-          $userID = (int)$user_data['userID'];
-          $lastPostIndex = count($posts) - 1;
-          $parentID = (int)$posts[$lastPostIndex]['postID'];
-
-          if(!empty($reply)){
-              $query = "INSERT INTO `posts` (`parentID`, `authorID`, `title`, `body`, `date`) 
-                        VALUES ('$parentID', '$userID', NULL, '$reply', CURRENT_TIMESTAMP);";
-
-              $result = mysqli_query($con, $query);
-
-              if($result){
-                  header('Location: thread.php?postID='.$postID);
-                  exit;
-              }else{
-                  alert('Error posting reply');
-              }
-          }
+  if($_SERVER['REQUEST_METHOD'] == "POST")
+  {
+    if(isset($_SESSION['userID']))
+    {
+      if(isset($_POST['reply']))
+      {
+        $reply = $_POST['reply'];
+        $userID = $user_data['userID'];
+        $i = count($posts)-1;
+        $parentID = $posts[$i]['postID'];
+        $query = "INSERT INTO `posts` (`parentID`, `authorID`, `title`, `body`, `date`) VALUES ('$parentID', '$userID', NULL, '$reply', CURRENT_TIMESTAMP);";
+        $result = mysqli_query($con, $query);
+        if($result){
+            header('Location: thread.php?postID='.$postID);
+            exit;
+        }else{
+            alert('Error posting reply');
+        }
       }
 
       elseif(isset($_POST['like']) && $user_data != null){
@@ -146,53 +150,62 @@
           header('Location: thread.php?postID='.$postID);
           exit;
       }
+      if(isset($_POST['edit']))
+      {
+          $postID = $_POST['postID'];
+          header('Location: post.php?postID='.$postID);
+          exit;
+      }
+      if(isset($_POST['delete']))
+      {
+          $deleteID = (int)$_POST['postID'];
 
-      elseif(isset($_POST['report_post']) && $user_data != null){
-          $reportPostID = (int)$_POST['report_post_id'];
-          $reporterID = (int)$user_data['userID'];
 
-          $query = "INSERT IGNORE INTO reports (postID, reporterID) VALUES (?, ?)";
-          $statement = mysqli_prepare($con, $query);
-          mysqli_stmt_bind_param($statement, 'ii', $reportPostID, $reporterID);
+          $res = mysqli_query($con, "SELECT parentID FROM posts WHERE postID = $deleteID");
+          $row = mysqli_fetch_assoc($res);
 
-          if(mysqli_stmt_execute($statement)){
+          if(!$row){
               header('Location: thread.php?postID='.$postID);
               exit;
           }
-      }
 
-      elseif(isset($_POST['edit_post']) && $user_data != null){
-          $editPostID = (int)$_POST['edit_post_id'];
-          $editBody = trim($_POST['edit_body'] ?? '');
+          $parentID = $row['parentID'];
 
-          $isAdmin = isset($user_data['isAdmin']) && $user_data['isAdmin'] !== null;
 
-          $checkQuery = "SELECT authorID, title FROM posts WHERE postID = ? LIMIT 1";
-          $checkStatement = mysqli_prepare($con, $checkQuery);
-          mysqli_stmt_bind_param($checkStatement, 'i', $editPostID);
-          mysqli_stmt_execute($checkStatement);
+          if($parentID === NULL)
+          {
+              $query = "WITH RECURSIVE thread AS (
+                          SELECT postID FROM posts WHERE postID = $deleteID
+                          UNION ALL
+                          SELECT p.postID
+                          FROM posts p
+                          INNER JOIN thread t ON p.parentID = t.postID
+                        )
+                        DELETE FROM posts 
+                        WHERE postID IN (SELECT postID FROM thread)";
 
-          $editPost = mysqli_fetch_assoc(mysqli_stmt_get_result($checkStatement));
+              mysqli_query($con, $query);
 
-          if($editPost && ((int)$editPost['authorID'] === (int)$user_data['userID'] || $isAdmin)){
-              if(isset($_POST['edit_title']) && $editPost['title'] !== null){
-                  $editTitle = trim($_POST['edit_title'] ?? '');
-
-                  $updateQuery = "UPDATE posts SET body = ?, title = ? WHERE postID = ?";
-                  $updateStatement = mysqli_prepare($con, $updateQuery);
-                  mysqli_stmt_bind_param($updateStatement, 'ssi', $editBody, $editTitle, $editPostID);
-              }else{
-                  $updateQuery = "UPDATE posts SET body = ? WHERE postID = ?";
-                  $updateStatement = mysqli_prepare($con, $updateQuery);
-                  mysqli_stmt_bind_param($updateStatement, 'si', $editBody, $editPostID);
-              }
-
-              if(mysqli_stmt_execute($updateStatement)){
-                  header('Location: thread.php?postID='.$postID);
-                  exit;
-              }
+              header('Location: index.php');
+              exit;
           }
+
+
+          $parentValue = is_null($parentID) ? "NULL" : (int)$parentID;
+
+          mysqli_query($con, "
+              UPDATE posts 
+              SET parentID = $parentValue
+              WHERE parentID = $deleteID
+          ");
+
+
+          mysqli_query($con, "DELETE FROM posts WHERE postID = $deleteID");
+
+          header('Location: thread.php?postID='.$postID);
+          exit;
       }
+    }
   }
 ?>
 
@@ -299,47 +312,59 @@
               Like: <?php echo $posts[0]['totalLikes']; ?>
             </a>
 
-            <a href="login.php" class="btn btn-sm btn-default">
-              Dislike: <?php echo $posts[0]['totalDislikes']; ?>
-            </a>
-          <?php else: ?>
-            <form action="" method="POST" style="display:inline;">
-              <input type="hidden" value="<?php echo (int)$posts[0]['postID']; ?>" name="postID">
+    <!-- Original Post -->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3><?php echo $posts[0]['title']; ?></h3>
+        <small>Posted by <?php echo $posts[0]['username']; ?> • <?php echo $posts[0]['date']; ?></small>
+      </div>
+      <div class="panel-body">
+        <p>
+          <?php echo $posts[0]['body']; ?>
+        </p>
+      </div>
+      <div class="panel-footer">
+        <form action="" method="POST">
+          <input type="text" value="<?php echo $posts[0]['postID']?>" name="postID" hidden>
+          <input class="btn btn-sm btn-default" type="submit" name="like" value="Like: <?php echo $posts[0]['totalLikes'];?>" <?php echo (!$user_data ? ' disabled' : ''); ?>>
+          <input class="btn btn-sm btn-default" type="submit" name="dislike" value="Dislike: <?php echo $posts[0]['totalDislikes'];?>" <?php echo (!$user_data ? ' disabled' : ''); ?>>
+          <input class="btn btn-sm btn-default" type="submit" name="report" value="Report" <?php echo (!$user_data ? ' disabled' : ''); ?>>
+          <?php if($user_data && ($user_data['userID'] == $posts[0]['authorID']  || !is_null($user_data['isAdmin']))){ ?>
+            <input class="btn btn-sm btn-default btn-danger right" type="submit" name="delete" value="Delete">
+            <input class="btn btn-sm btn-default right" type="submit" name="edit" value="Edit">
+          <?php } ?>
+        </form>
+      </div>
+    </div>
 
-              <input 
-                class="btn btn-sm btn-default" 
-                type="submit" 
-                name="like" 
-                value="Like: <?php echo $posts[0]['totalLikes']; ?>"
-              >
+    <!-- Replies Section -->
+    <h4>Replies</h4>
 
-              <input 
-                class="btn btn-sm btn-default" 
-                type="submit" 
-                name="dislike" 
-                value="Dislike: <?php echo $posts[0]['totalDislikes']; ?>"
-              >
-            </form>
-          <?php endif; ?>
-
-          <?php if($user_data == null): ?>
-            <a href="login.php" class="btn btn-sm btn-default">Report</a>
-          <?php elseif(in_array((int)$posts[0]['postID'], $myReports)): ?>
-            <span class="btn btn-sm btn-default disabled">Reported</span>
-          <?php else: ?>
-            <form method="POST" style="display:inline;">
-              <input type="hidden" name="report_post" value="1">
-              <input 
-                type="hidden" 
-                name="report_post_id" 
-                value="<?php echo (int)$posts[0]['postID']; ?>"
-              >
-
-              <button type="submit" class="btn btn-sm btn-default">
-                Report
-              </button>
-            </form>
-          <?php endif; ?>
+    <?php
+      for($i = 1; $i < count($posts); $i++){
+        echo '<div class="panel panel-info">
+                <div class="panel-heading">
+                  <strong><a href="profile.php?userID='.$posts[$i]['authorID'].'">'.$posts[$i]['username'].'</a></strong> • '.$posts[$i]['date'].'
+                </div>
+                <div class="panel-body">
+                  '.$posts[$i]['body'].'
+                </div>
+                <div class="panel-footer">
+                  <form action="" method="POST">
+                    <input type="text" value="'.$posts[$i]['postID'].'" name="postID" hidden>
+                    <input class="btn btn-sm btn-default" type="submit" name="like" value="Like: '.$posts[$i]['totalLikes'].'" '.(!$user_data ? ' disabled' : '').'>
+                    <input class="btn btn-sm btn-default" type="submit" name="dislike" value="Dislike: '.$posts[$i]['totalDislikes'].'" '.(!$user_data ? ' disabled' : '').'>
+                    <input class="btn btn-sm btn-default" type="submit" name="report" value="Report" '.(!$user_data ? ' disabled' : '').'>';
+                    if($user_data && ($user_data['userID'] == $posts[$i]['authorID']  || !is_null($user_data['isAdmin']))){
+                      echo '<input class="btn btn-sm btn-default btn-danger right" type="submit" name="delete" value="Delete">
+                            <input class="btn btn-sm btn-default right" type="submit" name="edit" value="Edit">';
+                    }
+                    echo '
+                  </form>
+                </div>
+              </div>';
+      }
+    ?>
 
           <a href="#" class="btn btn-sm btn-default btn-danger right">
             Delete
