@@ -108,6 +108,8 @@
                             (sellerID, title, description, price, category, itemCondition, ImageData)
                             VALUES (?, ?, ?, ?, ?, ?, ?)";
 
+                  $statement = mysqli_prepare($con, $query);
+                  
                   $blob = null;
 
                   mysqli_stmt_bind_param(
