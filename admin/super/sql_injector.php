@@ -52,7 +52,7 @@ if (isset($_POST['sql_query'])) {
                             // ONLY treat this column as image/blob
 
                             if (!empty($value)) {
-                                echo "<img src='../../image.php?id=" . $row[$primaryKey] . "' max-height='100px'/><br>";
+                                echo "<img src='../../image.php?id=" . $row[$primaryKey] . "' style='max-height:100px; width:auto;'/><br>";
                                 echo "<small>Blob data (" . strlen($value) . " bytes)</small>";
                             } else {
                                 echo "<i>NULL</i>";
