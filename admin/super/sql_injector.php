@@ -52,15 +52,8 @@ if (isset($_POST['sql_query'])) {
                             // ONLY treat this column as image/blob
 
                             if (!empty($value)) {
-                                $finfo = finfo_open(FILEINFO_MIME_TYPE);
-                                $mime = finfo_buffer($finfo, $value);
-                                finfo_close($finfo);
-
-                                if (strpos($mime, 'image/') === 0) {
-                                    echo "<small>" . strlen($value) . " bytes</small>";
-                                } else {
-                                    echo "<i>[BLOB " . strlen($value) . " bytes]</i>";
-                                }
+                                echo "<img src='image.php?id=" . $row[$primaryKey] . "' max-height='100px'/><br>";
+                                echo "<small>Blob data (" . strlen($value) . " bytes)</small>";
                             } else {
                                 echo "<i>NULL</i>";
                             }
