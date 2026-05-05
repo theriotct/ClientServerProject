@@ -6,9 +6,14 @@
 
     $user_data = check_login($con);
 
-    if(!$user_data || is_null($user_data['isAdmin']) || $_SESSION['2fa_verified'] !== true) {
+    if(!$user_data || (is_null($user_data['isAdmin']) && $user_data['isAdmin'] !== 0)|| $_SESSION['2fa_verified'] !== true) {
         forbidden();
     }
+
+	function get_users($con) {
+		$query = "SELECT * FROM user WHERE isAdmin IS NOT NULL";
+		return mysqli_query($con, $query);
+	}
 ?>
 
 <!DOCTYPE html>
@@ -218,45 +223,53 @@
 							</tr>
 						</thead>
 						<tbody>
+
+							<?php $users = get_users($con);
+							while($user = mysqli_fetch_assoc($users)): ?>
 							<tr>
 								<td>
 									<img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="">
-									<a href="#" class="user-link">Mila Kunis</a>
-									
+									<a href="../profile.php?userID=<?= $user['userID'] ?>" class="user-link"><?= $user['fname']." ".$user['lname'] ?></a>
+									<span class="user-subhead"><?= $user['username'] ?></span>
 								</td>
 								<td>
-									2013/08/08
+									<?= date("Y/m/d", strtotime($user['created_at'])) ?>
 								</td>
 							
 								<td>
-									<a href="#">mila@kunis.com</a>
+									<a href="mailto:<?= $user['email'] ?>"><?= $user['email'] ?></a>
 								</td>
 								<td style="width: 20%;">
-									<a href="#" class="table-link">
+									<a href="../profile.php?userID=<?= $user['userID'] ?>" class="table-link">
 										<span class="fa-stack">
 											<i class="fa fa-square fa-stack-2x"></i>
 											<i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
 										</span>
 									</a>
-										<a href="#" class="table-link">
+										<a href="#" class="table-link"><!-- Edit functionality not implemented yet -->
 										<span class="fa-stack">
 											<i class="fa fa-square fa-stack-2x"></i>
 											<i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
 										</span>
 									</a>
-									<a href="#" class="table-link danger">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
-										</span>
+									<form action="manageAdmins.php" method="POST">
+										<input type="hidden" name="userID" value="<?= $user['userID'] ?>">
+										<input type="submit" value="Delete" class="table-link danger">
+											<span class="fa-stack">
+												<i class="fa fa-square fa-stack-2x"></i>
+												<i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+											</span>
+										</a>
+									</form>
 									</a>
 								</td>
 							</tr>
+							<?php endwhile; ?>
 							<tr>
 								<td>
 									<img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="">
 									<a href="#" class="user-link">George Clooney</a>
-								
+									<span class="user-subhead">george.clooney</span>
 								</td>
 								<td>
 									2013/08/12
