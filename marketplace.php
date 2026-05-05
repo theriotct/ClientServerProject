@@ -510,7 +510,7 @@
               <?php while($item = mysqli_fetch_assoc($marketplaceResult)): ?>
                 <div class="col-md-6">
                   <div class="market-card shadow-sm">
-                    <?php if(!empty($item['imageData'])): ?>
+                    <?php if(!empty($item['ImageData'])): ?>
                       <img 
                           src="image.php?id=<?php echo (int)$item['itemID']; ?>" 
                           class="card-img-top"
