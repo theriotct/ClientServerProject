@@ -228,12 +228,12 @@
 							while($user = mysqli_fetch_assoc($users)): ?>
 							<tr>
 								<td>
-									<img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="">
+									<img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt=""><!-- Placeholder image -->
 									<a href="../profile.php?userID=<?= $user['userID'] ?>" class="user-link"><?= $user['fname']." ".$user['lname'] ?></a>
 									<span class="user-subhead"><?= $user['username'] ?></span>
 								</td>
 								<td>
-									<?= date("Y/m/d", strtotime($user['created_at'])) ?>
+									<?= date("Y/m/d", strtotime($user['createdOn'])) ?>
 								</td>
 							
 								<td>
