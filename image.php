@@ -10,7 +10,11 @@ mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 
 if ($row = mysqli_fetch_assoc($result)) {
-    header("Content-Type: image/*"); // you can improve this later
-    echo $row['ImageData'];
+    $img = $row['ImageData'];
+
+    if (!empty($img)) {
+        header("Content-Type: image/jpeg");
+        echo $img;
+    }
 }
 ?>
