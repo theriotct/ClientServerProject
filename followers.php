@@ -132,7 +132,11 @@
           <ul class="list-group list-group-dividered list-group-full">
             <li class="list-group-item">
               <div class="media">
-                
+                <div class="media-left">
+                  
+                    <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="">
+                    <i></i>
+                  
                 </div>
                 <div class="media-body">
                   <div class="pull-right">
