@@ -23,8 +23,8 @@
 	<script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'></script>
     <style>		
 		body{
-    		margin-top:20px;
-    		background:#eee;
+    		margin: 0;
+    		background:#fbbf77;
 		}
 
 .avatar {
@@ -111,7 +111,7 @@
     display: block;
     padding: 10px 15px;
     margin-bottom: -1px;
-    background-color: #fff;
+    background-color: #fbbf77;
     border: 1px solid transparent;
 }
 		</style>
@@ -132,11 +132,7 @@
           <ul class="list-group list-group-dividered list-group-full">
             <li class="list-group-item">
               <div class="media">
-                <div class="media-left">
-                  <a class="avatar avatar-online" href="javascript:void(0)">
-                    <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="">
-                    <i></i>
-                  </a>
+                
                 </div>
                 <div class="media-body">
                   <div class="pull-right">
@@ -157,7 +153,7 @@
                 </div>
                 <div class="media-body">
                   <div class="pull-right">
-                    <button type="button" class="btn btn-success btn-default btn-sm waves-effect waves-light"><i class="icon md-check" aria-hidden="true"></i>Following</button>
+                    <button type="button" class="btn btn-warning btn-default btn-sm waves-effect waves-light"><i class="icon md-check" aria-hidden="true"></i>Following</button>
                   </div>
                   <div><a class="name" href="javascript:void(0)">Ronnie Ellis</a></div>
                   <small>@kingronnie24</small>
