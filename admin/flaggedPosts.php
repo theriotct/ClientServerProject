@@ -198,10 +198,10 @@
                 </div>
 
                 <p class="mt-2 mb-1">
-                    <em>"<?php echo htmlspecialchars($r['bodyPreview']); ?>…"</em>
+                    <em>"<?php echo htmlspecialchars(isset($r['bodyPreview']) ? $r['bodyPreview'] : ''); ?>…"</em>
                 </p>
                 <p class="mb-1">
-                    <strong>Post author:</strong> <?php echo htmlspecialchars($r['postAuthor']); ?> &nbsp;
+                    <strong>Post author:</strong> <?php echo htmlspecialchars(isset($r['postAuthor']) ? $r['postAuthor'] : ''); ?> &nbsp;
                     <strong>Reported by:</strong> <?php echo htmlspecialchars($r['reporter']); ?>
                 </p>
                 <?php if (!empty($r['reason'])): ?>
