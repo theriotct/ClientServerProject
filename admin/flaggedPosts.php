@@ -113,8 +113,8 @@
                       pa.username      AS postAuthor,
                       rp.username      AS reporter
                FROM reports r
-               JOIN posts p  ON p.postID  = r.postID
-               JOIN user pa  ON pa.userID = p.authorID
+               LEFT JOIN posts p  ON p.postID  = r.postID
+               LEFT JOIN user pa  ON pa.userID = p.authorID
                JOIN user rp  ON rp.userID = r.reporterID
                WHERE 1=1";
 
