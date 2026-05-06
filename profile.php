@@ -209,7 +209,7 @@
                         <?php foreach ($activityPosts as $post): ?>
                             <div class="activity-item">
                                 <a href="thread.php?postID=<?php echo (int)$post['threadID']; ?>">
-                                    <?php echo htmlspecialchars($post['threadTitle']); ?>
+                                    <?php echo htmlspecialchars($post['threadTitle'] ?? 'Untitled Thread'); ?>
                                 </a>
                                 <p class="mb-1 mt-1 small">
                                     <?php
