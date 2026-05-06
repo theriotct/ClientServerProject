@@ -212,7 +212,7 @@
 
                 <div class="d-flex gap-2 flex-wrap mt-2">
                     <a href="../thread.php?postID=<?php echo $threadID; ?>"
-                       class="btn btn-sm btn-info" <?php if($r['postID'] == "Removed"){ echo "disabled"; } ?>>View Thread</a>
+                       class="btn btn-sm btn-info" <?php if($r['status'] == 'Removed'){ echo "disabled"; } ?>>View Thread</a>
 
                     <?php if ($isPending): ?>
                         <!-- Mark Reviewed -->
