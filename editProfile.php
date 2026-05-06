@@ -29,7 +29,7 @@
 
         $targetLevel = get_role_level($roleResult['isAdmin']);
 
-        if (!can_edit_profile($editorLevel, $targetLevel, $isSelf)) {
+        if (!($isSelf || $editorLevel >= $targetLevel)) {
             forbidden();
         }
 
@@ -77,7 +77,7 @@
         // ----------------------------
         // Permission check (SINGLE SOURCE OF TRUTH)
         // ----------------------------
-        if (!can_edit_profile($editorLevel, $targetLevel, $isSelf)) {
+        if (!($isSelf || $editorLevel >= $targetLevel)) {
             forbidden();
         }
 
