@@ -101,7 +101,6 @@
     elseif (isset($_GET['deleted']))  $success = 'Post deleted and report marked Removed.';
 
     $statusFilter  = trim($_GET['status'] ?? '');
-    alert($statusFilter);
     $validStatuses = ['Pending', 'Reviewed', 'Dismissed', 'Removed'];
     if (!in_array($statusFilter, $validStatuses)) $statusFilter = '';
 
