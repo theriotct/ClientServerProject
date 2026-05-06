@@ -66,7 +66,7 @@
 			padding-left: 20px;
 		}
 		.table thead > tr > th span {
-			border-bottom: 2px solid #fcb65b;
+			border-bottom: 2px solid #4257fc;
 			display: inline-block;
 			padding: 0 5px;
 			padding-bottom: 5px;
@@ -225,9 +225,23 @@
 									This is a bio
 								</td>
 							
-								<div class="pull-right">
-                    				<button type="button" class="btn btn-info btn-sm waves-effect waves-light">Follow</button>
-                  				</div>
+								<td style="width: 20%;">
+									<div>
+                    					<button type="button" class="btn btn-info btn-sm waves-effect waves-light">Follow</button>
+                  					</div>
+									<a href="#" class="table-link">
+										<span class="fa-stack">
+											<i class="fa fa-square fa-stack-2x"></i>
+											<i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+										</span>
+									</a>
+									<a href="#" class="table-link danger">
+										<span class="fa-stack">
+											<i class="fa fa-square fa-stack-2x"></i>
+											<i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+										</span>
+									</a>
+								</td>
 								
 							</tr>
 							<tr>
@@ -240,9 +254,26 @@
 									This is a bio
 								</td>
 							
-								<div class="pull-right">
-                    				<button type="button" class="btn btn-success btn-default btn-sm waves-effect waves-light"><i class="icon md-check" aria-hidden="true"></i>Following</button>
-                  				</div>
+								<td style="width: 20%;">
+									<a href="#" class="table-link">
+										<span class="fa-stack">
+											<i class="fa fa-square fa-stack-2x"></i>
+											<i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
+										</span>
+									</a>
+									<a href="#" class="table-link">
+										<span class="fa-stack">
+											<i class="fa fa-square fa-stack-2x"></i>
+											<i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+										</span>
+									</a>
+									<a href="#" class="table-link danger">
+										<span class="fa-stack">
+											<i class="fa fa-square fa-stack-2x"></i>
+											<i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+										</span>
+									</a>
+								</td>
 								
 							</tr>
 							<tr>
