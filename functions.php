@@ -125,25 +125,38 @@ mysqli_query($con, "CREATE TABLE IF NOT EXISTS `admin_logs` (
   PRIMARY KEY (`logID`)
 )");
 
-function check_admin($con, $superOnly = false)
+function check_admin($con, $requireSuperAdmin = false)
 {
-    $user_data = check_login($con);
-    if (!$user_data || is_null($user_data['isAdmin'])) {
-        header("HTTP/1.1 403 Forbidden");
-        include(dirname(__FILE__) . '/403.html');
-        die;
+    if(isset($_SESSION['userID']))
+    {
+        $id = (int)$_SESSION['userID'];
+
+        $stmt = mysqli_prepare($con, "SELECT * FROM user WHERE userID = ? LIMIT 1");
+        mysqli_stmt_bind_param($stmt, "i", $id);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+
+        if($result && mysqli_num_rows($result) > 0)
+        {
+            $user_data = mysqli_fetch_assoc($result);
+
+            if((int)$user_data['isAdmin'] !== 1)
+            {
+                header("Location: ../index.php");
+                die;
+            }
+
+            if($requireSuperAdmin && (int)$user_data['superAdmin'] !== 1)
+            {
+                die("Access denied. Super admin only.");
+            }
+
+            return $user_data;
+        }
     }
-    if ($superOnly && (int)$user_data['isAdmin'] !== 1) {
-        header("HTTP/1.1 403 Forbidden");
-        include(dirname(__FILE__) . '/403.html');
-        die;
-    }
-    if (empty($_SESSION['2fa_verified'])) {
-        header("HTTP/1.1 403 Forbidden");
-        include(dirname(__FILE__) . '/403.html');
-        die;
-    }
-    return $user_data;
+
+    header("Location: ../index.php");
+    die;
 }
 
 function log_admin_action($con, $adminID, $action, $targetType, $targetID = null, $note = null)
