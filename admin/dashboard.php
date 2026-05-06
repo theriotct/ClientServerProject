@@ -85,6 +85,9 @@
                     <li class="list-group-item" style="background-color:#00b7eb;">
                         <a href="super/sql_injector.php" style="color:black;" class="text-decoration-none">SQL Injector</a>
                     </li>
+                    <li class="list-group-item" style="background-color:#00b7eb;">
+                        <a href="manageAdmins.php" style="color:black;" class="text-decoration-none">Manage Admins Injector</a>
+                    </li>
                 </ul>
             </div>
             <?php endif; ?>
@@ -154,6 +157,10 @@
                 <li class="list-group-item" style="background-color:#00b7eb;">
                     <a href="../message.php" style="color:black;" class="text-decoration-none">Messages</a>
                 </li>
+                <li class="list-group-item" style="background-color: #00b7eb;">
+                    <a style="color: black;" href="../following.php" class="text-decoration-none">Following</a></li>
+                <li class="list-group-item" style="background-color: #00b7eb;">
+                    <a style="color: black;" href="../followers.php" class="text-decoration-none">Followers</a></li>
             </ul>
             <br>
             <a class="btn btn-primary" href="/logout.php">Logout</a>
