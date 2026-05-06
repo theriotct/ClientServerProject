@@ -226,8 +226,8 @@
 								</td>
 							
 								<td style="width: 20%;">
-									<div>
-                    					<button type="button" class="btn btn-info btn-sm waves-effect waves-light">Follow</button>
+									<div class="pull-right">
+                    					<button type="button" class="btn btn-warning btn-sm waves-effect waves-light">Follow</button>
                   					</div>
 									
 								</td>
@@ -242,6 +242,7 @@
 								<td>
 									gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
 									gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+									kjkjkjkjkj
 								</td>
 							
 								<td style="width: 20%;">
