@@ -241,6 +241,7 @@
 									<img src="image.php?userID=<?= $user['userID'] ?>" alt=""><!-- Placeholder image -->
 									<a href="../profile.php?userID=<?= $user['userID'] ?>" class="user-link"><?= $user['fname']." ".$user['lname'] ?></a>
 									<span class="user-subhead"><?= $user['username'] ?></span>
+									<span class="user-subhead"><?php if($user['isAdmin'] == 0){ echo " (Admin)"; }elseif($user['isAdmin'] == 1){ echo " (SuperAdmin)"; }else{ echo " (User)"; } ?></span>
 								</td>
 								<td>
 									<?= date("Y/m/d", strtotime($user['createdOn'])) ?>
