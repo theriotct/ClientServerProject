@@ -238,9 +238,9 @@
 							while($user = mysqli_fetch_assoc($users)): ?>
 							<tr>
 								<td>
-									<img src="image.php?userID=<?= $user['userID'] ?>" alt=""><!-- Placeholder image -->
+									<img src="../image.php?userID=<?= $user['userID'] ?>" alt=""><!-- Placeholder image -->
 									<a href="../profile.php?userID=<?= $user['userID'] ?>" class="user-link"><?= $user['fname']." ".$user['lname'] ?></a>
-									<span class="user-subhead"><?= $user['username'] ?></span>
+									<span class="user-subhead"><?= $user['username'] ?></span><br>
 									<span class="user-subhead"><?php if($user['isAdmin'] == 0){ echo " (Admin)"; }elseif($user['isAdmin'] == 1){ echo " (SuperAdmin)"; }else{ echo " (User)"; } ?></span>
 								</td>
 								<td>
