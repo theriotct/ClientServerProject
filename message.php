@@ -86,7 +86,7 @@
 					echo '<div class="badge bg-success float-right">' . $row['unreadCount'] . '</div>';
 				}
 				echo '<div class="d-flex align-items-start">';
-				echo '<img src="https://bootdey.com/img/Content/avatar/avatar2.png" class="rounded-circle mr-1" alt="' . htmlspecialchars($row['username']) . '" width="40" height="40">';
+				echo '<img src="image.php?userID=' . (int)$row['userID'] . '" class="rounded-circle mr-1" alt="' . htmlspecialchars($row['username']) . '" width="40" height="40">';
 				echo '<div class="flex-grow-1 ml-3">' . htmlspecialchars($row['username']) . '</div>';
 				echo '</div>';
 				echo '</a>';
@@ -188,7 +188,7 @@
 						    <div class="d-flex align-items-center py-1">
 								<?php if (isset($contact_data)) : ?>
 							    <div class="position-relative">
-								    <img src="image.php?userID=' . (int)$contact_data['userID'] . '" class="rounded-circle mr-1" alt="<?php echo htmlspecialchars($contact_data['username']); ?>" width="40" height="40">
+								    <img src="image.php?userID=<?php echo (int)$contact_data['userID']; ?>" class="rounded-circle mr-1" alt="<?php echo htmlspecialchars($contact_data['username']); ?>" width="40" height="40">
 							    </div>
 							    <div class="flex-grow-1 pl-3">
 								    <strong><?php echo htmlspecialchars($contact_data['username']); ?></strong>
