@@ -513,6 +513,7 @@
                     <?php if(!empty($item['ImageData'])): ?>
                       <img 
                           src="image.php?id=<?php echo (int)$item['itemID']; ?>" 
+                          href="image.php?id=<?php echo (int)$item['itemID']; ?>"
                           class="card-img-top"
                         >
                     <?php else: ?>
