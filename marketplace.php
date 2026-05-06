@@ -513,6 +513,7 @@
                     <?php if(!empty($item['ImageData'])): ?>
                       <a 
                         href="image.php?id=<?php echo (int)$item['itemID']; ?>"
+                        target="_blank"
                       >
                         <img 
                           src="image.php?id=<?php echo (int)$item['itemID']; ?>" 
