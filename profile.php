@@ -212,7 +212,12 @@
                                     <?php echo htmlspecialchars($post['threadTitle']); ?>
                                 </a>
                                 <p class="mb-1 mt-1 small">
-                                    <?php echo htmlspecialchars(mb_substr($post['body'], 0, 120)); ?><?php echo mb_strlen($post['body']) > 120 ? '…' : ''; ?>
+                                    <?php
+                                        $body = $post['body'] ?? '';
+                                        $truncated = mb_substr($body, 0, 120);
+                                        echo htmlspecialchars($truncated);
+                                        echo mb_strlen($body) > 120 ? '…' : '';
+                                    ?>
                                 </p>
                                 <small class="text-muted"><?php echo htmlspecialchars(date('M j, Y', strtotime($post['date']))); ?></small>
                             </div>
