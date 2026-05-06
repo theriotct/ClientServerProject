@@ -10,23 +10,49 @@
         die;
     }
 
-    $sessionUserID = (int)$user_data['userID'];
-    $errors        = [];
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        $errors = [];
+        $isAdmin = isset($user_data['isAdmin']) && $_SESSION['2fa_verified'] === true;
 
-    // Fetch current profile data — always use session userID, never URL param
-    $stmt = mysqli_prepare($con,
-        "SELECT userID, fname, lname, displayName, username, biography, signature,
-                profilePicture, location, major, interests
-         FROM user WHERE userID = ? LIMIT 1");
-    mysqli_stmt_bind_param($stmt, 'i', $sessionUserID);
-    mysqli_stmt_execute($stmt);
-    $profile = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+        // Decide which profile is being edited
+        if (isset($_GET['userID']) && $isAdmin) {
+            // Admin editing someone else
+            $userID = (int)$_GET['userID'];
+        } else {
+            // Normal user editing self (or ignoring URL tampering)
+            $userID = (int)$user_data['userID'];
+        }
 
-    if (!$profile) {
-        not_found();
+        // Fetch profile (shared logic for both cases)
+        $stmt = mysqli_prepare($con,
+            "SELECT userID, fname, lname, displayName, username, biography, signature,
+                    profilePicture, location, major, interests
+            FROM user
+            WHERE userID = ?
+            LIMIT 1"
+        );
+
+        mysqli_stmt_bind_param($stmt, 'i', $userID);
+        mysqli_stmt_execute($stmt);
+
+        $result = mysqli_stmt_get_result($stmt);
+        $profile = mysqli_fetch_assoc($result);
+
+        if (!$profile) {
+            not_found();
+        }
     }
-
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $errors = [];
+        $userID        = (int)($_POST['userID'] ?? 0);
+
+        $isAdmin = isset($user_data['isAdmin']) && $_SESSION['2fa_verified'] === true;
+        $isSelf  = $userID === (int)$user_data['userID'];
+
+        if (!$isSelf && !$isAdmin) {
+            forbidden();
+        }
+        
         $fname          = trim($_POST['fname']          ?? '');
         $lname          = trim($_POST['lname']          ?? '');
         $displayName    = trim($_POST['displayName']    ?? '');
@@ -52,21 +78,22 @@
         $major          = trim($_POST['major']          ?? '');
         $interests      = trim($_POST['interests']      ?? '');
 
-        if ($username === '')               $errors[] = 'Username is required.';
-        if (mb_strlen($fname)          > 50)   $errors[] = 'First name must be 50 characters or fewer.';
-        if (mb_strlen($lname)          > 50)   $errors[] = 'Last name must be 50 characters or fewer.';
-        if (mb_strlen($displayName)    > 75)   $errors[] = 'Display name must be 75 characters or fewer.';
-        if (mb_strlen($username)       > 25)   $errors[] = 'Username must be 25 characters or fewer.';
-        if (mb_strlen($biography)      > 1000) $errors[] = 'Biography must be 1000 characters or fewer.';
-        if (mb_strlen($signature)      > 100)  $errors[] = 'Signature must be 100 characters or fewer.';
-        if (mb_strlen($location)       > 100)  $errors[] = 'Location must be 100 characters or fewer.';
-        if (mb_strlen($major)          > 100)  $errors[] = 'Major must be 100 characters or fewer.';
-        if (mb_strlen($interests)      > 500)  $errors[] = 'Interests must be 500 characters or fewer.';
+        if ($userID === 0)                      $errors[] = 'Invalid user ID.';
+        if ($username === '')                   $errors[] = 'Username is required.';
+        if (mb_strlen($fname)          > 50)    $errors[] = 'First name must be 50 characters or fewer.';
+        if (mb_strlen($lname)          > 50)    $errors[] = 'Last name must be 50 characters or fewer.';
+        if (mb_strlen($displayName)    > 75)    $errors[] = 'Display name must be 75 characters or fewer.';
+        if (mb_strlen($username)       > 25)    $errors[] = 'Username must be 25 characters or fewer.';
+        if (mb_strlen($biography)      > 1000)  $errors[] = 'Biography must be 1000 characters or fewer.';
+        if (mb_strlen($signature)      > 100)   $errors[] = 'Signature must be 100 characters or fewer.';
+        if (mb_strlen($location)       > 100)   $errors[] = 'Location must be 100 characters or fewer.';
+        if (mb_strlen($major)          > 100)   $errors[] = 'Major must be 100 characters or fewer.';
+        if (mb_strlen($interests)      > 500)   $errors[] = 'Interests must be 500 characters or fewer.';
 
         if (empty($errors)) {
             $dupStmt = mysqli_prepare($con,
                 "SELECT userID FROM user WHERE username = ? AND userID != ? LIMIT 1");
-            mysqli_stmt_bind_param($dupStmt, 'si', $username, $sessionUserID);
+            mysqli_stmt_bind_param($dupStmt, 'si', $username, $userID);
             mysqli_stmt_execute($dupStmt);
             if (mysqli_num_rows(mysqli_stmt_get_result($dupStmt)) > 0) {
                 $errors[] = 'That username is already taken.';
@@ -88,7 +115,7 @@
                     'ssssssssssi',
                     $fname, $lname, $displayName, $username, $biography,
                     $signature, $profilePicture, $location, $major, $interests,
-                    $sessionUserID
+                    $userID
                 );
 
             } else {
@@ -104,7 +131,7 @@
                     'sssssssssi',
                     $fname, $lname, $displayName, $username, $biography,
                     $signature, $location, $major, $interests,
-                    $sessionUserID
+                    $userID
                 );
             }
 
@@ -172,6 +199,7 @@
                 <div class="form-card">
                     <h4>Edit Profile</h4>
                     <form method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="userID" value="<?php echo (int)$profile['userID']; ?>">
                         <div class="section-label">Identity</div>
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
