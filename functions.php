@@ -153,3 +153,10 @@ function log_admin_action($con, $adminID, $action, $targetType, $targetID = null
     mysqli_stmt_bind_param($stmt, 'issis', $adminID, $action, $targetType, $targetID, $note);
     mysqli_stmt_execute($stmt);
 }
+
+function get_role_level($isAdmin) {
+    if ($isAdmin === null) return 1; // user
+    if ((int)$isAdmin === 0) return 2; // admin
+    if ((int)$isAdmin === 1) return 3; // superadmin
+    return 1;
+}

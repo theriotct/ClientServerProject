@@ -11,57 +11,112 @@
     }
 
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-        $errors = [];
-        $isAdmin = isset($user_data['isAdmin']) && $_SESSION['2fa_verified'] === true;
 
-        // Decide which profile is being edited
-        if (isset($_GET['userID']) && $isAdmin) {
-            // Admin editing someone else
-            $userID = (int)$_GET['userID'];
-        } else {
-            // Normal user editing self (or ignoring URL tampering)
-            $userID = (int)$user_data['userID'];
+        $editorLevel = get_role_level($user_data['isAdmin']);
+
+        $isSelf = !isset($_GET['userID']) || ((int)$_GET['userID'] === (int)$user_data['userID']);
+        $targetUserID = $isSelf ? (int)$user_data['userID'] : (int)$_GET['userID'];
+
+        $roleStmt = mysqli_prepare($con, "SELECT isAdmin FROM user WHERE userID = ? LIMIT 1");
+        mysqli_stmt_bind_param($roleStmt, 'i', $targetUserID);
+        mysqli_stmt_execute($roleStmt);
+
+        $roleResult = mysqli_fetch_assoc(mysqli_stmt_get_result($roleStmt));
+
+        if (!$roleResult) {
+            not_found();
         }
 
-        // Fetch profile (shared logic for both cases)
+        $targetLevel = get_role_level($roleResult['isAdmin']);
+
+        if (!can_edit_profile($editorLevel, $targetLevel, $isSelf)) {
+            forbidden();
+        }
+
         $stmt = mysqli_prepare($con,
             "SELECT userID, fname, lname, displayName, username, biography, signature,
                     profilePicture, location, major, interests
-            FROM user
-            WHERE userID = ?
-            LIMIT 1"
+            FROM user WHERE userID = ? LIMIT 1"
         );
 
-        mysqli_stmt_bind_param($stmt, 'i', $userID);
+        mysqli_stmt_bind_param($stmt, 'i', $targetUserID);
         mysqli_stmt_execute($stmt);
 
-        $result = mysqli_stmt_get_result($stmt);
-        $profile = mysqli_fetch_assoc($result);
+        $profile = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
 
         if (!$profile) {
             not_found();
         }
     }
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
         $errors = [];
-        $userID        = (int)($_POST['userID'] ?? 0);
+        $userID = (int)($_POST['userID'] ?? 0);
 
-        $isAdmin = isset($user_data['isAdmin']) && $_SESSION['2fa_verified'] === true;
-        $isSelf  = $userID === (int)$user_data['userID'];
+        if ($userID === 0) {
+            not_found();
+        }
 
-        if (!$isSelf && !$isAdmin) {
+        // ----------------------------
+        // Get editor + target roles FIRST
+        // ----------------------------
+        $editorLevel = get_role_level($user_data['isAdmin']);
+        $isSelf = ($userID === (int)$user_data['userID']);
+
+        $stmt = mysqli_prepare($con, "SELECT isAdmin FROM user WHERE userID = ? LIMIT 1");
+        mysqli_stmt_bind_param($stmt, 'i', $userID);
+        mysqli_stmt_execute($stmt);
+        $target = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+
+        if (!$target) {
+            not_found();
+        }
+
+        $targetLevel = get_role_level($target['isAdmin']);
+
+        // ----------------------------
+        // Permission check (SINGLE SOURCE OF TRUTH)
+        // ----------------------------
+        if (!can_edit_profile($editorLevel, $targetLevel, $isSelf)) {
             forbidden();
         }
-        
-        $fname          = trim($_POST['fname']          ?? '');
-        $lname          = trim($_POST['lname']          ?? '');
-        $displayName    = trim($_POST['displayName']    ?? '');
-        $username       = trim($_POST['username']       ?? '');
-        $biography      = trim($_POST['biography']      ?? '');
-        $signature      = trim($_POST['signature']      ?? '');
 
+        // ----------------------------
+        // Load profile (for form + fallback)
+        // ----------------------------
+        $stmt2 = mysqli_prepare($con,
+            "SELECT userID, fname, lname, displayName, username, biography, signature,
+                    profilePicture, location, major, interests
+            FROM user WHERE userID = ? LIMIT 1"
+        );
+        mysqli_stmt_bind_param($stmt2, 'i', $userID);
+        mysqli_stmt_execute($stmt2);
+        $profile = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt2));
+
+        if (!$profile) {
+            not_found();
+        }
+
+        // ----------------------------
+        // Inputs
+        // ----------------------------
+        $fname       = trim($_POST['fname'] ?? '');
+        $lname       = trim($_POST['lname'] ?? '');
+        $displayName = trim($_POST['displayName'] ?? '');
+        $username    = trim($_POST['username'] ?? '');
+        $biography   = trim($_POST['biography'] ?? '');
+        $signature   = trim($_POST['signature'] ?? '');
+        $location    = trim($_POST['location'] ?? '');
+        $major       = trim($_POST['major'] ?? '');
+        $interests   = trim($_POST['interests'] ?? '');
+
+        // ----------------------------
+        // Image upload
+        // ----------------------------
         $profilePicture = null;
-        if (isset($_FILES['imageData']) && $_FILES['imageData']['error'] === UPLOAD_ERR_OK) {
+
+        if (!empty($_FILES['imageData']['tmp_name'])) {
+
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             $mime = finfo_file($finfo, $_FILES['imageData']['tmp_name']);
 
@@ -74,35 +129,44 @@
             finfo_close($finfo);
         }
 
-        $location       = trim($_POST['location']       ?? '');
-        $major          = trim($_POST['major']          ?? '');
-        $interests      = trim($_POST['interests']      ?? '');
+        // ----------------------------
+        // Validation
+        // ----------------------------
+        if ($username === '') {
+            $errors[] = 'Username is required.';
+        }
 
-        if ($userID === 0)                      $errors[] = 'Invalid user ID.';
-        if ($username === '')                   $errors[] = 'Username is required.';
-        if (mb_strlen($fname)          > 50)    $errors[] = 'First name must be 50 characters or fewer.';
-        if (mb_strlen($lname)          > 50)    $errors[] = 'Last name must be 50 characters or fewer.';
-        if (mb_strlen($displayName)    > 75)    $errors[] = 'Display name must be 75 characters or fewer.';
-        if (mb_strlen($username)       > 25)    $errors[] = 'Username must be 25 characters or fewer.';
-        if (mb_strlen($biography)      > 1000)  $errors[] = 'Biography must be 1000 characters or fewer.';
-        if (mb_strlen($signature)      > 100)   $errors[] = 'Signature must be 100 characters or fewer.';
-        if (mb_strlen($location)       > 100)   $errors[] = 'Location must be 100 characters or fewer.';
-        if (mb_strlen($major)          > 100)   $errors[] = 'Major must be 100 characters or fewer.';
-        if (mb_strlen($interests)      > 500)   $errors[] = 'Interests must be 500 characters or fewer.';
+        if (mb_strlen($username) > 25) {
+            $errors[] = 'Username must be 25 characters or fewer.';
+        }
 
+        // ----------------------------
+        // Username uniqueness
+        // ----------------------------
         if (empty($errors)) {
+
             $dupStmt = mysqli_prepare($con,
-                "SELECT userID FROM user WHERE username = ? AND userID != ? LIMIT 1");
+                "SELECT userID FROM user WHERE username = ? AND userID != ? LIMIT 1"
+            );
             mysqli_stmt_bind_param($dupStmt, 'si', $username, $userID);
             mysqli_stmt_execute($dupStmt);
-            if (mysqli_num_rows(mysqli_stmt_get_result($dupStmt)) > 0) {
+
+            $dupResult = mysqli_stmt_get_result($dupStmt);
+
+            if (mysqli_fetch_assoc($dupResult)) {
                 $errors[] = 'That username is already taken.';
             }
+
             mysqli_stmt_close($dupStmt);
         }
 
-        if(empty($errors)) {
+        // ----------------------------
+        // UPDATE
+        // ----------------------------
+        if (empty($errors)) {
+
             if ($profilePicture !== null) {
+
                 $updateStmt = mysqli_prepare($con,
                     "UPDATE user
                     SET fname=?, lname=?, displayName=?, username=?, biography=?,
@@ -119,6 +183,7 @@
                 );
 
             } else {
+
                 $updateStmt = mysqli_prepare($con,
                     "UPDATE user
                     SET fname=?, lname=?, displayName=?, username=?, biography=?,
@@ -136,19 +201,19 @@
             }
 
             mysqli_stmt_execute($updateStmt);
-
             mysqli_stmt_close($updateStmt);
 
-            header("Location: profile.php");
+            header("Location: profile.php?updated=1");
             exit;
         }
 
-        // Only reached when $errors is non-empty (success path exits above); repopulate form values
+        // repopulate on error
         $profile = array_merge($profile, compact(
             'fname', 'lname', 'displayName', 'username', 'biography',
             'signature', 'location', 'major', 'interests'
         ));
     }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
