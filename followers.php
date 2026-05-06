@@ -1,14 +1,12 @@
 <?php
     session_start();
 
-    include '../connection.php';
-    include '../functions.php';
+    include 'connection.php';
+    include 'functions.php';
 
     $user_data = check_login($con);
 
-    if(!$user_data || is_null($user_data['isAdmin']) || $_SESSION['2fa_verified'] !== true) {
-        forbidden();
-    }
+    
 ?>
 
 <!DOCTYPE html>
@@ -22,7 +20,7 @@
 	<script src='https://netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'></script>
     <style>
     	body{margin: 0;
-			 background-color: #b22222;}
+			 background-color: #4257fc;}
 
 
 		/* USER LIST TABLE */
@@ -52,7 +50,7 @@
 			background-color: #eee;
 		}
 		.table thead > tr > th {
-			border-bottom: 1px solid #fcb65b;
+			border-bottom: 1px solid #4257fc;
 			padding-bottom: 0;
 			background: #4257fc;
 		}
@@ -211,9 +209,8 @@
 					<table class="table user-list">
 						<thead>
 							<tr>
-								<th><span>Admin</span></th>
-								<th><span>Created</span></th>
-								<th><span>Email</span></th>
+								<th><span>Followers</span></th>
+								
 								<th>&nbsp;</th>
 							</tr>
 						</thead>
@@ -225,32 +222,13 @@
 									
 								</td>
 								<td>
-									2013/08/08
+									This is a bio
 								</td>
 							
-								<td>
-									<a href="#">mila@kunis.com</a>
-								</td>
-								<td style="width: 20%;">
-									<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-										<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-									<a href="#" class="table-link danger">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-								</td>
+								<div class="pull-right">
+                    				<button type="button" class="btn btn-info btn-sm waves-effect waves-light">Follow</button>
+                  				</div>
+								
 							</tr>
 							<tr>
 								<td>
@@ -259,32 +237,13 @@
 								
 								</td>
 								<td>
-									2013/08/12
+									This is a bio
 								</td>
 							
-								<td>
-									<a href="#">marlon@brando.com</a>
-								</td>
-								<td style="width: 20%;">
-									<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-									<a href="#" class="table-link">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-									<a href="#" class="table-link danger">
-										<span class="fa-stack">
-											<i class="fa fa-square fa-stack-2x"></i>
-											<i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
-										</span>
-									</a>
-								</td>
+								<div class="pull-right">
+                    				<button type="button" class="btn btn-success btn-default btn-sm waves-effect waves-light"><i class="icon md-check" aria-hidden="true"></i>Following</button>
+                  				</div>
+								
 							</tr>
 							<tr>
 								<td>
