@@ -112,8 +112,8 @@
                       pa.username      AS postAuthor,
                       rp.username      AS reporter
                FROM reports r
-               JOIN posts p  ON p.postID  = r.postID
-               JOIN user pa  ON pa.userID = p.authorID
+               LEFT JOIN posts p  ON p.postID  = r.postID
+               LEFT JOIN user pa  ON pa.userID = p.authorID
                JOIN user rp  ON rp.userID = r.reporterID
                WHERE 1=1";
 
@@ -197,10 +197,10 @@
                 </div>
 
                 <p class="mt-2 mb-1">
-                    <em>"<?php echo htmlspecialchars($r['bodyPreview']); ?>…"</em>
+                    <em>"<?php echo htmlspecialchars(isset($r['bodyPreview']) ? $r['bodyPreview'] : ''); ?>…"</em>
                 </p>
                 <p class="mb-1">
-                    <strong>Post author:</strong> <?php echo htmlspecialchars($r['postAuthor']); ?> &nbsp;
+                    <strong>Post author:</strong> <?php echo htmlspecialchars(isset($r['postAuthor']) ? $r['postAuthor'] : ''); ?> &nbsp;
                     <strong>Reported by:</strong> <?php echo htmlspecialchars($r['reporter']); ?>
                 </p>
                 <?php if (!empty($r['reason'])): ?>
@@ -212,7 +212,7 @@
 
                 <div class="d-flex gap-2 flex-wrap mt-2">
                     <a href="../thread.php?postID=<?php echo $threadID; ?>"
-                       class="btn btn-sm btn-info" target="_blank">View Thread</a>
+                       class="btn btn-sm btn-info" <?php if($r['status'] == 'Removed'){ echo "disabled"; } ?>>View Thread</a>
 
                     <?php if ($isPending): ?>
                         <!-- Mark Reviewed -->
