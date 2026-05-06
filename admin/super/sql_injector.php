@@ -2,82 +2,97 @@
 session_start();
 include "../../connection.php";
 
-
 if (isset($_POST['sql_query'])) {
-    $sql_query = trim($_POST['sql_query']);
 
+    $sql_query = trim($_POST['sql_query']);
     $result = mysqli_query($con, $sql_query);
 
     if ($result === false) {
-        // Syntax or SQL error
         echo "SQL Error: " . mysqli_error($con);
-    } else {
-        // Determine query type
-        $query_type = strtoupper(strtok($sql_query, " "));
+        exit;
+    }
 
-        if ($query_type === "SELECT" || $query_type === "SHOW" || $query_type === "DESCRIBE") {
+    $query_type = strtoupper(strtok($sql_query, " "));
 
-            if (mysqli_num_rows($result) > 0) {
-                echo "Query executed successfully!<br><br>";
-                echo "<table border='1'><tr>";
+    if (in_array($query_type, ["SELECT", "SHOW", "DESCRIBE"])) {
 
-                // Column headers
-                $columns = mysqli_fetch_fields($result);
-                foreach ($columns as $col) {
-                    echo "<th>" . htmlspecialchars($col->name) . "</th>";
-                }
-                echo "</tr>";
+        if (mysqli_num_rows($result) > 0) {
 
-                $primaryKey = null;
-                foreach ($columns as $col) {
-                    if (strtolower($col->name) === 'itemid') {
-                        $primaryKey = 'itemID';
-                        break;
-                    }
-                }
+            echo "Query executed successfully!<br><br>";
+            echo "<table border='1'><tr>";
 
-                // Rows
-                while ($row = mysqli_fetch_assoc($result)) {
-                    echo "<tr>";
-                    foreach ($columns as $col) {
-                        $name = $col->name;
-                        $value = $row[$name];
+            $columns = mysqli_fetch_fields($result);
 
-                        echo "<td>";
-
-                        if ($value === null) {
-                            echo "<i>NULL</i>";
-                        }
-                        elseif ($name === "ImageData") {
-                            // ONLY treat this column as image/blob
-
-                            if (!empty($value)) {
-                                echo "<img src='../../image.php?id=" . $row[$primaryKey] . "' style='max-height:100px; width:auto;'/><br>";
-                                echo "<small>Blob data (" . strlen($value) . " bytes)</small>";
-                            } else {
-                                echo "<i>NULL</i>";
-                            }
-                        }
-                        else {
-                            // EVERYTHING ELSE IS NORMAL TEXT
-                            echo htmlspecialchars($value);
-                        }
-
-                        echo "</td>";
-                    }
-                    echo "</tr>";
-                }
-
-                echo "</table>";
-            } else {
-                echo "Query executed successfully, but no results found.";
+            foreach ($columns as $col) {
+                echo "<th>" . htmlspecialchars($col->name) . "</th>";
             }
 
+            echo "</tr>";
+
+            // ✅ safer primary key detection (works for userID, itemID, postID, etc.)
+            $primaryKey = null;
+            foreach ($columns as $col) {
+                if (str_ends_with(strtolower($col->name), 'id')) {
+                    $primaryKey = $col->name;
+                    break;
+                }
+            }
+
+            while ($row = mysqli_fetch_assoc($result)) {
+
+                echo "<tr>";
+
+                foreach ($columns as $col) {
+
+                    $name = $col->name;
+                    $value = $row[$name];
+
+                    echo "<td>";
+
+                    if ($value === null) {
+                        echo "<i>NULL</i>";
+                    }
+
+                    // IMAGE HANDLING FIXED
+                    elseif (
+                        strtolower($name) === "imagedata" ||
+                        strtolower($name) === "profilepicture"
+                    ) {
+
+                        if (!empty($value) && $primaryKey && isset($row[$primaryKey])) {
+
+                            // decide correct parameter name
+                            $param = (strtolower($primaryKey) === 'userid') ? 'userID' : 'id';
+
+                            echo "<img src='../../image.php?$param=" . (int)$row[$primaryKey] . "' 
+                                  style='max-height:100px; width:auto;'/><br>";
+
+                            echo "<small>Blob data (" . strlen($value) . " bytes)</small>";
+                        } else {
+                            echo "<i>NULL</i>";
+                        }
+                    }
+
+                    else {
+                        echo htmlspecialchars($value);
+                    }
+
+                    echo "</td>";
+                }
+
+                echo "</tr>";
+            }
+
+            echo "</table>";
+
         } else {
-            // INSERT, UPDATE, DELETE, etc.
-            $affected = mysqli_affected_rows($con);
-            echo "Query successful! Rows affected: " . $affected;
+            echo "Query executed successfully, but no results found.";
         }
+
+    } else {
+
+        $affected = mysqli_affected_rows($con);
+        echo "Query successful! Rows affected: " . $affected;
     }
 }
 ?>
