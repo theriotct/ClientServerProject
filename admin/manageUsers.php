@@ -238,7 +238,7 @@
 							while($user = mysqli_fetch_assoc($users)): ?>
 							<tr>
 								<td>
-									<img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt=""><!-- Placeholder image -->
+									<img src="image.php?userID=<?= $user['userID'] ?>" alt=""><!-- Placeholder image -->
 									<a href="../profile.php?userID=<?= $user['userID'] ?>" class="user-link"><?= $user['fname']." ".$user['lname'] ?></a>
 									<span class="user-subhead"><?= $user['username'] ?></span>
 								</td>
