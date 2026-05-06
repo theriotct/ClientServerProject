@@ -511,11 +511,14 @@
                 <div class="col-md-6">
                   <div class="market-card shadow-sm">
                     <?php if(!empty($item['ImageData'])): ?>
-                      <img 
+                      <a 
+                        href="image.php?id=<?php echo (int)$item['itemID']; ?>"
+                      >
+                        <img 
                           src="image.php?id=<?php echo (int)$item['itemID']; ?>" 
-                          href="image.php?id=<?php echo (int)$item['itemID']; ?>"
                           class="card-img-top"
                         >
+                      </a>
                     <?php else: ?>
                       <div class="market-placeholder">Awesome Item</div>
                     <?php endif; ?>
