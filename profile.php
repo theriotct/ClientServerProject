@@ -143,7 +143,7 @@
             <!-- Left column -->
             <div class="col-md-4">
                 <div class="profile-card">
-                    <img src="<?php echo htmlspecialchars($avatar); ?>"
+                    <img src="image.php?userID=<?php echo (int)$profileUserID; ?>"
                          class="profile-img" alt="Profile Picture">
 
                     <h5 class="profile-name"><?php echo htmlspecialchars($displayName); ?></h5>
