@@ -30,6 +30,8 @@
                 <li class="list-group-item" style="background-color: #00b7eb;"><a style="color: black;" href="../marketplace.php" class="text-decoration-none">Browse Marketplace</a></li>
                 <li class="list-group-item" style="background-color: #00b7eb;"><a style="color: black;" href="../profile.php" class="text-decoration-none">View Profile</a></li>
                 <li class="list-group-item" style="background-color: #00b7eb;"><a style="color: black;" href="../message.php" class="text-decoration-none">Messages</a></li>
+                <li class="list-group-item" style="background-color: #00b7eb;"><a style="color: black;" href="../following.php" class="text-decoration-none">Following</a></li>
+                <li class="list-group-item" style="background-color: #00b7eb;"><a style="color: black;" href="../followers.php" class="text-decoration-none">Followers</a></li>
             </ul>
 
             <br>
