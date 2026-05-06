@@ -209,7 +209,7 @@
 					<table class="table user-list">
 						<thead>
 							<tr>
-								<th><span>Followers</span></th>
+								<th><h2>Followers</h2></th>
 								
 								<th>&nbsp;</th>
 							</tr>
