@@ -209,7 +209,7 @@
 					<table class="table user-list">
 						<thead>
 							<tr>
-								<th><span>Followers</span></th>
+								<th><h2>Followers</h2></th>
 								
 								<th>&nbsp;</th>
 							</tr>
@@ -227,7 +227,7 @@
 							
 								<td style="width: 20%;">
 									<div class="pull-right">
-                    					<button type="button" class="btn btn-warning btn-sm waves-effect waves-light">Follow</button>
+                    					<button type="button" class="btn btn-primary btn-sm waves-effect waves-light">Follow</button>
                   					</div>
 									
 								</td>
