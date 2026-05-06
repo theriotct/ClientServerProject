@@ -10,6 +10,7 @@
 		forbidden();
 	}
 
+?>
 
 <!DOCTYPE html>
 <html>
