@@ -133,10 +133,10 @@
             <li class="list-group-item">
               <div class="media">
                 <div class="media-left">
-                  
+                  <a class="avatar" href="javascript:void(0)">
                     <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="">
                     <i></i>
-                  
+                  </a>
                 </div>
                 <div class="media-body">
                   <div class="pull-right">
