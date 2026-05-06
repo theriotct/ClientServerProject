@@ -5,6 +5,8 @@
 
     $user_data = check_login($con);
 
+    $errors = [];
+
     if (!$user_data) {
         header("Location: login.php");
         die;
@@ -49,8 +51,6 @@
         }
     }
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-        $errors = [];
         $userID = (int)($_POST['userID'] ?? 0);
 
         if ($userID === 0) {
