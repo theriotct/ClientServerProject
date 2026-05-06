@@ -86,7 +86,7 @@
                         <a href="super/sql_injector.php" style="color:black;" class="text-decoration-none">SQL Injector</a>
                     </li>
                     <li class="list-group-item" style="background-color:#00b7eb;">
-                        <a href="manageAdmins.php" style="color:black;" class="text-decoration-none">Manage Admins Injector</a>
+                        <a href="manageAdmins.php" style="color:black;" class="text-decoration-none">Manage Admins</a>
                     </li>
                 </ul>
             </div>
