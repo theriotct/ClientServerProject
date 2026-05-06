@@ -3,46 +3,85 @@
   include("functions.php");
 
   $secret_key = getenv("PASSWORD_PEPPER"); // <-- get the pepper value from an environment variable
-  if($_SERVER['REQUEST_METHOD'] == "POST")
-  {
-      //Something was posted
-      $user_name = $_POST['username'];
-      $password = $_POST['password'];
-      $confirm_password = $_POST['confirm_password'];
-      $fname = $_POST['first_name'];
-      $lname = $_POST['last_name'];
-      $email = $_POST['email'];
-      $phone = $_POST['phone'];
+  if ($_SERVER['REQUEST_METHOD'] == "POST")
+{
+    $user_name = $_POST['username'];
+    $password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
+    $fname = $_POST['first_name'];
+    $lname = $_POST['last_name'];
+    $email = $_POST['email'];
+    $phone = $_POST['phone'];
 
-      if($password !== $confirm_password){
-          echo "Passwords do not match!";
-          exit;
-      }
+    if($password !== $confirm_password){
+        echo "Passwords do not match!";
+        exit;
+    }
 
-      if(!empty($user_name) && !empty($password) && !is_numeric($user_name))
-      {
-          $query = "select * from user where username = '$user_name' limit 1";
-          $result = mysqli_query($con, $query);
-          if($result){
-              if($result && mysqli_num_rows($result) > 0)
-              {
-                  //Change this to be more user friendly
-                  echo "Username already exists!";
-                  exit;
-              }
-          }
+    if(!empty($user_name) && !empty($password) && !is_numeric($user_name))
+    {
+        $query = "select * from user where username = '$user_name' limit 1";
+        $result = mysqli_query($con, $query);
 
-          //save to database
-          $password = $password . $secret_key; // <-- append the pepper to the password before hashing
-          $password_hash = password_hash($password, PASSWORD_DEFAULT);
-          $query = "insert into user (username,password,fname,lname,email,phone,auth_key) values ('$user_name', '$password_hash', '$fname', '$lname', '$email', '$phone', '0')"; // <-- save the salt in the database
-          mysqli_query($con, $query);
-          header("Location: login.php");
-          die;
-      }else{
-          echo "Please enter some valid information!";
-      } 
-  }
+        if($result && mysqli_num_rows($result) > 0)
+        {
+            echo "Username already exists!";
+            exit;
+        }
+
+        // ----------------------------
+        // DEFAULT PROFILE PICTURE BLOB
+        // ----------------------------
+        $profilePicture = file_get_contents(__DIR__ . "/images/avatar1.png");
+
+        // If user uploaded an image, override default
+        if (isset($_FILES['imageData']) && $_FILES['imageData']['error'] === UPLOAD_ERR_OK)
+        {
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mime = finfo_file($finfo, $_FILES['imageData']['tmp_name']);
+            finfo_close($finfo);
+
+            if (!in_array($mime, ['image/jpeg', 'image/png', 'image/webp']))
+            {
+                echo "Invalid image type!";
+                exit;
+            }
+
+            $profilePicture = file_get_contents($_FILES['imageData']['tmp_name']);
+        }
+
+        // password hashing
+        $password = $password . $secret_key;
+        $password_hash = password_hash($password, PASSWORD_DEFAULT);
+
+        // IMPORTANT: use prepared statement (still same logic otherwise)
+        $query = "INSERT INTO user 
+            (username, password, fname, lname, email, phone, auth_key, profilePicture)
+            VALUES (?, ?, ?, ?, ?, ?, '0', ?)";
+
+        $stmt = mysqli_prepare($con, $query);
+
+        mysqli_stmt_bind_param(
+            $stmt,
+            "sssssss",
+            $user_name,
+            $password_hash,
+            $fname,
+            $lname,
+            $email,
+            $phone,
+            $profilePicture
+        );
+
+        mysqli_stmt_execute($stmt);
+
+        header("Location: editProfile.php");
+        die;
+    }
+    else {
+        echo "Please enter some valid information!";
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
