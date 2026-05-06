@@ -56,7 +56,7 @@
 		}
 		.table tbody > tr > td {
 			font-size: 0.875em;
-			background: #4257fc;
+			background: #add8e6;
 			border-top: 10px solid #fcb65b;
 			vertical-align: middle;
 			padding: 12px 8px;
@@ -209,7 +209,7 @@
 					<table class="table user-list">
 						<thead>
 							<tr>
-								<th><h2>Followers</h2></th>
+								<th><h2>Following</h2></th>
 								
 								<th>&nbsp;</th>
 							</tr>
