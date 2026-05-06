@@ -33,7 +33,21 @@
         $username       = trim($_POST['username']       ?? '');
         $biography      = trim($_POST['biography']      ?? '');
         $signature      = trim($_POST['signature']      ?? '');
-        $profilePicture = trim($_POST['profilePicture'] ?? '');
+
+        $profilePicture = null;
+        if (isset($_FILES['imageData']) && $_FILES['imageData']['error'] === UPLOAD_ERR_OK) {
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mime = finfo_file($finfo, $_FILES['imageData']['tmp_name']);
+
+            if (!in_array($mime, ['image/jpeg', 'image/png', 'image/webp'])) {
+                $errors[] = "Invalid image type.";
+            } else {
+                $profilePicture = file_get_contents($_FILES['imageData']['tmp_name']);
+            }
+
+            finfo_close($finfo);
+        }
+
         $location       = trim($_POST['location']       ?? '');
         $major          = trim($_POST['major']          ?? '');
         $interests      = trim($_POST['interests']      ?? '');
@@ -45,7 +59,6 @@
         if (mb_strlen($username)       > 25)   $errors[] = 'Username must be 25 characters or fewer.';
         if (mb_strlen($biography)      > 1000) $errors[] = 'Biography must be 1000 characters or fewer.';
         if (mb_strlen($signature)      > 100)  $errors[] = 'Signature must be 100 characters or fewer.';
-        if (mb_strlen($profilePicture) > 500)  $errors[] = 'Profile picture URL must be 500 characters or fewer.';
         if (mb_strlen($location)       > 100)  $errors[] = 'Location must be 100 characters or fewer.';
         if (mb_strlen($major)          > 100)  $errors[] = 'Major must be 100 characters or fewer.';
         if (mb_strlen($interests)      > 500)  $errors[] = 'Interests must be 500 characters or fewer.';
@@ -58,31 +71,55 @@
             if (mysqli_num_rows(mysqli_stmt_get_result($dupStmt)) > 0) {
                 $errors[] = 'That username is already taken.';
             }
+            mysqli_stmt_close($dupStmt);
         }
 
-        if (empty($errors)) {
-            $updateStmt = mysqli_prepare($con,
-                "UPDATE user
-                 SET fname=?, lname=?, displayName=?, username=?, biography=?,
-                     signature=?, profilePicture=?, location=?, major=?, interests=?
-                 WHERE userID=?");
-            mysqli_stmt_bind_param($updateStmt, 'ssssssssssi',
-                $fname, $lname, $displayName, $username, $biography,
-                $signature, $profilePicture, $location, $major, $interests,
-                $sessionUserID);
+        if(empty($errors)) {
+            if ($profilePicture !== null) {
+                $updateStmt = mysqli_prepare($con,
+                    "UPDATE user
+                    SET fname=?, lname=?, displayName=?, username=?, biography=?,
+                        signature=?, profilePicture=?, location=?, major=?, interests=?
+                    WHERE userID=?"
+                );
 
-            if (mysqli_stmt_execute($updateStmt)) {
-                $_SESSION['username'] = $username;
-                header('Location: profile.php?updated=1');
-                exit;
+                mysqli_stmt_bind_param(
+                    $updateStmt,
+                    'ssssssssssi',
+                    $fname, $lname, $displayName, $username, $biography,
+                    $signature, $profilePicture, $location, $major, $interests,
+                    $sessionUserID
+                );
+
+            } else {
+                $updateStmt = mysqli_prepare($con,
+                    "UPDATE user
+                    SET fname=?, lname=?, displayName=?, username=?, biography=?,
+                        signature=?, location=?, major=?, interests=?
+                    WHERE userID=?"
+                );
+
+                mysqli_stmt_bind_param(
+                    $updateStmt,
+                    'sssssssssi',
+                    $fname, $lname, $displayName, $username, $biography,
+                    $signature, $location, $major, $interests,
+                    $sessionUserID
+                );
             }
-            $errors[] = 'Error saving profile. Please try again.';
+
+            mysqli_stmt_execute($updateStmt);
+
+            mysqli_stmt_close($updateStmt);
+
+            header("Location: profile.php");
+            exit;
         }
 
         // Only reached when $errors is non-empty (success path exits above); repopulate form values
         $profile = array_merge($profile, compact(
             'fname', 'lname', 'displayName', 'username', 'biography',
-            'signature', 'profilePicture', 'location', 'major', 'interests'
+            'signature', 'location', 'major', 'interests'
         ));
     }
 ?>
@@ -134,7 +171,7 @@
 
                 <div class="form-card">
                     <h4>Edit Profile</h4>
-                    <form method="POST">
+                    <form method="POST" enctype="multipart/form-data">
                         <div class="section-label">Identity</div>
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
@@ -178,10 +215,13 @@
 
                         <div class="section-label">Details</div>
                         <div class="mb-3">
-                            <label class="form-label">Profile picture URL</label>
-                            <input type="text" name="profilePicture" class="form-control" maxlength="500"
-                                   placeholder="https://example.com/photo.jpg"
-                                   value="<?php echo htmlspecialchars($profile['profilePicture'] ?? ''); ?>">
+                            <label class="form-label">Profile Picture</label>
+                            <input 
+                                type="file" 
+                                class="form-control" 
+                                name="imageData" 
+                                accept="image/*"
+                            >
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Location</label>
