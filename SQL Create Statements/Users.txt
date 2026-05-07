@@ -1,0 +1,12 @@
+CREATE TABLE `client_server_db`.`user` (
+  `userID` INT NOT NULL AUTO_INCREMENT, 
+  `username` VARCHAR(25) NOT NULL, 
+  `password` VARCHAR(255) NOT NULL, 
+  `salt` VARCHAR(255) NOT NULL, 
+  `isAdmin` BOOLEAN NULL, 
+  `biography` VARCHAR(1000) NULL, 
+  `signature` VARCHAR(100) NULL, 
+  `createdOn` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+  `lastLogin` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+  PRIMARY KEY (`userID`)
+);

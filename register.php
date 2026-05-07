@@ -1,3 +1,88 @@
+<?php
+  include("connection.php");
+  include("functions.php");
+
+  $secret_key = getenv("PASSWORD_PEPPER"); // <-- get the pepper value from an environment variable
+  if ($_SERVER['REQUEST_METHOD'] == "POST")
+{
+    $user_name = $_POST['username'];
+    $password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
+    $fname = $_POST['first_name'];
+    $lname = $_POST['last_name'];
+    $email = $_POST['email'];
+    $phone = $_POST['phone'];
+
+    if($password !== $confirm_password){
+        echo "Passwords do not match!";
+        exit;
+    }
+
+    if(!empty($user_name) && !empty($password) && !is_numeric($user_name))
+    {
+        $query = "select * from user where username = '$user_name' limit 1";
+        $result = mysqli_query($con, $query);
+
+        if($result && mysqli_num_rows($result) > 0)
+        {
+            echo "Username already exists!";
+            exit;
+        }
+
+        // ----------------------------
+        // DEFAULT PROFILE PICTURE BLOB
+        // ----------------------------
+        $profilePicture = file_get_contents(__DIR__ . "/images/avatar1.png");
+
+        // If user uploaded an image, override default
+        if (isset($_FILES['imageData']) && $_FILES['imageData']['error'] === UPLOAD_ERR_OK)
+        {
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mime = finfo_file($finfo, $_FILES['imageData']['tmp_name']);
+            finfo_close($finfo);
+
+            if (!in_array($mime, ['image/jpeg', 'image/png', 'image/webp']))
+            {
+                echo "Invalid image type!";
+                exit;
+            }
+
+            $profilePicture = file_get_contents($_FILES['imageData']['tmp_name']);
+        }
+
+        // password hashing
+        $password = $password . $secret_key;
+        $password_hash = password_hash($password, PASSWORD_DEFAULT);
+
+        // IMPORTANT: use prepared statement (still same logic otherwise)
+        $query = "INSERT INTO user 
+            (username, password, fname, lname, email, phone, auth_key, profilePicture)
+            VALUES (?, ?, ?, ?, ?, ?, '0', ?)";
+
+        $stmt = mysqli_prepare($con, $query);
+
+        mysqli_stmt_bind_param(
+            $stmt,
+            "sssssss",
+            $user_name,
+            $password_hash,
+            $fname,
+            $lname,
+            $email,
+            $phone,
+            $profilePicture
+        );
+
+        mysqli_stmt_execute($stmt);
+
+        header("Location: editProfile.php");
+        die;
+    }
+    else {
+        echo "Please enter some valid information!";
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -20,22 +105,9 @@
     </style>
   </head>
 
-  <body class="bg-light">
+  <body class="bg-info">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand bg-white border-bottom">
-      <div class="container">
-        <a class="navbar-brand fw-bold" href="index.html">Awesome Site</a>
-
-        <div class="navbar-nav ms-auto">
-          <a class="nav-link" href="index.html">Home</a>
-          <a class="nav-link" href="profile.html">My Profile</a>
-          <a class="nav-link" href="login.html">Login</a>
-          <a class="nav-link active" aria-current="page" href="register.html"
-            >Register</a
-          >
-        </div>
-      </div>
-    </nav>
+    <?php set_header(); ?>
 
     <!-- Page content -->
     <div class="container my-5">
@@ -47,7 +119,7 @@
 
               <!-- Form -->
               <!-- Later, you can connect this to your server by changing action="" -->
-              <form action="profile.html" method="get">
+              <form method="post">
                 <!-- First + Last Name -->
                 <div class="row g-3 mb-3">
                   <div class="col">
@@ -154,9 +226,7 @@
                 </div>
 
                 <!-- Submit -->
-                <button type="submit" class="btn btn-primary w-100">
-                  Create Account
-                </button>
+                <input type="submit" class="btn btn-primary w-100" value="Create Account">
 
                 <p class="text-center mt-3 mb-0">
                   Already have an account?
